@@ -1,0 +1,56 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Montserrat", Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --text-xs: 0.875rem; /* 14px (originally 12px) */
+  --text-sm: 1rem;     /* 16px (originally 14px) */
+  --text-base: 1.125rem; /* 18px (originally 16px) */
+  --text-lg: 1.25rem;    /* 20px (originally 18px) */
+  --text-xl: 1.375rem;   /* 22px (originally 20px) */
+  --text-2xl: 1.625rem;  /* 26px (originally 24px) */
+  --text-3xl: 2rem;      /* 32px (originally 30px) */
+  --text-4xl: 2.375rem;  /* 38px (originally 36px) */
+  --text-5xl: 3.125rem;  /* 50px (originally 48px) */
+
+  --animate-spin-slow: spin 20s linear infinite;
+  --animate-fade-in: fadeIn 0.4s ease-out forwards;
+  --animate-slide-in: slideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slideIn {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+}
+
+/* Base styles for global elements to support direct +2pt font increases */
+body {
+  font-family: var(--font-sans);
+  font-size: 1.125rem; /* Increased default body base by 2 points (typically 1rem / 16px -> 18px) */
+}
+
+p {
+  font-size: 1.125rem; /* Ensure standard body paragraphs render +2 points larger */
+  line-height: 1.6;
+}
+
+/* Custom premium aesthetic scrollbars for listing cards */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Base resets to give elegant touch controls */
+select, input, textarea {
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Zaytouynda Guide",
+  "description": "Explore Zaytouynda-rated, Bib Gourmand, and selected restaurants across Lebanon and worldwide capitals with maps, curated menus, itineraries, and an AI Gourmet Concierge.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
