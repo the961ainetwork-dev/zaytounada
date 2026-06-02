@@ -100,43 +100,43 @@ export default function LiveEntertainmentView({
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in text-left" id="live-entertainment-view">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in text-left text-neutral-900" id="live-entertainment-view">
       
       {/* Editorial Header */}
-      <div className="mb-8 border-b border-white/5 pb-5 flex flex-col md:flex-row justify-between items-start md:items-baseline gap-2">
+      <div className="mb-8 border-b border-neutral-200 pb-5 flex flex-col md:flex-row justify-between items-start md:items-baseline gap-2 text-left">
         <div>
-          <h2 className="font-serif font-light text-3xl text-white flex items-center gap-2.5">
-            <Music className="w-8 h-8 text-red-500" />
+          <h2 className="font-serif font-light text-3xl text-neutral-900 flex items-center gap-2.5">
+            <Music className="w-8 h-8 text-red-650" />
             <span>Live Entertainment Happening Near You</span>
           </h2>
-          <p className="text-xs text-white/40 mt-1 max-w-xl font-light">
+          <p className="text-xs text-neutral-500 mt-1 max-w-xl font-light">
             Surround your luxury plate with authentic acoustic depth, classical Tarab orchestration, sunset cliffside violinists, or progressive jazz lounge arrays.
           </p>
         </div>
-        <span className="text-[10px] font-mono uppercase bg-red-600/15 border border-red-500/25 text-red-400 font-bold px-3 py-1.5 rounded tracking-widest">
+        <span className="text-[10px] font-mono uppercase bg-red-50 border border-red-200 text-red-650 font-bold px-3 py-1.5 rounded tracking-widest leading-none">
           Beirut & Global Schedule
         </span>
       </div>
 
       {/* Main visual list */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
         {entertainmentShows.map((show) => {
           const matchingRestaurant = RESTAURANTS.find(r => r.id === show.restId);
           return (
             <div
               key={show.id}
-              className="bg-[#0a0a0a] border border-white/5 rounded-2xl overflow-hidden shadow-2xl flex flex-col justify-between h-full hover:border-white/10 transition-all"
+              className="bg-white border border-neutral-200 rounded-2xl overflow-hidden shadow-sm flex flex-col justify-between h-full hover:border-neutral-300 transition-all"
             >
-              <div className="relative h-56 w-full">
-                <img src={show.imageUrl} alt={show.title} className="w-full h-full object-cover opacity-35" referrerPolicy="no-referrer" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent" />
+              <div className="relative h-56 w-full bg-neutral-100">
+                <img src={show.imageUrl} alt={show.title} className="w-full h-full object-cover opacity-90" referrerPolicy="no-referrer" />
+                <div className="absolute inset-0 bg-gradient-to-t from-white/90 via-transparent to-transparent pointer-events-none" />
                 
                 {/* Visual marker tags */}
                 <div className="absolute top-4 left-4 flex gap-2">
-                  <span className="text-[9px] font-mono uppercase bg-red-650 text-white font-extrabold px-2.5 py-1 rounded shadow">
+                  <span className="text-[9px] font-mono uppercase bg-red-650 text-white font-extrabold px-2.5 py-1 rounded shadow-xs leading-none">
                     LIVE PERFORMANCE
                   </span>
-                  <span className="text-[9px] font-mono uppercase bg-neutral-900 text-white/80 border border-white/10 px-2.5 py-1 rounded">
+                  <span className="text-[9px] font-mono uppercase bg-white/95 text-neutral-800 border border-neutral-250 px-2.5 py-1 rounded shadow-xs font-bold leading-none">
                     {show.venueCity}
                   </span>
                 </div>
@@ -144,29 +144,29 @@ export default function LiveEntertainmentView({
 
               <div className="p-6 flex-1 flex flex-col justify-between space-y-6">
                 <div className="space-y-3">
-                  <span className="text-[9px] font-mono uppercase text-red-500 font-bold tracking-widest">{show.perfGroup}</span>
-                  <h4 className="font-serif font-black text-xl text-white leading-snug">{show.title}</h4>
+                  <span className="text-[9px] font-mono uppercase text-red-600 font-extrabold tracking-widest block">{show.perfGroup}</span>
+                  <h4 className="font-serif font-black text-xl text-neutral-950 leading-snug">{show.title}</h4>
                   
-                  <div className="flex flex-col gap-1.5 text-xs text-white/50 pt-1 font-light">
+                  <div className="flex flex-col gap-1.5 text-xs text-neutral-550 pt-1 font-light">
                     <div className="flex items-center gap-1.5">
-                      <Clock className="w-3.5 h-3.5 text-red-400" />
+                      <Clock className="w-3.5 h-3.5 text-red-600" />
                       <span>{show.timeString}</span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <MapPin className="w-3.5 h-3.5 text-red-400" />
-                      <span>At: <strong className="text-white/80 hover:underline cursor-pointer" onClick={() => matchingRestaurant && onSelectRestaurant(matchingRestaurant)}>{show.restName}</strong> ({show.venueDistrict}, {show.venueCity})</span>
+                      <MapPin className="w-3.5 h-3.5 text-red-600" />
+                      <span>At: <strong className="text-neutral-800 hover:text-red-650 hover:underline cursor-pointer" onClick={() => matchingRestaurant && onSelectRestaurant(matchingRestaurant)}>{show.restName}</strong> ({show.venueDistrict}, {show.venueCity})</span>
                     </div>
                   </div>
 
-                  <p className="text-xs text-white/45 leading-relaxed font-light font-sans pt-2">
+                  <p className="text-xs text-neutral-600 leading-relaxed font-light font-sans pt-2">
                     {show.description}
                   </p>
                 </div>
 
-                <div className="pt-4 border-t border-white/5 flex flex-col sm:flex-row gap-3 items-center justify-between">
-                  <div className="text-left">
-                    <span className="text-[9px] text-white/30 font-mono uppercase tracking-wider block">Inspections Standard:</span>
-                    <span className="text-amber-300 text-xs tracking-tighter block mt-0.5">
+                <div className="pt-4 border-t border-neutral-200 flex flex-col sm:flex-row gap-3 items-center justify-between">
+                  <div className="text-left w-full sm:w-auto">
+                    <span className="text-[9px] text-neutral-450 font-mono uppercase tracking-wider block font-bold">Inspections Standard:</span>
+                    <span className="text-amber-550 text-xs tracking-tighter block mt-0.5 font-bold">
                       {'✻'.repeat(matchingRestaurant?.stars || 3)} Zaytouynda Stars (✻)
                     </span>
                   </div>
@@ -175,7 +175,7 @@ export default function LiveEntertainmentView({
                     {matchingRestaurant && (
                       <button
                         onClick={() => onSelectRestaurant(matchingRestaurant)}
-                        className="flex-1 sm:flex-initial px-4 py-2.5 border border-white/10 hover:bg-white/5 text-white/90 text-[10px] font-bold uppercase tracking-widest rounded-lg transition-all cursor-pointer"
+                        className="flex-1 sm:flex-initial px-4 py-2.5 border border-neutral-250 bg-neutral-50 hover:bg-neutral-100 text-neutral-800 text-[10px] font-bold uppercase tracking-widest rounded-lg transition-all cursor-pointer"
                       >
                         Details
                       </button>
@@ -185,7 +185,7 @@ export default function LiveEntertainmentView({
                         setSelectedShow(show);
                         setBookingSuccess(false);
                       }}
-                      className="flex-1 sm:flex-initial px-5.5 py-2.5 bg-red-600 hover:bg-red-550 text-white text-[10px] font-extrabold uppercase tracking-widest rounded-lg transition-all cursor-pointer shadow-md"
+                      className="flex-1 sm:flex-initial px-5.5 py-2.5 bg-red-600 hover:bg-red-650 text-white text-[10px] font-extrabold uppercase tracking-widest rounded-lg transition-all cursor-pointer shadow-xs"
                     >
                       Reserve Seats
                     </button>
@@ -199,26 +199,26 @@ export default function LiveEntertainmentView({
 
       {/* MODAL: LIVE PERFORMANCE RESERVATION PORTAL OVERLAY */}
       {selectedShow && (
-        <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-[#050505] border border-white/10 rounded-2xl max-w-md w-full p-6.5 relative overflow-hidden shadow-2xl space-y-5">
+        <div className="fixed inset-0 z-50 bg-neutral-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white border border-neutral-200 rounded-2xl max-w-md w-full p-6.5 relative overflow-hidden shadow-2xl space-y-5 text-neutral-900 text-left">
             <button
               onClick={() => setSelectedShow(null)}
-              className="absolute top-4 right-4 text-white/40 hover:text-white font-mono cursor-pointer"
+              className="absolute top-4 right-4 text-neutral-450 hover:text-neutral-900 font-mono cursor-pointer font-bold text-lg"
             >
               ✕
             </button>
 
             {bookingSuccess ? (
               <div className="text-center py-6 space-y-5 animate-fade-in">
-                <div className="w-12 h-12 bg-emerald-950 text-emerald-400 rounded-full border border-emerald-800/30 flex items-center justify-center mx-auto">
+                <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-full border border-emerald-250 flex items-center justify-center mx-auto">
                   <CheckCircle className="w-6 h-6 animate-pulse" />
                 </div>
                 <div className="space-y-2">
-                  <span className="text-[9px] font-mono uppercase bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded border border-emerald-800/10 font-bold">
+                  <span className="text-[9px] font-mono uppercase bg-emerald-100 text-emerald-650 px-2 py-0.5 rounded border border-emerald-200 font-extrabold">
                     RESERVATIONS SECURED
                   </span>
-                  <h3 className="font-serif text-lg text-white font-bold">Show Seats Allocation Complete!</h3>
-                  <p className="text-xs text-white/50 leading-relaxed max-w-xs mx-auto font-light">
+                  <h3 className="font-serif text-lg text-neutral-950 font-bold">Show Seats Allocation Complete!</h3>
+                  <p className="text-xs text-neutral-500 leading-relaxed max-w-xs mx-auto font-light">
                     Your allocation for **"{selectedShow.title}"** at **{selectedShow.restName}** has been secured in alignment with the artists schedule. Forwarded to the host roster.
                   </p>
                 </div>
@@ -229,7 +229,7 @@ export default function LiveEntertainmentView({
                       setSelectedShow(null);
                       onNavigateTab('saved');
                     }}
-                    className="px-5.5 py-3 bg-red-650 hover:bg-red-550 text-white text-[10px] font-bold uppercase tracking-widest rounded-lg cursor-pointer"
+                    className="px-5.5 py-3 bg-red-650 hover:bg-red-600 text-white text-[10px] font-bold uppercase tracking-widest rounded-lg cursor-pointer"
                   >
                     View active tickets dashboard
                   </button>
@@ -238,60 +238,60 @@ export default function LiveEntertainmentView({
             ) : (
               <div className="space-y-4 text-left">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-full bg-red-600/10 border border-red-600/20 flex items-center justify-center text-red-500">
+                  <div className="w-9 h-9 rounded-full bg-red-50 border border-red-200 flex items-center justify-center text-red-655">
                     <Music className="w-4.5 h-4.5" />
                   </div>
                   <div>
-                    <h3 className="font-serif text-base text-white font-bold">Performance Seating Portal</h3>
-                    <p className="text-[10px] text-white/45 font-mono uppercase tracking-wide">At {selectedShow.restName}</p>
+                    <h3 className="font-serif text-base text-neutral-950 font-bold">Performance Seating Portal</h3>
+                    <p className="text-[10px] text-neutral-500 font-mono uppercase tracking-wide">At {selectedShow.restName}</p>
                   </div>
                 </div>
 
-                <div className="p-3 bg-neutral-900 border border-white/5 rounded-xl text-[11px] text-white/60 space-y-1.5">
+                <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl text-[11px] text-neutral-700 space-y-1.5">
                   <div>
-                    <span className="text-white/35 font-mono text-[8px] uppercase">SHOW PERFORMERS:</span>
-                    <p className="text-white font-bold">{selectedShow.title} - performed by {selectedShow.perfGroup}</p>
+                    <span className="text-neutral-450 font-mono text-[8px] uppercase font-bold">SHOW PERFORMERS:</span>
+                    <p className="text-neutral-900 font-bold">{selectedShow.title} - performed by {selectedShow.perfGroup}</p>
                   </div>
                   <div>
-                    <span className="text-white/35 font-mono text-[8px] uppercase">TIMELINE INDEX:</span>
-                    <p className="text-white">{selectedShow.timeString}</p>
+                    <span className="text-neutral-450 font-mono text-[8px] uppercase font-bold">TIMELINE INDEX:</span>
+                    <p className="text-neutral-900 font-medium">{selectedShow.timeString}</p>
                   </div>
                 </div>
 
                 <form onSubmit={handleBookShow} className="space-y-4 pt-1">
                   <div className="space-y-1.5">
-                    <label className="text-[9.5px] font-mono text-white/40 uppercase tracking-widest block font-bold">Guest Primary Name</label>
+                    <label className="text-[9.5px] font-mono text-neutral-505 uppercase tracking-widest block font-bold">Guest Primary Name</label>
                     <input
                       type="text"
                       required
                       placeholder="e.g. Master Al-Sayed"
                       value={userName}
                       onChange={(e) => setUserName(e.target.value)}
-                      className="w-full px-3.5 py-2.5 text-xs bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-red-600/50"
+                      className="w-full px-3.5 py-2.5 text-xs bg-white border border-neutral-250 rounded-lg text-neutral-900 focus:outline-none focus:border-red-650"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[9.5px] font-mono text-white/40 uppercase tracking-widest block font-bold">Corporate or Personal Email</label>
+                    <label className="text-[9.5px] font-mono text-neutral-505 uppercase tracking-widest block font-bold">Corporate or Personal Email</label>
                     <input
                       type="email"
                       required
                       placeholder="e.g. resident@domain.com"
                       value={userEmail}
                       onChange={(e) => setUserEmail(e.target.value)}
-                      className="w-full px-3.5 py-2.5 text-xs bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-red-600/50"
+                      className="w-full px-3.5 py-2.5 text-xs bg-white border border-neutral-250 rounded-lg text-neutral-900 focus:outline-none focus:border-red-650"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[9.5px] font-mono text-white/40 uppercase tracking-widest block font-bold">Party Size Allocation (Covers)</label>
+                    <label className="text-[9.5px] font-mono text-neutral-505 uppercase tracking-widest block font-bold">Party Size Allocation (Covers)</label>
                     <select
                       value={guestCount}
                       onChange={(e) => setGuestCount(Number(e.target.value))}
-                      className="w-full px-3.5 py-2.5 text-xs bg-white/5 border border-[#ffffff15] rounded-lg text-white font-medium focus:outline-none cursor-pointer outline-none"
+                      className="w-full px-3.5 py-2.5 text-xs bg-white border border-neutral-250 rounded-lg text-neutral-900 font-semibold focus:outline-none cursor-pointer outline-none"
                     >
                       {[1, 2, 3, 4, 5, 8, 10].map((num) => (
-                        <option key={num} value={num} className="bg-neutral-950 text-white">
+                        <option key={num} value={num} className="bg-white text-neutral-900 font-medium">
                           {num} Guest{num > 1 ? 's' : ''} (Table Cover)
                         </option>
                       ))}
@@ -299,24 +299,24 @@ export default function LiveEntertainmentView({
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[9.5px] font-mono text-white/40 uppercase tracking-widest block font-bold">Performance Seating Requests</label>
+                    <label className="text-[9.5px] font-mono text-neutral-505 uppercase tracking-widest block font-bold">Performance Seating Requests</label>
                     <textarea
                       placeholder="Special table near acoustic harp / live vocals, gluten restriction notes..."
                       rows={2}
                       value={customRequests}
                       onChange={(e) => setCustomRequests(e.target.value)}
-                      className="w-full px-3.5 py-2.5 text-xs bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none resize-none"
+                      className="w-full px-3.5 py-2.5 text-xs bg-white border border-neutral-250 rounded-lg text-neutral-900 focus:outline-none resize-none font-sans"
                     />
                   </div>
 
-                  <div className="p-3 bg-red-650/10 border border-red-550/20 text-[9.5px] text-red-300 font-mono flex items-start gap-2 rounded-lg leading-relaxed">
-                    <Sparkles className="w-3.5 h-3.5 mt-0.5 shrink-0 animate-pulse text-red-400" />
+                  <div className="p-3 bg-red-50 border border-red-200 text-[9.5px] text-red-650 font-mono flex items-start gap-2 rounded-lg leading-relaxed">
+                    <Sparkles className="w-3.5 h-3.5 mt-0.5 shrink-0 animate-pulse text-red-600" />
                     <span>Allocations for shows are extremely limited. Traditional attire or smart elegant jacket required at entrance. No ticketing cost.</span>
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full py-4 text-center bg-red-600 hover:bg-red-550 text-white text-[10px] tracking-widest font-extrabold uppercase rounded-lg transition-all cursor-pointer shadow-md"
+                    className="w-full py-4 text-center bg-red-600 hover:bg-red-655 text-white text-[10px] tracking-widest font-extrabold uppercase rounded-lg transition-all cursor-pointer shadow-sm"
                   >
                     Confirm Show Allocation Seat
                   </button>

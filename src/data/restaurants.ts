@@ -22,10 +22,10 @@ export const RESTAURANTS: Restaurant[] = [
       'Fattoush with Pomegranate: Crispy flatbread shards, fresh purslane, sumac, and rich molasses pomegranate dressing',
       'Kabab Karaz: Tender charcoal lamb skewers glazed in a sweet-and-sour wild mountain cherry reduction'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&q=80&w=800',
+    imageUrl: 'https://images.unsplash.com/photo-1541532713592-79a0317b6b77?auto=format&fit=crop&q=80&w=800',
     images: [
-      'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=800',
-      'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80&w=800'
+      'https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&q=80&w=800',
+      'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&q=80&w=800'
     ],
     features: ['Live Traditional Oud Player', 'Opulent Oriental Decor', 'Ultra-Premium Ingredients', 'Sequential Feasting Ritual'],
     instagram: '@emsherifrestaurant',
@@ -53,9 +53,9 @@ export const RESTAURANTS: Restaurant[] = [
       'Kharouf: 12-hour slow-braised lamb shank accompanied by sweet organic dried fruits',
       'Mafroukeh: Velvet semolina cake layered with fresh clotted ashta cream, almonds, and rose water syrup'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&q=80&w=800',
+    imageUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=800',
     images: [
-      'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=800'
+      'https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&q=80&w=800'
     ],
     features: ['Historical Palace Location', 'Exquisite Interior Design', 'Vegetarian Friendly Options', 'Elegant Wine List'],
     instagram: '@lizabeirut',
@@ -83,7 +83,7 @@ export const RESTAURANTS: Restaurant[] = [
       'Sultan Ibrahim: Crispy fried native red mullet seasoned with wild sea salt and natural sumac',
       'Ghazl el Banat with Ashta: Traditional Levantine spun cotton candy over rich milk-and-rose clotted cream'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&q=80&w=800',
+    imageUrl: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&q=80&w=800',
     images: [
       'https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&q=80&w=800'
     ],
@@ -113,9 +113,9 @@ export const RESTAURANTS: Restaurant[] = [
       'Spiced Slow-Cooked Lamb Shoulder: Fall-off-the-bone lamb with dynamic roasted cumin jus',
       'Whipped Labneh Dip with organic smoked honey, black dates, and clay-oven sourdough bread'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&q=80&w=800',
+    imageUrl: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=800',
     images: [
-      'https://images.unsplash.com/photo-1522336572468-97b06e8ef143?auto=format&fit=crop&q=80&w=800'
+      'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&q=80&w=800'
     ],
     features: ['Neighborhood Bistro Vibe', 'High-Heat Open Wood Grill', 'Natural Local Organic Wine List', 'Dynamic Changing Plates'],
     instagram: '@baronbeirut',
@@ -143,9 +143,9 @@ export const RESTAURANTS: Restaurant[] = [
       'Subeoreg: Layers of boiled and baked dough with premium local cheeses and melted butter',
       'Armenian Kibbeh: Spiced raw beef paste blended with cracked wheat, red pepper paste, and walnuts'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=800',
+    imageUrl: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&q=80&w=800',
     images: [
-      'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&q=80&w=800'
+      'https://images.unsplash.com/photo-1541532713592-79a0317b6b77?auto=format&fit=crop&q=80&w=800'
     ],
     features: ['Warm Family Hospitality', 'Historic Stone Walls', 'Excellent Outdoor Patio', 'Unique Spiced Wine Selection'],
     instagram: '@mayrigbeirut',
@@ -172,9 +172,9 @@ export const RESTAURANTS: Restaurant[] = [
       'Cherry Kabab: Miniature lamb meatballs tossed in mountain-cherry coulis',
       'Osmalieh: Golden spun pastry containing fresh clotted ashta cream, served with orange-blossom syrup'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80&w=800',
+    imageUrl: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&q=80&w=800',
     images: [
-      'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=800'
+      'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&q=80&w=800'
     ],
     features: ['Waterfront Promenade Deck', 'Luxury Lounge Seating', 'Live Traditional Oud Music', 'Exclusive Arak Bar'],
     instagram: '@mayas_beirut',
@@ -201,9 +201,9 @@ export const RESTAURANTS: Restaurant[] = [
       'Koussa Bil Laban: Organic stuffed baby zucchini cooked in a velvet, garlic-mint mountain goat yogurt',
       'Zenkol: Light sweet herbal dough dumplings poached and tossed in cold wild blossom honey syrup'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&q=80&w=800',
+    imageUrl: 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&q=80&w=800',
     images: [
-      'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=800'
+      'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&q=80&w=800'
     ],
     features: ['Scenic Mountain Panorama', '100% Eco-Sustainable Building', 'Farm-to-Table Organic Produce', 'Daily Changing Regional Menu'],
     instagram: '@tawlet_lebanon',
@@ -232,9 +232,9 @@ export const RESTAURANTS: Restaurant[] = [
       'Crispy Herb Shoestring Fries: Hand-cut potatoes sprinkled with wild thyme, rosemary, and block-grated halloumi cheese',
       'Smoked Rosemary Old Fashioned: Custom dark oak-aged whiskey smoked table-side with dried mountain cedar needles'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&q=80&w=800',
+    imageUrl: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&q=80&w=800',
     images: [
-      'https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&q=80&w=800'
+      'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&q=80&w=800'
     ],
     features: ['Cozy Retro Vinyl Atmosphere', 'World-Class Craft Mixology', 'Friendly Neighborhood Vibe', 'Late Night Gourmet Eats'],
     instagram: '@ferdinand.beirut',
@@ -261,9 +261,9 @@ export const RESTAURANTS: Restaurant[] = [
       'Avocado Halloumi Toast: Sourdough slices loaded with creamed avocado, grilled halloumi slices, and wild mountain sumac',
       'Cardamom Honey Latte: Espressos with organic honey, warm cardamom milk'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&q=80&w=800',
+    imageUrl: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&q=80&w=800',
     images: [
-      'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=800'
+      'https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&q=80&w=800'
     ],
     features: ['Restored Architectural House', 'Quiet Lush Outdoor Garden', 'On-Site Coffee Roastery', 'Laptops & Books Welcome'],
     instagram: '@kaleicoffee.co',
@@ -290,7 +290,7 @@ export const RESTAURANTS: Restaurant[] = [
       'Arak Sunset Mule: Lebanese traditional triple-distilled arak liquor, spicy ginger beer, and crushed garden mint',
       'Caprese Toast: Local baked baguette loaded with garden basil pesto, fresh heirloom tomatoes, and olive oil'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=800',
+    imageUrl: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&q=80&w=800',
     images: [
       'https://images.unsplash.com/photo-1543007630-9710e4a00a20?auto=format&fit=crop&q=80&w=800'
     ],
@@ -319,9 +319,9 @@ export const RESTAURANTS: Restaurant[] = [
       'Sriracha Glazed Calamari: Fresh beachfront squid tossed in a spicy, fiery house sauce',
       'The Colonel BBQ Pork Ribs: Slow-braised ribs glazed in dark stout-infused barbecue reduction'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&q=80&w=800',
+    imageUrl: 'https://images.unsplash.com/photo-1568219656418-15c329c72fd3?auto=format&fit=crop&q=80&w=800',
     images: [
-      'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&q=80&w=800'
+      'https://images.unsplash.com/photo-1535958636474-b021ee887b13?auto=format&fit=crop&q=80&w=800'
     ],
     features: ['Direct Beachfront Access', 'Eco-Friendly Container Styling', 'On-Site Brewery Tours', 'Live Acoustic Sunset Concerts'],
     instagram: '@colonelbeer',
@@ -348,7 +348,7 @@ export const RESTAURANTS: Restaurant[] = [
       'Pistachio Rose Saint-Honoré: Delicate caramel puff pastry with cream, fresh roses, and local pistachios',
       'Thyme infusion Scone: Savory scone baked with wild zaatar spices, served with whipped labneh cream'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&q=80&w=800',
+    imageUrl: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&q=80&w=800',
     images: [
       'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&q=80&w=800'
     ],
@@ -379,9 +379,9 @@ export const RESTAURANTS: Restaurant[] = [
       'Grilled Sea Bass: Crisped over beach pine coals, served with rich tarator sauce',
       'Batroun Lemonade Margarita: A refreshing cocktail of fresh-squeezed Batroun lemonade, triple-sec, and local arak'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&q=80&w=800',
+    imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=800',
     images: [
-      'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&q=80&w=800'
+      'https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&q=80&w=800'
     ],
     features: ['Built Directly on Rocky Cliffs', 'Spectacular Sunset Views', 'Beach Bonfire Party', 'Seaside DJs & Cocktail Bar'],
     instagram: '@pierre.and.friends',
@@ -408,9 +408,9 @@ export const RESTAURANTS: Restaurant[] = [
       'Charcoal-Grilled Prawn Sticks: Skewered jumbo prawns marinated in native sumac and chili reduction',
       'Iris Sunset Smash: Signature vodka cocktail shaken with muddled fresh watermelon, wild honey, and mint leaf'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=800',
+    imageUrl: 'https://images.unsplash.com/photo-1570872626485-d8ffea69f463?auto=format&fit=crop&q=80&w=800',
     images: [
-      'https://images.unsplash.com/photo-1543007630-9710e4a00a20?auto=format&fit=crop&q=80&w=800'
+      'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&q=80&w=800'
     ],
     features: ['Panoramic Skyline Views', 'Sleek Open-Air Rooftop Deck', 'World-Class Guest DJs', 'Sensational Sunset Promenades'],
     instagram: '@irisbeirut',
@@ -437,9 +437,9 @@ export const RESTAURANTS: Restaurant[] = [
       'Truffle Thyme Flatbread: Crispy thin yeast dough cooked with wild thyme, white truffle oil, and local goat cheese',
       'Quarantina Sour: Special signature smokey mezcal shaken with fresh sour lemon juice and orange blossom honey'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&q=80&w=800',
+    imageUrl: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&q=80&w=800',
     images: [
-      'https://images.unsplash.com/photo-1549611016-3a70d82b5040?auto=format&fit=crop&q=80&w=800'
+      'https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&q=80&w=800'
     ],
     features: ['Retractable Heavy Metal Roof', 'Designed by Architect Bernard Khoury', 'Underground Rave Legacy', 'Late Night Fuel Kitchen'],
     instagram: '@b018',
@@ -466,9 +466,9 @@ export const RESTAURANTS: Restaurant[] = [
       'The Elefteriades Mezze Platter: Custom collection of fine hummus, mutabbal, and crisp halloumi bourek',
       'Ashta Ice Cream Castle: Mountains of traditional rose-water ice cream decorated with crushed pistachios'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=800',
+    imageUrl: 'https://images.unsplash.com/photo-1503095391755-14171168db45?auto=format&fit=crop&q=80&w=800',
     images: [
-      'https://images.unsplash.com/photo-1522336572468-97b06e8ef143?auto=format&fit=crop&q=80&w=800'
+      'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&q=80&w=800'
     ],
     features: ['Spectacular Live Variety Show', 'Historic Theater Interior Design', 'VVIP Booth Seating', 'Premium Levantine Mezze Options'],
     instagram: '@musichallbeirut',
@@ -495,7 +495,7 @@ export const RESTAURANTS: Restaurant[] = [
       'Kibbeh Chocolat: Sweet savory fried kibbeh stuffed with melted native dates and walnuts',
       'Byblos Basil Sangria: Chilled local red wine pitcher muddled with fresh garden basil and orange juice'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&q=80&w=800',
+    imageUrl: 'https://images.unsplash.com/photo-1572116469696-31de0f17cc34?auto=format&fit=crop&q=80&w=800',
     images: [
       'https://images.unsplash.com/photo-1543007630-9710e4a00a20?auto=format&fit=crop&q=80&w=800'
     ],
@@ -526,9 +526,9 @@ export const RESTAURANTS: Restaurant[] = [
       'Manousheh Zaatar and Cheese: Half thyme, half akkawi cheese folded with cold fresh mint roots, cucumber, and black olives',
       'Baked Halloumi Swirl: Tender dough rolled around thick halloumi cheese and black sesame seeds'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1579758629938-03607ccdbaba?auto=format&fit=crop&q=80&w=800',
+    imageUrl: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=800',
     images: [
-      'https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&q=80&w=800'
+      'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=800'
     ],
     features: ['Stone Deck Ovens', 'Superb Takeaway Speed', 'Established in 1975', 'Ultra-Affordable Comfort Food'],
     instagram: '@furn_beaino',
@@ -555,7 +555,7 @@ export const RESTAURANTS: Restaurant[] = [
       'Roast Beef Roll: Slow-cooked beef flank tossed with mayonnaise, mustard, tomatoes, and extra mint',
       'Melted Halloumi Markouk: Clay flatbread cooked with warm halloumi cheese and red chili oil'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1549611016-3a70d82b5040?auto=format&fit=crop&q=80&w=800',
+    imageUrl: 'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&q=80&w=800',
     images: [
       'https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&q=80&w=800'
     ],
@@ -584,9 +584,9 @@ export const RESTAURANTS: Restaurant[] = [
       'Tripoli Knafeh: Baked semolina and akkawi melted cheese pastry served warm inside a fresh sesame brioche bun',
       'Baklava: Crispy multi-layered phyllo dough pastry stuffed with crushed green Aleppo pistachios'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&q=80&w=800',
+    imageUrl: 'https://images.unsplash.com/photo-1601050690597-df056fb4ce78?auto=format&fit=crop&q=80&w=800',
     images: [
-      'https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&q=80&w=800'
+      'https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&q=80&w=800'
     ],
     features: ['Breathtaking Historic Palace', 'Takeaways & Gift Boxes Available', 'Established in 1881', 'Live Dessert Cooking Stations'],
     instagram: '@alhallab1881',
@@ -613,9 +613,9 @@ export const RESTAURANTS: Restaurant[] = [
       'Organic Mountain Honey tasting: Raw wild thyme and cedar honeys from high Lebanese elevations',
       'Heirloom Fig and Walnut Jam: Sweet, chunky local figs cooked with natural flower cloves'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800',
+    imageUrl: 'https://images.unsplash.com/photo-1488459718432-01055e67e1f5?auto=format&fit=crop&q=80&w=800',
     images: [
-      'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=800'
+      'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800'
     ],
     features: ['Weekly Farmers Cooperative Market', 'Farmers & Artisans Direct Stalls', '100% Organic Local Sourcing', 'Warm Community Atmosphere'],
     instagram: '@soukeltayeb',
@@ -642,9 +642,9 @@ export const RESTAURANTS: Restaurant[] = [
       'Ful Medames: Slow-cooked fava beans with organic lemon juice, garlic, extra virgin olive oil, and fresh cumin',
       'Hummus lahme: Silky chickpea purée loaded with hot sautéed grass-fed lamb cubes and roasting nuts'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1579758629938-03607ccdbaba?auto=format&fit=crop&q=80&w=800',
+    imageUrl: 'https://images.unsplash.com/photo-1541532713592-79a0317b6b77?auto=format&fit=crop&q=80&w=800',
     images: [
-      'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=800'
+      'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80&w=800'
     ],
     features: ['Neighborhood Breakfast Legend', 'Warm Cozy Family Seating', 'Live Counter Preparation', 'Extremely Speedy Service'],
     instagram: '@abouabdallah_beirut',

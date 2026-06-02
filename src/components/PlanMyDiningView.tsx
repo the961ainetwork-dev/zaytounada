@@ -17,7 +17,7 @@ export default function PlanMyDiningView({
   // Wizard steps: 1 = Location, 2 = Cuisine/Vibe, 3 = Price & Preference, 4 = Counselor Recommendations & Booking
   const [step, setStep] = useState<number>(1);
   const [location, setLocation] = useState<string>('Beirut');
-  const [cuisine, setCuisine] = useState<string>('Traditional Lebanese');
+  const [cuisine, setCuisine] = useState<string>('Traditional Lebanese Haute Cuisine');
   const [price, setPrice] = useState<string>('$$$$');
   const [tablePreference, setTablePreference] = useState<string>('Main VIP Room');
   
@@ -156,29 +156,29 @@ Please proceed to secure your allocation slot below, and our concierge will forw
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 animate-fade-in" id="plan-my-dining-view">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 animate-fade-in text-neutral-900" id="plan-my-dining-view">
       
       {/* Tab Header Banner */}
-      <div className="mb-8 border-b border-white/5 pb-4.5 flex flex-col md:flex-row justify-between items-start md:items-baseline gap-2">
-        <div>
-          <h2 className="font-serif font-light text-3xl text-white flex items-center gap-2.5">
-            <Compass className="w-8 h-8 text-red-500" />
+      <div className="mb-8 border-b border-neutral-200 pb-4.5 flex flex-col md:flex-row justify-between items-start md:items-baseline gap-2">
+        <div className="text-left">
+          <h2 className="font-serif font-light text-3xl text-neutral-900 flex items-center gap-2.5">
+            <Compass className="w-8 h-8 text-red-650" />
             <span>Plan My Dining</span>
           </h2>
-          <p className="text-xs text-white/40 mt-1 max-w-xl font-light">
+          <p className="text-xs text-neutral-500 mt-1 max-w-xl font-light">
             An interactive step-by-step counselor checklist matching your layout requirements, budget tier, and location preferences with our elite curated directory.
           </p>
         </div>
-        <div className="flex items-center gap-2 bg-neutral-900 border border-white/5 p-1 rounded-lg">
+        <div className="flex items-center gap-2 bg-neutral-100 border border-neutral-200 p-1 rounded-lg">
           {[1, 2, 3, 4].map((s) => (
             <div
               key={s}
               className={`w-7 h-7 rounded-md flex items-center justify-center text-xs font-bold font-mono transition-all ${
                 step === s
-                  ? 'bg-red-600 text-white shadow-md'
+                  ? 'bg-red-600 text-white shadow'
                   : step > s
-                  ? 'bg-emerald-950 text-emerald-400 border border-emerald-800/30'
-                  : 'text-white/30 hover:text-white/55'
+                  ? 'bg-emerald-50 text-emerald-650 border border-emerald-300 font-extrabold'
+                  : 'text-neutral-400 hover:text-neutral-600'
               }`}
             >
               {s}
@@ -189,11 +189,11 @@ Please proceed to secure your allocation slot below, and our concierge will forw
 
       {/* STEP 1: SELECT LOCATION */}
       {step === 1 && (
-        <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-6 md:p-10 text-center animate-fade-in space-y-8">
+        <div className="bg-white border border-neutral-200 rounded-2xl p-6 md:p-10 text-center animate-fade-in space-y-8 shadow-sm">
           <div className="max-w-xl mx-auto space-y-3">
-            <span className="text-[10px] font-mono tracking-widest text-red-500 uppercase font-bold">Step One • Culinary Focus</span>
-            <h3 className="font-serif text-2xl text-white font-light">Select Your Gastro Capital Location</h3>
-            <p className="text-xs text-white/40 leading-relaxed font-light">
+            <span className="text-[10px] font-mono tracking-widest text-red-650 uppercase font-extrabold block">Step One • Culinary Focus</span>
+            <h3 className="font-serif text-2xl text-neutral-950 font-light">Select Your Gastro Capital Location</h3>
+            <p className="text-xs text-neutral-500 leading-relaxed font-light">
               Choose the global destination you wish to explore. Our inspectors focus highly on Lebanese ports of gastronomy and international culinary capitols.
             </p>
           </div>
@@ -207,14 +207,14 @@ Please proceed to secure your allocation slot below, and our concierge will forw
                   onClick={() => handleLocationChange(loc)}
                   className={`p-6 rounded-xl border flex flex-col items-center gap-3 transition-all cursor-pointer ${
                     location === loc
-                      ? 'bg-red-650/10 border-red-550/40 text-white shadow-xl ring-1 ring-red-550/20'
-                      : 'bg-white/5 hover:bg-white/10 border-white/5 text-white/70'
+                      ? 'bg-red-50/50 border-red-500 text-neutral-950 shadow ring-1 ring-red-200'
+                      : 'bg-neutral-50 border-neutral-200 text-neutral-700 hover:bg-neutral-100'
                   }`}
                 >
-                  <MapPin className={`w-6 h-6 ${location === loc ? 'text-red-500' : 'text-white/30'}`} />
+                  <MapPin className={`w-6 h-6 ${location === loc ? 'text-red-650' : 'text-neutral-400'}`} />
                   <div>
-                    <span className="font-serif text-base font-medium block">{loc}</span>
-                    <span className="text-[9px] font-mono text-white/30 uppercase mt-1 block">
+                    <span className="font-serif text-base font-semibold block">{loc}</span>
+                    <span className="text-[9px] font-mono text-neutral-400 uppercase mt-1 block font-bold">
                       {matchedCount} Registered Spots
                     </span>
                   </div>
@@ -226,7 +226,7 @@ Please proceed to secure your allocation slot below, and our concierge will forw
           <div className="pt-6 flex justify-end max-w-3xl mx-auto">
             <button
               onClick={() => setStep(2)}
-              className="flex items-center gap-2 px-6 py-3.5 bg-red-600 hover:bg-red-500 text-white text-xs uppercase font-bold tracking-widest transition-all rounded-lg cursor-pointer"
+              className="flex items-center gap-2 px-6 py-3.5 bg-red-600 hover:bg-red-650 text-white text-xs uppercase font-bold tracking-widest transition-all rounded-lg cursor-pointer"
             >
               <span>Choose Culinary Vibe</span>
               <ArrowRight className="w-4 h-4" />
@@ -237,11 +237,11 @@ Please proceed to secure your allocation slot below, and our concierge will forw
 
       {/* STEP 2: SELECT CUISINE & TASTE */}
       {step === 2 && (
-        <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-6 md:p-10 text-center animate-fade-in space-y-8">
+        <div className="bg-white border border-neutral-200 rounded-2xl p-6 md:p-10 text-center animate-fade-in space-y-8 shadow-sm">
           <div className="max-w-xl mx-auto space-y-3">
-            <span className="text-[10px] font-mono tracking-widest text-red-500 uppercase font-bold">Step Two • Gastronomy Selection</span>
-            <h3 className="font-serif text-2xl text-white font-light">What style of cooking do you desire?</h3>
-            <p className="text-xs text-white/40 leading-relaxed font-light">
+            <span className="text-[10px] font-mono tracking-widest text-red-650 uppercase font-extrabold block">Step Two • Gastronomy Selection</span>
+            <h3 className="font-serif text-2xl text-neutral-950 font-light">What style of cooking do you desire?</h3>
+            <p className="text-xs text-neutral-500 leading-relaxed font-light">
               Selecting your ideal cuisine allows our counselor model to sort the flavors, seasoning levels, and signature dishes correctly.
             </p>
           </div>
@@ -251,29 +251,29 @@ Please proceed to secure your allocation slot below, and our concierge will forw
               <button
                 key={c}
                 onClick={() => setCuisine(c)}
-                className={`px-5 py-3 rounded-full border text-xs font-medium cursor-pointer transition-all ${
+                className={`px-5 py-3 rounded-full border text-xs font-semibold cursor-pointer transition-all ${
                   cuisine === c
-                    ? 'bg-red-600 text-white border-red-600 shadow-lg'
-                    : 'bg-white/5 hover:bg-white/10 text-white/80 border-white/10'
+                    ? 'bg-red-600 text-white border-red-600 shadow-sm'
+                    : 'bg-neutral-50 hover:bg-neutral-100 text-neutral-700 border-neutral-250'
                 }`}
               >
-                <ChefHat className="w-4 h-4 inline-block mr-1.5 -mt-0.5 text-white/60" />
+                <ChefHat className="w-4 h-4 inline-block mr-1.5 -mt-0.5 text-neutral-550" />
                 <span>{c}</span>
               </button>
             ))}
           </div>
 
-          <div className="pt-6 flex justify-between max-w-3xl mx-auto border-t border-white/5">
+          <div className="pt-6 flex justify-between max-w-3xl mx-auto border-t border-neutral-100">
             <button
               onClick={() => setStep(1)}
-              className="flex items-center gap-2 px-5 py-3 bg-neutral-900 border border-white/10 hover:bg-white/5 text-white text-xs uppercase font-bold tracking-widest transition-all rounded-lg cursor-pointer"
+              className="flex items-center gap-2 px-5 py-3 bg-neutral-100 border border-neutral-250 hover:bg-neutral-200 text-neutral-700 text-xs uppercase font-bold tracking-widest transition-all rounded-lg cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Back</span>
             </button>
             <button
               onClick={() => setStep(3)}
-              className="flex items-center gap-2 px-6 py-3.5 bg-red-600 hover:bg-red-500 text-white text-xs uppercase font-bold tracking-widest transition-all rounded-lg cursor-pointer"
+              className="flex items-center gap-2 px-6 py-3.5 bg-red-600 hover:bg-red-650 text-white text-xs uppercase font-bold tracking-widest transition-all rounded-lg cursor-pointer"
             >
               <span>Seating & Price</span>
               <ArrowRight className="w-4 h-4" />
@@ -282,13 +282,13 @@ Please proceed to secure your allocation slot below, and our concierge will forw
         </div>
       )}
 
-      {/* STEP 3: SELECT PRICE & SEATING LOCATION */}
+      {/* STEP 3: SELECT PRICE & SEATING LOCATION SECTION */}
       {step === 3 && (
-        <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-6 md:p-10 text-left animate-fade-in space-y-8">
+        <div className="bg-white border border-neutral-200 rounded-2xl p-6 md:p-10 text-left animate-fade-in space-y-8 shadow-sm">
           <div className="max-w-xl mx-auto text-center space-y-3">
-            <span className="text-[10px] font-mono tracking-widest text-red-500 uppercase font-bold">Step Three • Allocation & Budget</span>
-            <h3 className="font-serif text-2xl text-white font-light">Determine Budget & Atmosphere Preference</h3>
-            <p className="text-xs text-white/40 leading-relaxed font-light">
+            <span className="text-[10px] font-mono tracking-widest text-red-650 uppercase font-extrabold block">Step Three • Allocation & Budget</span>
+            <h3 className="font-serif text-2xl text-neutral-950 font-light text-center">Determine Budget & Atmosphere Preference</h3>
+            <p className="text-xs text-neutral-500 leading-relaxed font-light text-center">
               Refinement of details: establish your expenditure standard and match secure layout choices.
             </p>
           </div>
@@ -296,8 +296,8 @@ Please proceed to secure your allocation slot below, and our concierge will forw
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {/* Price section */}
             <div className="space-y-4">
-              <label className="text-xs font-mono uppercase text-white/60 tracking-wider flex items-center gap-1.5 font-bold">
-                <DollarSign className="w-4 h-4 text-red-500" />
+              <label className="text-xs font-mono uppercase text-neutral-600 tracking-wider flex items-center gap-1.5 font-bold">
+                <DollarSign className="w-4 h-4 text-red-600" />
                 <span>Expenditure Standard (Price Category)</span>
               </label>
               <div className="grid grid-cols-2 gap-3.5">
@@ -313,13 +313,13 @@ Please proceed to secure your allocation slot below, and our concierge will forw
                     onClick={() => setPrice(p.value)}
                     className={`p-4 rounded-xl border text-left cursor-pointer transition-all ${
                       price === p.value
-                        ? 'bg-red-650/15 border-red-550/50 text-white ring-1 ring-red-550/10 shadow-lg'
-                        : 'bg-white/5 hover:bg-white/10 border-white/5 text-white/70'
+                        ? 'bg-red-50/50 border-red-500 text-neutral-950 ring-1 ring-red-200 shadow-xs'
+                        : 'bg-neutral-50 border-neutral-200 text-neutral-700 hover:bg-neutral-100'
                     }`}
                   >
-                    <span className="font-serif text-sm font-semibold block text-red-400">{p.value === 'All Price Tiers' ? '$$' : p.value}</span>
+                    <span className="font-serif text-sm font-bold block text-red-650">{p.value === 'All Price Tiers' ? '$$' : p.value}</span>
                     <span className="font-sans text-xs font-bold block mt-1">{p.label}</span>
-                    <span className="text-[9.5px] text-white/35 mt-0.5 block leading-tight">{p.desc}</span>
+                    <span className="text-[9.5px] text-neutral-550 mt-0.5 block leading-tight">{p.desc}</span>
                   </button>
                 ))}
               </div>
@@ -327,8 +327,8 @@ Please proceed to secure your allocation slot below, and our concierge will forw
 
             {/* Table layout Preference */}
             <div className="space-y-4">
-              <label className="text-xs font-mono uppercase text-white/60 tracking-wider flex items-center gap-1.5 font-bold">
-                <Compass className="w-4 h-4 text-red-500" />
+              <label className="text-xs font-mono uppercase text-neutral-600 tracking-wider flex items-center gap-1.5 font-bold">
+                <Compass className="w-4 h-4 text-red-600" />
                 <span>Discretionary Seating Layout</span>
               </label>
               <div className="space-y-2.5">
@@ -339,15 +339,15 @@ Please proceed to secure your allocation slot below, and our concierge will forw
                     onClick={() => setTablePreference(plat.name)}
                     className={`w-full p-3.5 rounded-lg border text-left flex items-start justify-between gap-3 cursor-pointer transition-all ${
                       tablePreference === plat.name
-                        ? 'bg-red-650/15 border-red-550/50 text-white font-medium shadow-md'
-                        : 'bg-white/5 hover:bg-white/10 border-white/5 text-white/60'
+                        ? 'bg-red-50/40 border-red-500 text-neutral-950 font-medium shadow-xs'
+                        : 'bg-neutral-50 border-neutral-200 text-neutral-600 hover:bg-neutral-100'
                     }`}
                   >
                     <div>
-                      <span className="text-xs font-bold block">{plat.name}</span>
-                      <span className="text-[10px] text-white/40 font-light mt-0.5 block">{plat.desc}</span>
+                      <span className="text-xs font-bold block text-neutral-900">{plat.name}</span>
+                      <span className="text-[10px] text-neutral-500 font-light mt-0.5 block">{plat.desc}</span>
                     </div>
-                    <div className={`w-4 h-4 rounded-full border flex items-center justify-center mt-0.5 ${tablePreference === plat.name ? 'border-red-500 bg-red-600 text-white' : 'border-white/20'}`}>
+                    <div className={`w-4 h-4 rounded-full border flex items-center justify-center mt-0.5 ${tablePreference === plat.name ? 'border-red-550 bg-red-600 text-white' : 'border-neutral-300'}`}>
                       {tablePreference === plat.name && <div className="w-1.5 h-1.5 rounded-full bg-white bg-opacity-95" />}
                     </div>
                   </button>
@@ -356,17 +356,17 @@ Please proceed to secure your allocation slot below, and our concierge will forw
             </div>
           </div>
 
-          <div className="pt-6 flex justify-between max-w-4xl mx-auto border-t border-white/5">
+          <div className="pt-6 flex justify-between max-w-4xl mx-auto border-t border-neutral-150">
             <button
               onClick={() => setStep(2)}
-              className="flex items-center gap-2 px-5 py-3 bg-neutral-900 border border-white/10 hover:bg-white/5 text-white text-xs uppercase font-bold tracking-widest transition-all rounded-lg cursor-pointer"
+              className="flex items-center gap-2 px-5 py-3 bg-neutral-100 border border-neutral-250 hover:bg-neutral-200 text-neutral-750 text-xs uppercase font-bold tracking-widest transition-all rounded-lg cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Back</span>
             </button>
             <button
               onClick={queryCounselorAI}
-              className="flex items-center gap-2 px-7 py-4 bg-gradient-to-r from-red-600 to-orange-500 text-white text-xs uppercase font-bold tracking-[0.2em] transition-all rounded-lg cursor-pointer shadow-lg hover:brightness-110"
+              className="flex items-center gap-2 px-7 py-4 bg-gradient-to-r from-red-650 to-orange-500 text-white text-xs uppercase font-bold tracking-[0.2em] transition-all rounded-lg cursor-pointer shadow-sm hover:brightness-105"
             >
               <Sparkles className="w-4 h-4 animate-pulse" />
               <span>Query AI Counselor</span>
@@ -377,23 +377,23 @@ Please proceed to secure your allocation slot below, and our concierge will forw
 
       {/* STEP 4: RECOMMENDATIONS, INSIGHTS & BOOKING INTEGRATION */}
       {step === 4 && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start animate-fade-in">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start animate-fade-in text-left">
           
           {/* Left panel: Counselor advice */}
           <div className="lg:col-span-7 space-y-6">
-            <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-6.5 text-left shadow-xl space-y-6">
+            <div className="bg-white border border-neutral-200 rounded-2xl p-6.5 text-left shadow-sm space-y-6">
               
-              <div className="flex items-center justify-between border-b border-white/5 pb-4">
+              <div className="flex items-center justify-between border-b border-neutral-150 pb-4">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-10 h-10 rounded-full bg-red-600/10 border border-red-600/25 flex items-center justify-center text-red-500">
+                  <div className="w-10 h-10 rounded-full bg-red-50 border border-red-200 flex items-center justify-center text-red-600">
                     <Sparkles className="w-5 h-5 animate-spin-slow" />
                   </div>
                   <div>
-                    <h3 className="font-serif text-lg text-white font-medium">Zaytouynda Inspection Brief</h3>
-                    <p className="text-[10px] text-white/40 font-mono uppercase tracking-wider">Exclusive Matching Output</p>
+                    <h3 className="font-serif text-lg text-neutral-950 font-semibold leading-tight">Zaytouynda Inspection Brief</h3>
+                    <p className="text-[10px] text-neutral-500 font-mono uppercase tracking-wider mt-0.5">Exclusive Matching Output</p>
                   </div>
                 </div>
-                <div className="text-[10px] font-mono tracking-wider text-red-500 bg-red-600/10 border border-red-500/20 px-2.5 py-1 rounded">
+                <div className="text-[10px] font-mono tracking-wider text-red-650 bg-red-50 border border-red-200 px-2.5 py-1 rounded font-bold">
                   {location} • {cuisine}
                 </div>
               </div>
@@ -402,28 +402,28 @@ Please proceed to secure your allocation slot below, and our concierge will forw
               {isPending ? (
                 <div className="py-12 flex flex-col items-center justify-center space-y-4">
                   <div className="w-10 h-10 border-2 border-red-600 border-t-transparent rounded-full animate-spin" />
-                  <p className="font-serif text-white/50 italic text-sm text-center">
+                  <p className="font-serif text-neutral-500 italic text-sm text-center">
                     Your gourmet counselor is contacting the Beirut Head Office to formulate matching options...
                   </p>
                 </div>
               ) : (
-                <div className="text-sm text-white/80 leading-relaxed font-light space-y-4 markdown-body">
+                <div className="text-sm text-neutral-800 leading-relaxed font-light space-y-4 markdown-body">
                   {aiSuggestions.split('\n').map((line, idx) => {
                     if (line.startsWith('### ')) {
-                      return <h4 key={idx} className="font-serif text-white font-bold text-base mt-4 mb-2 tracking-wide text-red-400">{line.replace('### ', '')}</h4>;
+                      return <h4 key={idx} className="font-serif text-neutral-950 font-bold text-base mt-4 mb-2 tracking-wide text-red-650">{line.replace('### ', '')}</h4>;
                     }
                     if (line.startsWith('**') || line.startsWith('* ')) {
-                      return <p key={idx} className="pl-3 border-l-2 border-red-600/30 text-xs text-white/70 py-0.5 leading-snug">{line.replace('* ', '')}</p>;
+                      return <p key={idx} className="pl-3 border-l-2 border-red-500/50 text-xs text-neutral-700 py-0.5 leading-snug">{line.replace('* ', '')}</p>;
                     }
-                    return <p key={idx} className="text-white/75 mt-2 text-xs">{line}</p>;
+                    return <p key={idx} className="text-neutral-700 mt-2 text-xs leading-relaxed">{line}</p>;
                   })}
                 </div>
               )}
 
               {/* Matches display cards */}
               {!isPending && matchedRestaurants.length > 0 && (
-                <div className="pt-6 border-t border-white/5 space-y-3.5">
-                  <h4 className="text-[10px] font-mono uppercase text-white/40 tracking-wider">Matching Registered Directories ({matchedRestaurants.length})</h4>
+                <div className="pt-6 border-t border-neutral-150 space-y-3.5">
+                  <h4 className="text-[10px] font-mono uppercase text-neutral-450 tracking-wider font-bold">Matching Registered Directories ({matchedRestaurants.length})</h4>
                   <div className="space-y-3">
                     {matchedRestaurants.map((m) => (
                       <div 
@@ -431,22 +431,22 @@ Please proceed to secure your allocation slot below, and our concierge will forw
                         onClick={() => setSelectedBookableRestaurant(m)}
                         className={`p-4.5 rounded-xl border text-left flex items-center justify-between gap-4 cursor-pointer transition-all ${
                           selectedBookableRestaurant?.id === m.id
-                            ? 'bg-red-650/10 border-red-550/40 text-white'
-                            : 'bg-white/5 hover:bg-white/10 border-white/5 text-white/60'
+                            ? 'bg-red-50 border-red-500 text-neutral-950 shadow-xs'
+                            : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-700'
                         }`}
                       >
                         <div className="flex items-center gap-4">
-                          <img src={m.imageUrl} alt={m.name} className="w-12 h-12 rounded object-cover border border-white/10 bg-neutral-900" referrerPolicy="no-referrer" />
+                          <img src={m.imageUrl} alt={m.name} className="w-12 h-12 rounded object-cover border border-neutral-250 bg-neutral-100" referrerPolicy="no-referrer" />
                           <div>
-                            <span className="font-serif text-sm font-bold block text-white/90">{m.name}</span>
-                            <span className="text-[10px] text-white/40 block leading-tight mt-0.5">{m.cuisine} • Chef {m.chef}</span>
+                            <span className="font-serif text-sm font-bold block text-neutral-950">{m.name}</span>
+                            <span className="text-[10px] text-neutral-500 block leading-tight mt-0.5">{m.cuisine} • Chef {m.chef}</span>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <span className="text-amber-400 block text-xs tracking-tighter">
+                        <div className="text-right shrink-0">
+                          <span className="text-amber-550 block text-xs tracking-tighter">
                             {'✻'.repeat(m.stars || 1)}
                           </span>
-                          <span className="text-[9px] font-mono text-white/30 uppercase block mt-1">
+                          <span className="text-[9px] font-mono text-neutral-450 uppercase block mt-1">
                             {m.priceRange} {m.city}
                           </span>
                         </div>
@@ -460,7 +460,7 @@ Please proceed to secure your allocation slot below, and our concierge will forw
             <div className="flex justify-start">
               <button
                 onClick={() => setStep(3)}
-                className="flex items-center gap-2 px-5 py-3 bg-neutral-900 border border-white/10 hover:bg-white/5 text-white text-xs uppercase font-bold tracking-widest transition-all rounded-lg cursor-pointer"
+                className="flex items-center gap-2 px-5 py-3 bg-neutral-105 border border-neutral-250 hover:bg-neutral-200 text-neutral-700 text-xs uppercase font-bold tracking-widest transition-all rounded-lg cursor-pointer"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Adjust Parameters</span>
@@ -472,52 +472,52 @@ Please proceed to secure your allocation slot below, and our concierge will forw
           <div className="lg:col-span-5 space-y-6">
             
             {confirmedBooking ? (
-              <div className="bg-[#0b0c0a] border border-emerald-500/15 rounded-2xl p-6.5 text-center shadow-2xl space-y-6">
-                <div className="w-12 h-12 rounded-full bg-emerald-950 text-emerald-400 flex items-center justify-center mx-auto border border-emerald-800/30">
+              <div className="bg-emerald-50/50 border border-emerald-200 rounded-2xl p-6.5 text-center shadow-sm space-y-6">
+                <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto border border-emerald-300">
                   <CheckCircle className="w-6 h-6 animate-pulse" />
                 </div>
                 
                 <div className="space-y-2">
-                  <span className="text-[9px] font-mono text-emerald-400 uppercase font-bold bg-emerald-950/45 px-2.5 py-1 border border-emerald-800/20 rounded">
+                  <span className="text-[9px] font-mono text-emerald-600 uppercase font-bold bg-emerald-100 px-2.5 py-1 border border-emerald-200 rounded">
                     CONCIERGE TICKET ACQUIRED
                   </span>
-                  <h3 className="font-serif text-xl font-bold text-white mt-2">Allocation Complete</h3>
-                  <p className="text-xs text-white/50 leading-relaxed font-light">
+                  <h3 className="font-serif text-xl font-bold text-neutral-900 mt-2">Allocation Complete</h3>
+                  <p className="text-xs text-neutral-600 leading-relaxed font-light">
                     Your seating of **{tablePreference}** has been coordinated with the Maitre D' at **{confirmedBooking.restaurantName}**. Detailed ticket summary forwarded below.
                   </p>
                 </div>
 
-                <div className="p-4 bg-[#0a0a0a] border border-white/5 rounded-xl text-left space-y-3 font-mono text-xs">
-                  <div className="flex justify-between border-b border-white/5 pb-2">
-                    <span className="text-white/40">GUEST:</span>
-                    <span className="text-white font-bold">{confirmedBooking.userName}</span>
+                <div className="p-4 bg-white border border-neutral-200 rounded-xl text-left space-y-3 font-mono text-xs">
+                  <div className="flex justify-between border-b border-neutral-100 pb-2">
+                    <span className="text-neutral-400">GUEST:</span>
+                    <span className="text-neutral-900 font-bold">{confirmedBooking.userName}</span>
                   </div>
-                  <div className="flex justify-between border-b border-white/5 pb-2">
-                    <span className="text-white/40">EMAIL:</span>
-                    <span className="text-white">{confirmedBooking.userEmail}</span>
+                  <div className="flex justify-between border-b border-neutral-100 pb-2">
+                    <span className="text-neutral-400">EMAIL:</span>
+                    <span className="text-neutral-900">{confirmedBooking.userEmail}</span>
                   </div>
-                  <div className="flex justify-between border-b border-white/5 pb-2">
-                    <span className="text-white/40">ESTABLISHMENT:</span>
-                    <span className="text-white text-red-400 font-bold">{confirmedBooking.restaurantName}</span>
+                  <div className="flex justify-between border-b border-neutral-100 pb-2">
+                    <span className="text-neutral-400">ESTABLISHMENT:</span>
+                    <span className="text-neutral-900 text-red-650 font-bold">{confirmedBooking.restaurantName}</span>
                   </div>
-                  <div className="flex justify-between border-b border-white/5 pb-2">
-                    <span className="text-white/40">DATE & TIME:</span>
-                    <span className="text-white">{confirmedBooking.date} • {confirmedBooking.time}</span>
+                  <div className="flex justify-between border-b border-neutral-100 pb-2">
+                    <span className="text-neutral-400">DATE & TIME:</span>
+                    <span className="text-neutral-900">{confirmedBooking.date} • {confirmedBooking.time}</span>
                   </div>
-                  <div className="flex justify-between border-b border-white/5 pb-2">
-                    <span className="text-white/40">COVERS (GUESTS):</span>
-                    <span className="text-white">{confirmedBooking.guestsCount} Seats Allocated</span>
+                  <div className="flex justify-between border-b border-neutral-100 pb-2">
+                    <span className="text-neutral-400">COVERS (GUESTS):</span>
+                    <span className="text-neutral-900">{confirmedBooking.guestsCount} Seats Allocated</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-white/40">PLACEMENT:</span>
-                    <span className="text-white">{tablePreference}</span>
+                    <span className="text-neutral-400">PLACEMENT:</span>
+                    <span className="text-neutral-900">{tablePreference}</span>
                   </div>
                 </div>
 
                 <div className="space-y-3">
                   <button
                     onClick={() => onNavigateTab('saved')}
-                    className="w-full px-4 py-3 bg-red-650 hover:bg-red-550 text-white text-[10px] font-bold uppercase tracking-widest rounded-lg cursor-pointer"
+                    className="w-full px-4 py-3 bg-red-600 hover:bg-red-550 text-white text-[10px] font-bold uppercase tracking-widest rounded-lg cursor-pointer"
                   >
                     View Active Bookings Dashboard
                   </button>
@@ -526,81 +526,81 @@ Please proceed to secure your allocation slot below, and our concierge will forw
                       setConfirmedBooking(null);
                       setStep(1);
                     }}
-                    className="w-full px-4 py-3 bg-transparent border border-white/10 text-white/60 hover:text-white hover:bg-white/5 text-[10px] font-bold uppercase tracking-widest rounded-lg cursor-pointer"
+                    className="w-full px-4 py-3 bg-white border border-neutral-250 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 text-[10px] font-bold uppercase tracking-widest rounded-lg cursor-pointer transition-all"
                   >
                     Plan Another Experience
                   </button>
                 </div>
               </div>
             ) : (
-              <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-6 md:p-8 shadow-xl text-left space-y-5">
+              <div className="bg-white border border-neutral-200 rounded-2xl p-6 md:p-8 shadow-sm text-left space-y-5">
                 <div>
-                  <h3 className="font-serif text-lg text-white font-medium flex items-center gap-2">
-                    <Calendar className="w-5 h-5 text-red-500" />
+                  <h3 className="font-serif text-lg text-neutral-950 font-semibold flex items-center gap-2 leading-tight">
+                    <Calendar className="w-5 h-5 text-red-650" />
                     <span>Instant Seating Reservation</span>
                   </h3>
-                  <p className="text-xs text-white/40 mt-1 max-w-sm font-light">
+                  <p className="text-xs text-neutral-500 mt-1 max-w-sm font-light">
                     Submit your details using our Zaytouynda luxury portal to secure a placing list at **{selectedBookableRestaurant?.name || 'Levantine Diner'}** directly.
                   </p>
                 </div>
 
                 <form onSubmit={handleCreateBooking} className="space-y-4">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-mono text-white/40 uppercase tracking-wider block font-bold">Primary Guest Name</label>
+                    <label className="text-[10px] font-mono text-neutral-505 uppercase tracking-wider block font-bold">Primary Guest Name</label>
                     <input
                       type="text"
                       required
                       placeholder="e.g. Master Al-Sayed"
                       value={userName}
                       onChange={(e) => setUserName(e.target.value)}
-                      className="w-full px-3.5 py-2.5 text-xs bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-red-600/50"
-                    />
+                      className="w-full px-3.5 py-2.5 text-xs bg-white border border-neutral-255 rounded-lg text-neutral-900 focus:outline-none focus:border-red-650"
+                  />
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-mono text-white/40 uppercase tracking-wider block font-bold">Email Address</label>
+                    <label className="text-[10px] font-mono text-neutral-505 uppercase tracking-wider block font-bold">Email Address</label>
                     <input
                       type="email"
                       required
                       placeholder="e.g. resident@domain.com"
                       value={userEmail}
                       onChange={(e) => setUserEmail(e.target.value)}
-                      className="w-full px-3.5 py-2.5 text-xs bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-red-600/50"
+                      className="w-full px-3.5 py-2.5 text-xs bg-white border border-neutral-255 rounded-lg text-neutral-900 focus:outline-none focus:border-red-650"
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-3.5">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-mono text-white/40 uppercase tracking-wider block font-bold">Preferred Date</label>
+                      <label className="text-[10px] font-mono text-neutral-505 uppercase tracking-wider block font-bold">Preferred Date</label>
                       <input
                         type="date"
                         required
                         value={bookingDate}
                         onChange={(e) => setBookingDate(e.target.value)}
-                        className="w-full px-3.5 py-2.5 text-xs bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-red-600/50"
+                        className="w-full px-3.5 py-2.5 text-xs bg-white border border-neutral-255 rounded-lg text-neutral-900 focus:outline-none focus:border-red-650"
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-mono text-white/40 uppercase tracking-wider block font-bold">Prefers Time</label>
+                      <label className="text-[10px] font-mono text-neutral-505 uppercase tracking-wider block font-bold">Prefers Time</label>
                       <input
                         type="time"
                         required
                         value={bookingTime}
                         onChange={(e) => setBookingTime(e.target.value)}
-                        className="w-full px-3.5 py-2.5 text-xs bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-red-600/50"
+                        className="w-full px-3.5 py-2.5 text-xs bg-white border border-neutral-255 rounded-lg text-neutral-900 focus:outline-none focus:border-red-650"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-mono text-white/40 uppercase tracking-wider block font-bold">Covers Count (Guests)</label>
+                    <label className="text-[10px] font-mono text-neutral-505 uppercase tracking-wider block font-bold">Covers Count (Guests)</label>
                     <select
                       value={guestsCount}
                       onChange={(e) => setGuestsCount(Number(e.target.value))}
-                      className="w-full px-3.5 py-2.5 text-xs bg-white/5 border border-[#ffffff15] rounded-lg text-white font-medium focus:outline-none focus:border-red-600/50 outline-none cursor-pointer"
+                      className="w-full px-3.5 py-2.5 text-xs bg-white border border-neutral-250 rounded-lg text-neutral-900 font-semibold focus:outline-none focus:border-red-650 cursor-pointer"
                     >
                       {[1, 2, 3, 4, 5, 6, 8, 10].map((num) => (
-                        <option key={num} value={num} className="bg-neutral-950 text-white">
+                        <option key={num} value={num} className="bg-white text-neutral-900">
                           {num} Guest{num > 1 ? 's' : ''} (Table Cover)
                         </option>
                       ))}
@@ -608,24 +608,24 @@ Please proceed to secure your allocation slot below, and our concierge will forw
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-mono text-white/40 uppercase tracking-wider block font-bold">Special Requests / Seating Notes</label>
+                    <label className="text-[10px] font-mono text-neutral-505 uppercase tracking-wider block font-bold">Special Requests / Seating Notes</label>
                     <textarea
-                      placeholder="e.g. Wheat allergy, celebrating continuous golden anniversary celebrations..."
+                      placeholder="e.g. Wheat allergy, celebrating continuous anniversary celebrations..."
                       rows={2}
                       value={specialRequests}
                       onChange={(e) => setSpecialRequests(e.target.value)}
-                      className="w-full px-3.5 py-2.5 text-xs bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-red-600/50 resize-none font-sans"
+                      className="w-full px-3.5 py-2.5 text-xs bg-white border border-neutral-250 rounded-lg text-neutral-900 focus:outline-none focus:border-red-650 resize-none font-sans"
                     />
                   </div>
 
-                  <div className="p-3 bg-red-600/10 border border-red-500/20 rounded-lg text-[10px] text-red-300 font-mono flex items-start gap-2 leading-relaxed">
-                    <FileText className="w-3.5 h-3.5 shrink-0 mt-0.5 text-red-400" />
+                  <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-[10px] text-red-650 font-mono flex items-start gap-2 leading-relaxed">
+                    <FileText className="w-3.5 h-3.5 shrink-0 mt-0.5 text-red-650" />
                     <span>Seat allocated for **{tablePreference}** will be held for exactly 15 minutes past scheduled timeline. No prepayment necessary.</span>
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full py-4 text-center text-white bg-red-600 hover:bg-red-550 text-[10px] tracking-widest font-bold uppercase transition-all rounded-lg cursor-pointer"
+                    className="w-full py-4 text-center text-white bg-red-600 hover:bg-red-650 text-[10px] tracking-widest font-bold uppercase transition-all rounded-lg cursor-pointer shadow-sm"
                   >
                     Confirm Exclusive Reservation Row
                   </button>

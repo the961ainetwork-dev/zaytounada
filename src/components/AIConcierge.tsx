@@ -104,44 +104,44 @@ export default function AIConcierge({
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end overflow-hidden" id="ai-concierge-panel">
-      {/* Dark overlay backdrop */}
+      {/* Light-dark backdrop overlay */}
       <div 
-        className="absolute inset-0 bg-black/85 backdrop-blur-md transition-opacity" 
+        className="absolute inset-0 bg-neutral-900/60 backdrop-blur-md transition-opacity" 
         onClick={onClose} 
       />
 
       {/* Floating sliding drawer panel */}
-      <div className="relative w-full max-w-xl bg-[#0a0a0a] border-l border-white/5 text-white h-full flex flex-col shadow-2xl animate-slide-in">
+      <div className="relative w-full max-w-xl bg-white border-l border-neutral-250 text-neutral-900 h-full flex flex-col shadow-2xl animate-slide-in">
         
         {/* Panel Header */}
-        <div className="p-5 border-b border-white/5 bg-[#050505] flex items-center justify-between">
+        <div className="p-5 border-b border-neutral-200 bg-neutral-50 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="relative flex items-center justify-center w-10 h-10 bg-white/5 border border-white/10 rounded-lg shadow-inner">
-              <Bot className="w-5 h-5 text-red-500 animate-pulse" />
-              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-red-600 rounded-full border border-[#050505] flex items-center justify-center">
+            <div className="relative flex items-center justify-center w-10 h-10 bg-red-50 border border-red-250 rounded-lg shadow-inner">
+              <Bot className="w-5 h-5 text-red-650 animate-pulse" />
+              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-red-600 rounded-full border border-white flex items-center justify-center">
                 <span className="text-[7px] text-white font-bold">✻</span>
               </div>
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <h3 className="font-serif font-light text-base tracking-widest uppercase text-white">Gourmet Concierge</h3>
+                <h3 className="font-serif font-semibold text-base tracking-widest uppercase text-neutral-900">Gourmet Concierge</h3>
                 <span className="text-[9px] bg-red-600 text-white px-1.5 py-0.5 rounded font-mono font-bold">AI</span>
               </div>
-              <p className="text-[10px] font-mono text-white/40 tracking-wider">The Zaytouynda Inspection AI Assistant</p>
+              <p className="text-[10px] font-mono text-neutral-500 tracking-wider">The Zaytouynda Inspection AI Assistant</p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
             <button
               onClick={handleClearHistory}
-              className="p-2 hover:bg-white/5 text-[#777] hover:text-[#F5F5F5] transition-colors cursor-pointer"
+              className="p-2 hover:bg-neutral-100 text-neutral-400 hover:text-neutral-800 transition-colors cursor-pointer rounded-full"
               title="Reset conversation"
             >
               <RefreshCw className="w-4 h-4" />
             </button>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-white/5 text-[#777] hover:text-[#F5F5F5] transition-colors cursor-pointer"
+              className="p-2 hover:bg-neutral-100 text-neutral-400 hover:text-neutral-800 transition-colors cursor-pointer rounded-full"
               id="ai-concierge-close"
             >
               <X className="w-5 h-5" />
@@ -150,13 +150,13 @@ export default function AIConcierge({
         </div>
 
         {/* Content lists and chats viewport */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-5 bg-[#0a0a0a]">
+        <div className="flex-1 overflow-y-auto p-5 space-y-5 bg-white">
           
           {/* Saved items tags reminder context */}
           {savedRestaurants.length > 0 && (
-            <div className="p-3.5 bg-white/5 border border-white/5 rounded text-xs space-y-1">
-              <span className="text-[8px] font-mono text-red-500 font-bold tracking-widest uppercase block">Personalized Culinary Scope</span>
-              <p className="text-white/70 font-serif italic text-xs leading-normal font-light">
+            <div className="p-3.5 bg-neutral-50 border border-neutral-200 rounded text-xs space-y-1">
+              <span className="text-[8px] font-mono text-red-600 font-bold tracking-widest uppercase block">Personalized Culinary Scope</span>
+              <p className="text-neutral-700 font-serif italic text-xs leading-normal font-light">
                 I am aware of your {savedRestaurants.length} saved restaurant{savedRestaurants.length > 1 ? 's' : ''} ({savedRestaurants.slice(0, 3).map(r => r.name).join(', ')}{savedRestaurants.length > 3 ? '...' : ''}). I can tailor itineraries matching these selections!
               </p>
             </div>
@@ -172,22 +172,22 @@ export default function AIConcierge({
                   className={`flex gap-3 max-w-[85%] ${isModel ? 'mr-auto text-left' : 'ml-auto flex-row-reverse text-right'}`}
                 >
                   {isModel && (
-                    <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
-                      <Award className="w-4 h-4 text-red-500" />
+                    <div className="w-8 h-8 rounded-full bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                      <Award className="w-4 h-4 text-red-600" />
                     </div>
                   )}
 
                   <div className="space-y-1">
-                    <div className={`p-4 rounded text-xs sm:text-[13px] leading-relaxed relative ${
+                    <div className={`p-4 rounded text-xs sm:text-[13px] leading-relaxed relative shadow-xs ${
                       isModel 
-                        ? 'bg-white/5 border border-white/5 text-white/90 font-serif font-light' 
-                        : 'bg-red-600 border border-red-500 text-white font-sans font-light'
+                        ? 'bg-neutral-50 border border-neutral-200 text-neutral-850 font-serif font-light' 
+                        : 'bg-red-650 border border-red-500 text-white font-sans font-light'
                     }`}>
                       {/* Message text with pre-wrap spacing support for formatting splits */}
                       <p className="whitespace-pre-wrap">{msg.content}</p>
                     </div>
                     {/* Time footer timestamp */}
-                    <p className="text-[9px] text-white/30 font-mono flex items-center gap-1 px-1 justify-end uppercase tracking-wider">
+                    <p className="text-[9px] text-neutral-400 font-mono flex items-center gap-1 px-1 justify-end uppercase tracking-wider">
                       <Clock className="w-3 h-3" />
                       <span>{msg.timestamp}</span>
                     </p>
@@ -199,26 +199,26 @@ export default function AIConcierge({
             {/* Simulated interactive loading spinner */}
             {isLoading && (
               <div className="flex gap-3 max-w-[85%] mr-auto text-left">
-                <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 animate-spin">
-                  <span className="text-red-500 text-xs">✻</span>
+                <div className="w-8 h-8 rounded-full bg-neutral-100 border border-neutral-200 flex items-center justify-center shrink-0 animate-spin">
+                  <span className="text-red-600 text-xs font-bold">✻</span>
                 </div>
-                <div className="py-4.5 px-5 bg-white/5 border border-white/5 text-xs rounded flex items-center gap-2">
+                <div className="py-4.5 px-5 bg-neutral-50 border border-neutral-200 text-xs rounded flex items-center gap-2">
                   <div className="flex gap-1.5">
-                    <div className="w-2 h-2 bg-red-500 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-                    <div className="w-2 h-2 bg-red-500 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-                    <div className="w-2 h-2 bg-red-400 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-red-600 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                    <div className="w-2 h-2 bg-red-600 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                    <div className="w-2 h-2 bg-red-500 rounded-full animate-bounce"></div>
                   </div>
-                  <span className="font-serif italic text-white/40 font-light">Zaytouynda expert counselor computing fine details...</span>
+                  <span className="font-serif italic text-neutral-500 font-light">Zaytouynda expert counselor computing fine details...</span>
                 </div>
               </div>
             )}
 
             {/* Error notifications */}
             {errorText && (
-              <div className="p-4 bg-red-950/20 border border-red-900/40 rounded text-xs text-red-400 flex items-start gap-3">
+              <div className="p-4 bg-red-50 border border-red-200 rounded text-xs text-red-700 flex items-start gap-3">
                 <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
                 <div>
-                  <h5 className="font-semibold text-white/90 uppercase tracking-widest font-mono text-[10px]">Concierge Timeout</h5>
+                  <h5 className="font-semibold text-red-905 uppercase tracking-widest font-mono text-[10px]">Concierge Timeout</h5>
                   <p className="mt-0.5 leading-relaxed font-light">{errorText}</p>
                 </div>
               </div>
@@ -231,13 +231,13 @@ export default function AIConcierge({
           {/* Prompt card triggers (shown initially or during chat limits) */}
           {messages.length === 1 && (
             <div className="pt-4 space-y-2.5">
-              <span className="text-[9px] font-mono text-white/40 tracking-widest uppercase block font-bold">Suggested Gourmet Directives</span>
+              <span className="text-[9px] font-mono text-neutral-400 tracking-widest uppercase block font-bold">Suggested Gourmet Directives</span>
               <div className="grid grid-cols-1 gap-2">
                 {suggestions.map((sug, idx) => (
                   <button
                     key={idx}
                     onClick={() => handleSendMessage(sug)}
-                    className="w-full text-left p-3.5 rounded bg-[#050505] border border-white/5 hover:border-red-600 hover:bg-white/5 text-xs text-white/70 hover:text-white transition-all cursor-pointer font-light"
+                    className="w-full text-left p-3.5 rounded bg-neutral-50 border border-neutral-200 hover:border-red-600 hover:bg-white text-xs text-neutral-600 hover:text-red-700 transition-all cursor-pointer font-light shadow-xs"
                   >
                     ⋄ "{sug}"
                   </button>
@@ -248,7 +248,7 @@ export default function AIConcierge({
         </div>
 
         {/* Input box section */}
-        <div className="p-4 bg-[#050505] border-t border-white/5">
+        <div className="p-4 bg-neutral-50 border-t border-neutral-200">
           <form 
             onSubmit={(e) => { e.preventDefault(); handleSendMessage(inputValue); }}
             className="flex items-center gap-2"
@@ -259,7 +259,7 @@ export default function AIConcierge({
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               disabled={isLoading}
-              className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded text-xs sm:text-[13px] text-white placeholder-white/30 outline-none focus:border-red-600"
+              className="flex-1 px-4 py-3 bg-white border border-neutral-250 rounded text-xs sm:text-[13px] text-neutral-900 placeholder-neutral-400 outline-none focus:border-red-650 shadow-sm"
               id="ai-concierge-input"
             />
             <button
@@ -267,15 +267,15 @@ export default function AIConcierge({
               disabled={isLoading || !inputValue.trim()}
               className={`p-3 rounded text-white shadow transition-all cursor-pointer ${
                 isLoading || !inputValue.trim()
-                  ? 'bg-white/5 text-[#777] cursor-not-allowed border border-white/5'
-                  : 'bg-transparent border border-red-600 text-red-500 hover:bg-red-600 hover:text-white_active:scale-95'
+                  ? 'bg-neutral-100 text-neutral-350 cursor-not-allowed border border-neutral-200/50 shadow-none'
+                  : 'bg-red-600 border border-red-650 text-white hover:bg-red-650 active:scale-95'
               }`}
               id="ai-concierge-send-btn"
             >
               <Send className="w-4 h-4" />
             </button>
           </form>
-          <p className="text-[8px] text-white/30 font-mono text-center mt-3 uppercase tracking-widest">
+          <p className="text-[8px] text-neutral-450 font-mono text-center mt-3 uppercase tracking-widest">
             Powered by Gemini AI Studio • Zaytouynda Counselor Program.
           </p>
         </div>
