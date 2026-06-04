@@ -21,7 +21,19 @@ import { RESTAURANTS } from './data/restaurants';
 import { Award, Compass, Heart, Award as AwardIcon, MapPin, Grid, Plus, Sparkles, BookOpen, Calendar, Star, Gift, ArrowRight, Share2, Check } from 'lucide-react';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<string>('discovery');
+  const [activeTab, setActiveTab] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname;
+      if (path === '/admin' || path.startsWith('/admin/')) {
+        return 'admin';
+      }
+      const hash = window.location.hash;
+      if (hash === '#admin') {
+        return 'admin';
+      }
+    }
+    return 'discovery';
+  });
   const [restaurants, setRestaurants] = useState<Restaurant[]>(RESTAURANTS);
   const [pagesConfig, setPagesConfig] = useState<any[]>([]);
   const [siteSettings, setSiteSettings] = useState<any>({
@@ -75,6 +87,31 @@ export default function App() {
   useEffect(() => {
     fetchPagesAndSettings();
   }, [activeTab]);
+
+  useEffect(() => {
+    if (activeTab === 'admin') {
+      if (window.location.pathname !== '/admin') {
+        window.history.pushState(null, '', '/admin');
+      }
+    } else {
+      if (window.location.pathname === '/admin') {
+        window.history.pushState(null, '', '/');
+      }
+    }
+  }, [activeTab]);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const path = window.location.pathname;
+      if (path === '/admin' || path.startsWith('/admin/')) {
+        setActiveTab('admin');
+      } else {
+        setActiveTab(prev => prev === 'admin' ? 'discovery' : prev);
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   const [selectedNeighborhoodId, setSelectedNeighborhoodId] = useState<string | null>(null);
   const [focusedNeighborhoodId, setFocusedNeighborhoodId] = useState<string | null>(null);
