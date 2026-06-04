@@ -92,12 +92,24 @@ export default function App() {
   }, [activeTab]);
 
   useEffect(() => {
+    // Gracefully normalize path-based Direct link to hash-based #admin link 
+    // to prevent server-side/CDN 404 failures on subsequents refreshes.
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname;
+      if (path === '/admin' || path.startsWith('/admin/')) {
+        window.history.replaceState(null, '', '/#admin');
+        setActiveTab('admin');
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     if (activeTab === 'admin') {
-      if (window.location.pathname !== '/admin') {
-        window.history.pushState(null, '', '/admin');
+      if (window.location.hash !== '#admin') {
+        window.history.pushState(null, '', '/#admin');
       }
     } else {
-      if (window.location.pathname === '/admin') {
+      if (window.location.hash === '#admin') {
         window.history.pushState(null, '', '/');
       }
     }
@@ -136,8 +148,14 @@ export default function App() {
         }
       }
 
+      // If we previously had #admin hash but switched tabs, clear hash
+      if (url.hash === '#admin' && activeTab !== 'admin') {
+        url.hash = '';
+        changed = true;
+      }
+
       if (changed) {
-        window.history.pushState(null, '', url.pathname + url.search);
+        window.history.pushState(null, '', url.pathname + url.search + url.hash);
       }
     } catch (err) {
       console.error("Failed to sync URL parameters:", err);
@@ -147,7 +165,8 @@ export default function App() {
   useEffect(() => {
     const handlePopState = () => {
       const path = window.location.pathname;
-      if (path === '/admin' || path.startsWith('/admin/')) {
+      const hash = window.location.hash;
+      if (path === '/admin' || path.startsWith('/admin/') || hash === '#admin') {
         setActiveTab('admin');
       } else {
         const params = new URLSearchParams(window.location.search);
