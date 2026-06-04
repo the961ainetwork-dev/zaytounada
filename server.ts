@@ -99,6 +99,11 @@ async function startServer() {
 
   app.use(express.json());
 
+  // Redirect any direct /admin browser page accesses to serverless-friendly /#admin to prevent CDN/Hosting 404 errors
+  app.get(["/admin", "/admin/"], (req, res) => {
+    res.redirect(302, "/#admin");
+  });
+
   // --- RESTAURANTS REST API ENDPOINTS ---
   app.get("/api/restaurants", (req, res) => {
     res.json(restaurantsList);

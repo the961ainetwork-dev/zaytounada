@@ -25,6 +25,8 @@ export default function App() {
     if (typeof window !== 'undefined') {
       const path = window.location.pathname;
       if (path === '/admin' || path.startsWith('/admin/')) {
+        // Replace /admin with /#admin in the address bar immediately to avoid CDN/server 404s on browser reloads
+        window.history.replaceState(null, '', '/#admin');
         return 'admin';
       }
       const hash = window.location.hash;
@@ -166,7 +168,10 @@ export default function App() {
     const handlePopState = () => {
       const path = window.location.pathname;
       const hash = window.location.hash;
-      if (path === '/admin' || path.startsWith('/admin/') || hash === '#admin') {
+      if (path === '/admin' || path.startsWith('/admin/')) {
+        window.history.replaceState(null, '', '/#admin');
+        setActiveTab('admin');
+      } else if (hash === '#admin') {
         setActiveTab('admin');
       } else {
         const params = new URLSearchParams(window.location.search);
