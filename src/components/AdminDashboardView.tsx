@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { 
   Lock, LayoutDashboard, Calendar, CalendarCheck2, Star, Plus, Edit, Trash2, 
   Users, CheckCircle, Clock, XCircle, ChevronRight, Mail, Eye, Save, AlertCircle, 
-  RefreshCw, FileText, Check, ArrowLeft, Search, Building2, Bell, MapPin 
+  RefreshCw, FileText, Check, ArrowLeft, Search, Building2, Bell, MapPin, ArrowUp, ArrowDown,
+  Compass
 } from 'lucide-react';
-import { Restaurant, Booking } from '../types';
+import { Restaurant, Booking, Article } from '../types';
 
 interface AdminDashboardViewProps {
   onRestaurantsUpdated?: () => void;
@@ -17,19 +18,22 @@ export default function AdminDashboardView({ onRestaurantsUpdated }: AdminDashbo
   const [authError, setAuthError] = useState('');
 
   // Active sub-section of admin controls
-  const [adminTab, setAdminTab] = useState<'reservations' | 'restaurants' | 'subscribers' | 'emails'>('reservations');
+  const [adminTab, setAdminTab] = useState<'reservations' | 'restaurants' | 'subscribers' | 'emails' | 'stories' | 'pages-sections'>('reservations');
 
   // Server state data
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [subscribers, setSubscribers] = useState<{ id: string; email: string; date: string }[]>([]);
   const [emailLogs, setEmailLogs] = useState<{ id: string; to: string; subject: string; html: string; date: string }[]>([]);
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [pagesConfig, setPagesConfig] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   // Search/Filters in admin lists
   const [bookingFilter, setBookingFilter] = useState('');
   const [restaurantFilter, setRestaurantFilter] = useState('');
   const [subscriberFilter, setSubscriberFilter] = useState('');
+  const [storyFilter, setStoryFilter] = useState('');
 
   // Modal / Form state for edit/addition of Restaurant
   const [isRestaurantFormOpen, setIsRestaurantFormOpen] = useState(false);
@@ -67,6 +71,28 @@ export default function AdminDashboardView({ onRestaurantsUpdated }: AdminDashbo
     status: 'confirmed' as 'pending' | 'confirmed'
   });
 
+  // Modal / Form state for Stories (Magazine articles)
+  const [isArticleFormOpen, setIsArticleFormOpen] = useState(false);
+  const [editingArticleId, setEditingArticleId] = useState<string | null>(null);
+  const [articleFormData, setArticleFormData] = useState({
+    title: '',
+    subtitle: '',
+    category: 'History',
+    readTime: '6 min read',
+    imageUrl: '',
+    author: 'Jean-Luc Zaytounada',
+    content: ''
+  });
+
+  // Form state for General Site Settings
+  const [settingsFormData, setSettingsFormData] = useState({
+    heroTagline: '',
+    heroSubtitle: '',
+    neighborhoodsTitle: '',
+    neighborhoodsSubtitle: '',
+    featuredChoiceId: 'rest-1'
+  });
+
   // Subscriber Form
   const [quickEmail, setQuickEmail] = useState('');
 
@@ -88,17 +114,31 @@ export default function AdminDashboardView({ onRestaurantsUpdated }: AdminDashbo
   const fetchAllData = async () => {
     setIsLoading(true);
     try {
-      const [resB, resR, resS, resE] = await Promise.all([
+      const [resB, resR, resS, resE, resA, resP, resSettings] = await Promise.all([
         fetch('/api/bookings').then(r => r.json()),
         fetch('/api/restaurants').then(r => r.json()),
         fetch('/api/subscribers').then(r => r.json()),
-        fetch('/api/email-logs').then(r => r.json())
+        fetch('/api/email-logs').then(r => r.json()),
+        fetch('/api/articles').then(r => r.json()),
+        fetch('/api/pages').then(r => r.json()),
+        fetch('/api/settings').then(r => r.json())
       ]);
 
       if (Array.isArray(resB)) setBookings(resB);
       if (Array.isArray(resR)) setRestaurants(resR);
       if (Array.isArray(resS)) setSubscribers(resS);
       if (Array.isArray(resE)) setEmailLogs(resE);
+      if (Array.isArray(resA)) setArticles(resA);
+      if (Array.isArray(resP)) setPagesConfig(resP.sort((a: any, b: any) => a.order - b.order));
+      if (resSettings && !resSettings.error) {
+        setSettingsFormData({
+          heroTagline: resSettings.heroTagline || '',
+          heroSubtitle: resSettings.heroSubtitle || '',
+          neighborhoodsTitle: resSettings.neighborhoodsTitle || '',
+          neighborhoodsSubtitle: resSettings.neighborhoodsSubtitle || '',
+          featuredChoiceId: resSettings.featuredChoiceId || 'rest-1'
+        });
+      }
     } catch (err) {
       console.error("Failed to query full administrative states:", err);
       triggerAlert('err', 'Failed to retrieve administrative records from Express API Server.');
@@ -333,6 +373,158 @@ export default function AdminDashboardView({ onRestaurantsUpdated }: AdminDashbo
     }
   };
 
+  // --- STORIES / ARTICLES OPERATIONS ---
+  const handleOpenAddArticle = () => {
+    setEditingArticleId(null);
+    setArticleFormData({
+      title: '',
+      subtitle: '',
+      category: 'History',
+      readTime: '6 min read',
+      imageUrl: '',
+      author: 'Jean-Luc Zaytounada',
+      content: ''
+    });
+    setIsArticleFormOpen(true);
+  };
+
+  const handleOpenEditArticle = (art: Article) => {
+    setEditingArticleId(art.id);
+    setArticleFormData({
+      title: art.title,
+      subtitle: art.subtitle,
+      category: art.category,
+      readTime: art.readTime,
+      imageUrl: art.imageUrl,
+      author: art.author,
+      content: Array.isArray(art.content) ? art.content.join('\n\n') : ''
+    });
+    setIsArticleFormOpen(true);
+  };
+
+  const handleSaveArticle = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const processedContent = articleFormData.content
+      ? articleFormData.content.split('\n\n').map(p => p.trim()).filter(Boolean)
+      : [];
+
+    const payload = {
+      ...articleFormData,
+      content: processedContent
+    };
+
+    const url = editingArticleId ? `/api/articles/${editingArticleId}` : '/api/articles';
+    const method = editingArticleId ? 'PUT' : 'POST';
+
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        triggerAlert('success', editingArticleId ? 'Article modified.' : 'New chronicle listed successfully!');
+        setIsArticleFormOpen(false);
+        fetchAllData();
+      } else {
+        const errData = await res.json();
+        triggerAlert('err', errData.error || 'Server validation failed.');
+      }
+    } catch (err) {
+      triggerAlert('err', 'Network error committing chronicle.');
+    }
+  };
+
+  const handleDeleteArticle = async (id: string) => {
+    if (!confirm('Are you sure you want to remove this story? This will erase it from the magazine catalog.')) return;
+    try {
+      const res = await fetch(`/api/articles/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        triggerAlert('success', 'Chronicle deleted successfully.');
+        fetchAllData();
+      } else {
+        triggerAlert('err', 'Failed to delete chronicle.');
+      }
+    } catch (err) {
+      triggerAlert('err', 'Error connecting to delete API.');
+    }
+  };
+
+  // --- PAGES & SECTIONS OPERATIONS ---
+  const handleMovePage = (index: number, direction: 'up' | 'down') => {
+    const newPages = [...pagesConfig];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= newPages.length) return;
+
+    // Swap ordering numbers
+    const temp = newPages[index].order;
+    newPages[index].order = newPages[targetIndex].order;
+    newPages[targetIndex].order = temp;
+
+    // Re-sort state
+    const sorted = newPages.sort((a, b) => a.order - b.order);
+    setPagesConfig(sorted);
+  };
+
+  const handlePageToggleActive = (pageId: string) => {
+    const updated = pagesConfig.map(p => {
+      if (p.id === pageId) {
+        if (p.cannotDisable) return p;
+        return { ...p, active: !p.active };
+      }
+      return p;
+    });
+    setPagesConfig(updated);
+  };
+
+  const handlePageLabelChange = (pageId: string, label: string) => {
+    const updated = pagesConfig.map(p => {
+      if (p.id === pageId) {
+        return { ...p, label };
+      }
+      return p;
+    });
+    setPagesConfig(updated);
+  };
+
+  const handleSavePagesConfig = async () => {
+    try {
+      const res = await fetch('/api/pages', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(pagesConfig)
+      });
+      if (res.ok) {
+        triggerAlert('success', 'Page navigation order & configurations committed to Express Server!');
+        fetchAllData();
+      } else {
+        triggerAlert('err', 'Failed to commit tab/page configuration.');
+      }
+    } catch (err) {
+      triggerAlert('err', 'Network error committing pages configuration.');
+    }
+  };
+
+  const handleSaveSiteSettings = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await fetch('/api/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(settingsFormData)
+      });
+      if (res.ok) {
+        triggerAlert('success', 'General site content & headings customized successfully. Reload pages to view!');
+        fetchAllData();
+      } else {
+        triggerAlert('err', 'Failed to customize site parameters.');
+      }
+    } catch (err) {
+      triggerAlert('err', 'Network error committing core settings.');
+    }
+  };
+
   // Filters logic
   const filteredBookings = bookings.filter(b => 
     b.userName.toLowerCase().includes(bookingFilter.toLowerCase()) ||
@@ -348,6 +540,12 @@ export default function AdminDashboardView({ onRestaurantsUpdated }: AdminDashbo
 
   const filteredSubscribers = subscribers.filter(s => 
     s.email.toLowerCase().includes(subscriberFilter.toLowerCase())
+  );
+
+  const filteredArticles = articles.filter(a =>
+    a.title.toLowerCase().includes(storyFilter.toLowerCase()) ||
+    a.category.toLowerCase().includes(storyFilter.toLowerCase()) ||
+    a.author.toLowerCase().includes(storyFilter.toLowerCase())
   );
 
   // Authentication Lock Screen
@@ -505,6 +703,30 @@ export default function AdminDashboardView({ onRestaurantsUpdated }: AdminDashbo
           >
             <Mail className="w-4 h-4 text-emerald-600" />
             <span>Email Routing Sent Box ({emailLogs.length})</span>
+          </button>
+
+          <button
+            onClick={() => setAdminTab('stories')}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
+              adminTab === 'stories'
+                ? 'bg-emerald-800 text-white shadow-md'
+                : 'bg-white text-neutral-600 hover:bg-neutral-100 border border-neutral-200 shadow-2xs'
+            }`}
+          >
+            <FileText className="w-4 h-4 text-emerald-600" />
+            <span>Edit Stories ({articles.length})</span>
+          </button>
+
+          <button
+            onClick={() => setAdminTab('pages-sections')}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
+              adminTab === 'pages-sections'
+                ? 'bg-emerald-800 text-white shadow-md'
+                : 'bg-white text-neutral-600 hover:bg-neutral-100 border border-neutral-200 shadow-2xs'
+            }`}
+          >
+            <Compass className="w-4 h-4 text-amber-550" />
+            <span>Edit Sections & Pages</span>
           </button>
         </div>
 
@@ -849,6 +1071,277 @@ export default function AdminDashboardView({ onRestaurantsUpdated }: AdminDashbo
                 ))}
               </div>
             )}
+          </div>
+        )}
+
+        {/* TABLE CONTROL 5: EDIT STORIES (MAGAZINE ARTICLES) */}
+        {adminTab === 'stories' && (
+          <div className="bg-white border border-neutral-200 rounded-2xl shadow-sm overflow-hidden animate-fade-in text-left">
+            <div className="p-4 border-b border-neutral-100 bg-neutral-50/50 flex flex-col sm:flex-row justify-between items-center gap-4">
+              <div className="relative w-full sm:w-85">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 w-4 h-4" />
+                <input
+                  type="text"
+                  placeholder="Query story title, category, author..."
+                  value={storyFilter}
+                  onChange={(e) => setStoryFilter(e.target.value)}
+                  className="pl-9 pr-4 py-2 w-full text-xs bg-white border border-neutral-200 rounded-lg text-neutral-900 focus:outline-none focus:border-emerald-600 shadow-2xs"
+                />
+              </div>
+
+              <button
+                onClick={handleOpenAddArticle}
+                className="flex items-center gap-1.5 px-4.5 py-2.5 bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-sm transition-all cursor-pointer"
+              >
+                <Plus className="w-4 h-4 text-amber-300" />
+                <span>WRITE NEW STORY CHRONICLE</span>
+              </button>
+            </div>
+
+            {filteredArticles.length === 0 ? (
+              <div className="p-12 text-center text-neutral-500">
+                <FileText className="w-10 h-10 text-neutral-300 mx-auto mb-3" />
+                <p className="text-sm font-medium">No story chronicles found in memory matching requirements.</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-neutral-50 border-b border-neutral-150 text-[10px] font-mono uppercase tracking-wider text-neutral-600">
+                      <th className="px-6 py-4">Cover</th>
+                      <th className="px-6 py-4">Title & Subtitle</th>
+                      <th className="px-6 py-4">Category</th>
+                      <th className="px-6 py-4">Author & Metrics</th>
+                      <th className="px-6 py-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-neutral-100 text-xs">
+                    {filteredArticles.map((art) => (
+                      <tr key={art.id} className="hover:bg-neutral-50/60 transition-colors">
+                        <td className="px-6 py-4 shrink-0">
+                          <img
+                            src={art.imageUrl}
+                            alt={art.title}
+                            className="w-14 h-11 object-cover rounded-lg border border-neutral-200 shadow-xs"
+                            referrerPolicy="no-referrer"
+                          />
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="font-serif text-sm font-bold text-neutral-900 leading-tight">
+                            {art.title}
+                            <span className="text-[9px] font-mono text-neutral-400 font-normal ml-1.5 block sm:inline">ID: {art.id}</span>
+                          </div>
+                          <div className="text-[11px] text-neutral-500 italic mt-0.5 max-w-md line-clamp-1">{art.subtitle}</div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="bg-red-50 text-red-650 text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded border border-red-200 font-mono">
+                            {art.category}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="font-bold text-neutral-805">By {art.author}</div>
+                          <div className="text-[10px] text-neutral-500 font-mono mt-0.5">{art.date} • {art.readTime}</div>
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <div className="flex items-center justify-end gap-1.5">
+                            <button
+                              onClick={() => handleOpenEditArticle(art)}
+                              className="p-1 px-2.5 bg-neutral-100 text-neutral-700 hover:bg-amber-500 hover:text-emerald-950 font-mono text-[10px] uppercase font-bold rounded border border-neutral-200 transition-colors cursor-pointer"
+                            >
+                              EDIT
+                            </button>
+                            <button
+                              onClick={() => handleDeleteArticle(art.id)}
+                              className="p-1 px-2 bg-neutral-100 text-red-650 hover:bg-red-650 hover:text-white font-mono text-[10px] uppercase font-bold rounded border border-neutral-200 transition-colors cursor-pointer"
+                            >
+                              DELETE
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* TABLE CONTROL 6: EDIT SECTIONS & PAGES ORDERING */}
+        {adminTab === 'pages-sections' && (
+          <div className="space-y-8 animate-fade-in text-left">
+            {/* General Site Content Headings Customization */}
+            <div className="bg-white border border-neutral-200 rounded-2xl shadow-sm p-6">
+              <div className="border-b border-neutral-100 pb-3 mb-5">
+                <h3 className="font-serif text-lg font-bold text-neutral-900 uppercase tracking-wide">
+                  Customize Site Sections Copy
+                </h3>
+                <p className="text-xs text-neutral-450 font-mono uppercase tracking-widest">
+                  Modify main display headings and templates
+                </p>
+              </div>
+
+              <form onSubmit={handleSaveSiteSettings} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1">
+                      Hero Slider Title / Tagline
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full bg-neutral-50 border border-neutral-250 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-600 focus:bg-white text-neutral-950 font-medium"
+                      value={settingsFormData.heroTagline}
+                      onChange={e => setSettingsFormData({...settingsFormData, heroTagline: e.target.value})}
+                      required
+                      placeholder="e.g. The Elite Authority Vetting Lebanese Terroir"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1">
+                      Hero Slider Subtitle
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full bg-neutral-50 border border-neutral-250 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-600 focus:bg-white text-neutral-950 font-medium"
+                      value={settingsFormData.heroSubtitle}
+                      onChange={e => setSettingsFormData({...settingsFormData, heroSubtitle: e.target.value})}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1">
+                      Neighborhoods Section Title
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full bg-neutral-50 border border-neutral-250 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-600 focus:bg-white text-neutral-950 font-medium"
+                      value={settingsFormData.neighborhoodsTitle}
+                      onChange={e => setSettingsFormData({...settingsFormData, neighborhoodsTitle: e.target.value})}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1">
+                      Neighborhoods Section Subtitle
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full bg-neutral-50 border border-neutral-250 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-600 focus:bg-white text-neutral-950 font-medium"
+                      value={settingsFormData.neighborhoodsSubtitle}
+                      onChange={e => setSettingsFormData({...settingsFormData, neighborhoodsSubtitle: e.target.value})}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <button
+                    type="submit"
+                    className="px-5 py-2.5 bg-neutral-900 border border-neutral-850 hover:bg-amber-500 hover:text-emerald-950 text-white font-mono font-bold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer"
+                  >
+                    Apply site sections text
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            {/* Menu Navigation Ordering and Move Pages control */}
+            <div className="bg-white border border-neutral-200 rounded-2xl shadow-sm overflow-hidden">
+              <div className="p-5 border-b border-neutral-100 bg-neutral-50/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                  <h3 className="font-serif text-lg font-bold text-neutral-900 uppercase tracking-wide">
+                    Rearrange Main Menu Tabs & Pages
+                  </h3>
+                  <p className="text-xs text-neutral-450 font-mono uppercase tracking-widest mt-0.5">
+                    Drag-free dynamic routing: Rename, enable/hide, and change navigation priority ordering
+                  </p>
+                </div>
+
+                <button
+                  onClick={handleSavePagesConfig}
+                  className="flex items-center gap-1.5 px-5 py-2.5 bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-sm transition-all cursor-pointer"
+                >
+                  <Save className="w-4 h-4 text-amber-300" />
+                  <span>COMMIT PAGE HIERARCHY</span>
+                </button>
+              </div>
+
+              {pagesConfig.length === 0 ? (
+                <div className="p-8 text-center text-neutral-450 text-xs">
+                  Loading menu components layout config...
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-neutral-50 border-b border-neutral-150 text-[10px] font-mono uppercase tracking-wider text-neutral-600">
+                        <th className="px-6 py-4">Page Index</th>
+                        <th className="px-6 py-4">Tab Reference ID</th>
+                        <th className="px-6 py-4">Nav Label Name</th>
+                        <th className="px-6 py-4">Status</th>
+                        <th className="px-6 py-4 text-right">Priority Positioning Ordering</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-neutral-100 text-xs">
+                      {pagesConfig.map((page, idx) => (
+                        <tr key={page.id} className="hover:bg-neutral-50/60 transition-colors">
+                          <td className="px-6 py-4 font-mono font-bold text-neutral-550">
+                            {idx + 1}
+                          </td>
+                          <td className="px-6 py-4 font-mono font-bold text-emerald-800">
+                            {page.id}
+                          </td>
+                          <td className="px-6 py-4">
+                            <input
+                              type="text"
+                              value={page.label}
+                              onChange={(e) => handlePageLabelChange(page.id, e.target.value)}
+                              className="px-2.5 py-1.5 w-64 bg-neutral-50 border border-neutral-200 hover:border-neutral-350 focus:bg-white text-xs text-neutral-900 rounded font-medium focus:outline-none focus:border-emerald-600"
+                            />
+                          </td>
+                          <td className="px-6 py-4">
+                            <button
+                              onClick={() => handlePageToggleActive(page.id)}
+                              disabled={page.cannotDisable}
+                              className={`px-3 py-1 text-[9px] font-mono uppercase font-bold rounded cursor-pointer ${
+                                page.active
+                                  ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-250'
+                                  : 'bg-neutral-100 hover:bg-neutral-200 text-neutral-450 border border-neutral-250 line-through'
+                              }`}
+                            >
+                              {page.active ? 'Visible' : 'Hidden'}
+                            </button>
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <div className="flex items-center justify-end gap-1.5">
+                              <button
+                                onClick={() => handleMovePage(idx, 'up')}
+                                disabled={idx === 0}
+                                className="p-1 px-2.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 disabled:opacity-40 disabled:cursor-not-allowed font-mono text-[10px] uppercase font-bold rounded border border-neutral-250 transition-colors cursor-pointer flex items-center gap-1"
+                              >
+                                <ArrowUp className="w-3 h-3" />
+                                <span>UP</span>
+                              </button>
+                              <button
+                                onClick={() => handleMovePage(idx, 'down')}
+                                disabled={idx === pagesConfig.length - 1}
+                                className="p-1 px-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 disabled:opacity-40 disabled:cursor-not-allowed font-mono text-[10px] uppercase font-bold rounded border border-neutral-250 transition-colors cursor-pointer flex items-center gap-1"
+                              >
+                                <ArrowDown className="w-3 h-3" />
+                                <span>DOWN</span>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
           </div>
         )}
 
@@ -1286,6 +1779,140 @@ export default function AdminDashboardView({ onRestaurantsUpdated }: AdminDashbo
                   AUDIT COMPLETE
                 </button>
               </div>
+
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL WINDOW 4: ADD / EDIT STORY CHRONICLE */}
+      {isArticleFormOpen && (
+        <div className="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="article-form-title" role="dialog" aria-modal="true">
+          <div className="fixed inset-0 bg-neutral-950/70 backdrop-blur-sm" onClick={() => setIsArticleFormOpen(false)} />
+          <div className="flex min-h-screen items-center justify-center p-4">
+            <div className="relative w-full max-w-2xl bg-white border border-neutral-200 rounded-3xl overflow-hidden shadow-2xl p-6 md:p-8 animate-fade-in my-8 text-neutral-950 text-left">
+              
+              <button
+                onClick={() => setIsArticleFormOpen(false)}
+                className="absolute top-4 right-4 text-neutral-400 hover:text-neutral-700 p-2 rounded-full cursor-pointer hover:bg-neutral-100"
+              >
+                <XCircle className="w-6 h-6" />
+              </button>
+
+              <div className="mb-6 border-b border-neutral-100 pb-3 text-left">
+                <h3 className="font-serif text-2xl font-light text-neutral-900 uppercase tracking-wide" id="article-form-title">
+                  {editingArticleId ? 'Modify Story Chronicle' : 'Create New Story Chronicle'}
+                </h3>
+                <p className="text-xs font-mono text-neutral-450 mt-0.5 uppercase tracking-widest leading-none">
+                  Zaytounada Magazine Editorial Publisher
+                </p>
+              </div>
+
+              <form onSubmit={handleSaveArticle} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1">Chronicle Title</label>
+                    <input
+                      type="text"
+                      className="w-full bg-neutral-50 border border-neutral-250 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-600 focus:bg-white text-neutral-950 font-medium"
+                      value={articleFormData.title}
+                      onChange={e => setArticleFormData({...articleFormData, title: e.target.value})}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1 font-serif">Category / Genre</label>
+                    <select
+                      className="w-full bg-neutral-50 border border-neutral-250 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-600 focus:bg-white text-neutral-950 font-medium"
+                      value={articleFormData.category}
+                      onChange={e => setArticleFormData({...articleFormData, category: e.target.value})}
+                    >
+                      <option value="History">History</option>
+                      <option value="Trends">Trends</option>
+                      <option value="Guides">Guides</option>
+                      <option value="Behind the Scenes">Behind the Scenes</option>
+                      <option value="Chef Chronicles">Chef Chronicles</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1">Subtitle / Summary</label>
+                  <input
+                    type="text"
+                    className="w-full bg-neutral-50 border border-neutral-250 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-600 focus:bg-white text-neutral-950 font-medium"
+                    value={articleFormData.subtitle}
+                    onChange={e => setArticleFormData({...articleFormData, subtitle: e.target.value})}
+                    required
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1">Author Name</label>
+                    <input
+                      type="text"
+                      className="w-full bg-neutral-50 border border-neutral-250 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-600 focus:bg-white text-neutral-950 font-medium"
+                      value={articleFormData.author}
+                      onChange={e => setArticleFormData({...articleFormData, author: e.target.value})}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1">Read Time Estimate</label>
+                    <input
+                      type="text"
+                      className="w-full bg-neutral-50 border border-neutral-250 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-600 focus:bg-white text-neutral-950 font-medium"
+                      value={articleFormData.readTime}
+                      onChange={e => setArticleFormData({...articleFormData, readTime: e.target.value})}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1">Cover Image URL</label>
+                  <input
+                    type="url"
+                    className="w-full bg-neutral-50 border border-neutral-250 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-600 focus:bg-white text-neutral-950 font-mono"
+                    value={articleFormData.imageUrl}
+                    onChange={e => setArticleFormData({...articleFormData, imageUrl: e.target.value})}
+                    placeholder="https://images.unsplash.com/photo-..."
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1">
+                    Editorial Content Paragraphs (Separate each paragraph with two line-breaks / enter keys)
+                  </label>
+                  <textarea
+                    rows={7}
+                    className="w-full bg-neutral-50 border border-neutral-250 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-600 focus:bg-white text-neutral-955 leading-relaxed font-serif"
+                    value={articleFormData.content}
+                    onChange={e => setArticleFormData({...articleFormData, content: e.target.value})}
+                    required
+                    placeholder="First paragraph... \n\nSecond paragraph..."
+                  />
+                </div>
+
+                <div className="flex justify-end gap-3 pt-4 border-t border-neutral-100 mt-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsArticleFormOpen(false)}
+                    className="px-4 py-2 bg-neutral-150 hover:bg-neutral-200 text-neutral-700 text-xs font-mono font-bold uppercase rounded-lg transition-all cursor-pointer"
+                  >
+                    CANCEL
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2 bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-sm transition-all cursor-pointer animate-fade-in"
+                  >
+                    {editingArticleId ? 'COMMIT CHRONICLE DETAILS' : 'PUBLISH CHRONICLE'}
+                  </button>
+                </div>
+              </form>
 
             </div>
           </div>

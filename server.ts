@@ -3,13 +3,41 @@ import path from "path";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
-import { RESTAURANTS as initialRestaurants } from "./src/data/restaurants";
+import { RESTAURANTS as initialRestaurants, ARTICLES as initialArticles } from "./src/data/restaurants";
 
 // Load environment variables
 dotenv.config();
 
 // In-Memory Database stores
 let restaurantsList = [...initialRestaurants];
+let articlesList = [...initialArticles];
+
+let pagesConfigList: any[] = [
+  { id: 'discovery', label: 'Explore Restaurants', icon: 'Compass', active: true, order: 0 },
+  { id: 'neighborhoods', label: 'Neighborhoods', icon: 'MapPin', active: true, order: 1 },
+  { id: 'catalogue', label: 'Zaytounada Catalogue', icon: 'Grid', active: true, order: 2 },
+  { id: 'pubs-cafes', label: 'Pubs & Cafes', icon: 'Coffee', active: true, order: 3 },
+  { id: 'vibes', label: 'Lebanese Vibes', icon: 'Flame', active: true, order: 4 },
+  { id: 'takeaways-bakeries', label: 'Bakeries & Produce', icon: 'Store', active: true, order: 5 },
+  { id: 'curation-explorer', label: 'Curation Guide', icon: 'Compass', active: true, order: 6 },
+  { id: 'map', label: 'Gastronomic Map', icon: 'Navigation', active: true, order: 7 },
+  { id: 'plan-dining', label: 'Plan My Dining', icon: 'Calendar', active: true, order: 8 },
+  { id: 'gift-cards', label: 'Gift Vouchers', icon: 'Gift', active: true, order: 9 },
+  { id: 'live-shows', label: 'Live Shows', icon: 'Music', active: true, order: 10 },
+  { id: 'magazine', label: 'Editorial Magazine', icon: 'BookOpen', active: true, order: 11 },
+  { id: 'my-guide', label: 'Itineraries', icon: 'Sparkles', active: true, order: 12 },
+  { id: 'admin', label: 'Admin Lockbox', icon: 'Lock', active: true, order: 13, cannotDisable: true },
+  { id: 'get-started', label: 'Get Started', icon: 'Info', active: true, order: 14 }
+];
+
+let siteSettings = {
+  heroTagline: "The Elite Authority Vetting Lebanese Terroir & Gastronomy",
+  heroSubtitle: "Anonymous inspections, prestigious stars, and legendary feasts curated for true epicureans.",
+  neighborhoodsTitle: "Select Gourmet Neighborhoods",
+  neighborhoodsSubtitle: "Cultural Quarters Directory",
+  featuredChoiceId: "rest-1"
+};
+
 let bookingsList: any[] = [
   {
     id: "book-1",
@@ -314,6 +342,86 @@ async function startServer() {
   // --- EMAIL LOGGER ROUTER SEND BOX ENDPOINT ---
   app.get("/api/email-logs", (req, res) => {
     res.json(emailLogs);
+  });
+
+  // --- ARTICLES / MAGAZINE STORIES API ENDPOINTS ---
+  app.get("/api/articles", (req, res) => {
+    res.json(articlesList);
+  });
+
+  app.post("/api/articles", (req, res) => {
+    const { title, subtitle, category, readTime, imageUrl, date, author, content } = req.body;
+    if (!title || !subtitle || !category || !content) {
+      res.status(400).json({ error: "Title, Subtitle, Category, and Content are required." });
+      return;
+    }
+    const newArticle = {
+      id: `art-${Math.random().toString(36).substr(2, 9)}`,
+      title,
+      subtitle,
+      category,
+      readTime: readTime || "5 min read",
+      imageUrl: imageUrl || "https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&q=80&w=800",
+      date: date || new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+      author: author || "Jean-Luc Zaytounada",
+      content: Array.isArray(content) ? content : [content]
+    };
+    articlesList.unshift(newArticle);
+    res.status(201).json(newArticle);
+  });
+
+  app.put("/api/articles/:id", (req, res) => {
+    const { id } = req.params;
+    const index = articlesList.findIndex(a => a.id === id);
+    if (index === -1) {
+      res.status(404).json({ error: "Article not found." });
+      return;
+    }
+    articlesList[index] = {
+      ...articlesList[index],
+      ...req.body,
+      content: Array.isArray(req.body.content) ? req.body.content : articlesList[index].content
+    };
+    res.json(articlesList[index]);
+  });
+
+  app.delete("/api/articles/:id", (req, res) => {
+    const { id } = req.params;
+    const index = articlesList.findIndex(a => a.id === id);
+    if (index === -1) {
+      res.status(404).json({ error: "Article not found." });
+      return;
+    }
+    const removed = articlesList.splice(index, 1);
+    res.json({ message: "Article deleted successfully.", deleted: removed[0] });
+  });
+
+  // --- PAGES CONFIGURATION API ENDPOINTS ---
+  app.get("/api/pages", (req, res) => {
+    res.json(pagesConfigList);
+  });
+
+  app.put("/api/pages", (req, res) => {
+    const newConfig = req.body;
+    if (Array.isArray(newConfig)) {
+      pagesConfigList = newConfig;
+      res.json(pagesConfigList);
+    } else {
+      res.status(400).json({ error: "Configuration must be an array of pages." });
+    }
+  });
+
+  // --- SITE SETTINGS API ENDPOINTS ---
+  app.get("/api/settings", (req, res) => {
+    res.json(siteSettings);
+  });
+
+  app.put("/api/settings", (req, res) => {
+    siteSettings = {
+      ...siteSettings,
+      ...req.body
+    };
+    res.json(siteSettings);
   });
 
   // API endpoint: Gourmet Michelin AI Concierge

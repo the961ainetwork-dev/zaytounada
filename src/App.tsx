@@ -23,6 +23,35 @@ import { Award, Compass, Heart, Award as AwardIcon, MapPin, Grid, Plus, Sparkles
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>('discovery');
   const [restaurants, setRestaurants] = useState<Restaurant[]>(RESTAURANTS);
+  const [pagesConfig, setPagesConfig] = useState<any[]>([]);
+  const [siteSettings, setSiteSettings] = useState<any>({
+    heroTagline: "The Elite Authority Vetting Lebanese Terroir & Gastronomy",
+    heroSubtitle: "Anonymous inspections, prestigious stars, and legendary feasts curated for true epicureans.",
+    neighborhoodsTitle: "Select Gourmet Neighborhoods",
+    neighborhoodsSubtitle: "Cultural Quarters Directory",
+    featuredChoiceId: "rest-1"
+  });
+
+  const fetchPagesAndSettings = async () => {
+    try {
+      const resPages = await fetch('/api/pages');
+      if (resPages.ok) {
+        const dataPages = await resPages.json();
+        if (Array.isArray(dataPages) && dataPages.length > 0) {
+          setPagesConfig(dataPages.sort((a,b) => a.order - b.order));
+        }
+      }
+      const resSettings = await fetch('/api/settings');
+      if (resSettings.ok) {
+        const dataSettings = await resSettings.json();
+        if (dataSettings && dataSettings.heroTagline) {
+          setSiteSettings(dataSettings);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to load dynamic configurations:", err);
+    }
+  };
 
   const fetchRestaurants = async () => {
     try {
@@ -40,7 +69,12 @@ export default function App() {
 
   useEffect(() => {
     fetchRestaurants();
+    fetchPagesAndSettings();
   }, []);
+
+  useEffect(() => {
+    fetchPagesAndSettings();
+  }, [activeTab]);
 
   const [selectedNeighborhoodId, setSelectedNeighborhoodId] = useState<string | null>(null);
   const [focusedNeighborhoodId, setFocusedNeighborhoodId] = useState<string | null>(null);
@@ -245,6 +279,7 @@ export default function App() {
         setSelectedCity={setSelectedCity}
         onOpenConcierge={() => setIsConciergeActive(true)}
         savedCount={savedRestaurantIds.length}
+        pagesConfig={pagesConfig}
       />
 
       {/* Main Container */}
@@ -254,6 +289,27 @@ export default function App() {
         {activeTab === 'discovery' && (
           <div className="space-y-8 animate-fade-in" id="discovery-pane">
             
+            {/* Elegant Dynamic Branding Header */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 pt-1 text-left animate-fade-in" id="homepage-dynamic-hero-banner">
+              <div className="bg-gradient-to-r from-emerald-950 via-emerald-900 to-amber-950 text-white rounded-3xl p-6 md:p-8 shadow-xl relative overflow-hidden">
+                {/* Decorative background vectors */}
+                <div className="absolute -right-16 -top-16 w-64 h-64 bg-amber-400/10 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute -left-16 -bottom-16 w-64 h-64 bg-emerald-400/10 rounded-full blur-3xl pointer-events-none" />
+                
+                <div className="max-w-3xl relative z-10">
+                  <span className="text-[10px] font-mono tracking-[0.2em] font-bold text-amber-400 uppercase bg-amber-400/10 px-2.5 py-1 rounded-full border border-amber-400/20">
+                    ★ CHRONICLE HEADQUARTERS
+                  </span>
+                  <h1 className="font-serif text-2xl md:text-3xl lg:text-4xl font-normal leading-tight mt-3 text-white uppercase tracking-wide">
+                    {siteSettings?.heroTagline || "The Elite Authority Vetting Lebanese Terroir & Gastronomy"}
+                  </h1>
+                  <p className="text-sm md:text-base text-neutral-300 font-light mt-3 leading-relaxed max-w-2xl">
+                    {siteSettings?.heroSubtitle || "Anonymous inspections, prestigious stars, and legendary feasts curated for true epicureans."}
+                  </p>
+                </div>
+              </div>
+            </div>
+
             {/* Gen Z Interactive Slider with Optimized Section Images & Live Marquee */}
             <HeroSlider 
               onNavigateTab={setActiveTab}
@@ -265,10 +321,14 @@ export default function App() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-left" id="neighborhoods-directory-banner-rail">
               <div className="border-b border-neutral-100 pb-3 mb-6">
                 <span className="text-[10px] font-mono uppercase tracking-[0.25em] font-extrabold text-amber-500 block">
-                  CULTURAL QUARTERS DIRECTORY
+                  {siteSettings?.neighborhoodsSubtitle || "CULTURAL QUARTERS DIRECTORY"}
                 </span>
                 <h3 className="font-serif font-light text-2xl text-neutral-900 mt-1 uppercase tracking-wider">
-                  Select <span className="font-medium text-emerald-800">Gourmet Neighborhoods</span>
+                  {siteSettings?.neighborhoodsTitle ? (
+                    siteSettings.neighborhoodsTitle
+                  ) : (
+                    <>Select <span className="font-medium text-emerald-800">Gourmet Neighborhoods</span></>
+                  )}
                 </h3>
               </div>
 
@@ -281,7 +341,44 @@ export default function App() {
                   { id: 'badaro', name: 'Badaro', label: 'بدارو', desc: 'Leafy Terraces & Sidewalk Lunches', count: 3, bg: 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&q=80&w=350' },
                   { id: 'antelias', name: 'Antelias', label: 'أنطلياس', desc: 'Coastal Seafood Feasts', count: 2, bg: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&q=80&w=350' }
                 ].map((nb) => {
-                  const dynamicCount = RESTAURANTS.filter(r => r.neighborhood === nb.id).length || nb.count;
+                  const totalCount = RESTAURANTS.filter(r => r.neighborhood === nb.id).length || nb.count;
+                  
+                  // Compute match count based on all ACTIVE filters
+                  const filteredCount = RESTAURANTS.filter(rest => {
+                    if (rest.neighborhood !== nb.id) return false;
+                    
+                    const cityMatch = selectedCity === 'All Cities' || rest.city.toLowerCase() === selectedCity.toLowerCase();
+                    
+                    const matchesSearch = !searchQuery ? true : (
+                      rest.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                      rest.chef.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                      rest.cuisine.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                      rest.country.toLowerCase().includes(searchQuery.toLowerCase())
+                    );
+
+                    let matchesDistinction = true;
+                    if (selectedDistinction !== 'All Distinctions') {
+                      if (selectedDistinction === 'Stars') {
+                        matchesDistinction = rest.stars > 0;
+                      } else if (selectedDistinction === 'Bib Gourmand') {
+                        matchesDistinction = rest.distinction === 'BIB_GOURMAND';
+                      } else if (selectedDistinction === 'Selected') {
+                        matchesDistinction = rest.distinction === 'SELECTED';
+                      }
+                    }
+
+                    const matchesCuisine = selectedCuisine === 'All Cuisines' || rest.cuisine === selectedCuisine;
+                    const matchesPrice = selectedPrice === 'All Prices' || rest.priceRange === selectedPrice;
+
+                    return cityMatch && matchesSearch && matchesDistinction && matchesCuisine && matchesPrice;
+                  }).length;
+
+                  const hasActiveFilters = selectedCity !== 'All Cities' ||
+                                           searchQuery !== '' ||
+                                           selectedDistinction !== 'All Distinctions' ||
+                                           selectedCuisine !== 'All Cuisines' ||
+                                           selectedPrice !== 'All Prices';
+
                   return (
                     <div
                       key={nb.id}
@@ -348,26 +445,59 @@ export default function App() {
                         </p>
                       </div>
 
-                      <div className="absolute top-2 right-2 bg-emerald-950/90 text-white border border-white/5 backdrop-blur-md px-1.5 py-0.5 rounded text-[7.5px] font-mono font-bold tracking-widest z-10">
-                        {dynamicCount} SPOTS
+                      <div className="absolute top-2 right-2 flex flex-col items-end gap-1 z-10">
+                        <div className="bg-emerald-950/90 text-white border border-white/5 backdrop-blur-md px-1.5 py-0.5 rounded text-[7.5px] font-mono font-bold tracking-widest">
+                          {totalCount} SPOTS
+                        </div>
+                        {hasActiveFilters && (
+                          <div className="bg-amber-500 text-emerald-950 px-1.5 py-0.5 rounded text-[7.5px] font-mono font-black tracking-widest uppercase shadow border border-amber-300">
+                            {filteredCount} MATCHED
+                          </div>
+                        )}
                       </div>
 
                       {/* Editorial Interactive Hover Tooltip Overlay (z-20) */}
                       <div className="absolute inset-0 bg-neutral-950/95 p-4 flex flex-col justify-between opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-20 text-left">
                         <div className="space-y-1">
-                          <span className="text-[8px] font-mono text-emerald-400 font-extrabold uppercase tracking-widest block">
-                            ✻ NEIGHBORHOOD INSIGHT
+                          <span className="text-[8px] font-mono text-emerald-400 font-extrabold uppercase tracking-widest block font-bold">
+                            ★ NEIGHBORHOOD INSIGHT
                           </span>
                           <h4 className="font-serif text-sm font-bold text-white tracking-tight leading-tight">
                             {nb.name} ({nb.label})
                           </h4>
-                          <p className="text-[9px] text-neutral-300 leading-relaxed mt-1.5 font-sans">
-                            Explore {dynamicCount} exquisite dining spots, including historic bistros and local sourdough bakeries.
+                          <p className="text-[9px] text-neutral-300 leading-relaxed mt-1.5 font-sans font-light">
+                            {hasActiveFilters ? (
+                              <>
+                                Found <span className="text-amber-300 font-bold">{filteredCount}</span> spot{filteredCount === 1 ? '' : 's'} matching active filters (out of {totalCount} total).
+                              </>
+                            ) : (
+                              `Explore ${totalCount} exquisite dining spots, including historic bistros and local sourdough bakeries.`
+                            )}
                           </p>
+
+                          {hasActiveFilters && (
+                            <div className="text-[7.5px] font-mono text-neutral-400 mt-1 uppercase tracking-wider space-y-0.5">
+                              {selectedDistinction !== 'All Distinctions' && (
+                                <div>• {selectedDistinction}</div>
+                              )}
+                              {selectedCuisine !== 'All Cuisines' && (
+                                <div>• Cuisine: {selectedCuisine}</div>
+                              )}
+                              {selectedPrice !== 'All Prices' && (
+                                <div>• Price: {selectedPrice}</div>
+                              )}
+                              {selectedCity !== 'All Cities' && (
+                                <div>• City: {selectedCity}</div>
+                              )}
+                              {searchQuery && (
+                                <div className="truncate">• Search: "{searchQuery}"</div>
+                              )}
+                            </div>
+                          )}
                         </div>
                         <div className="border-t border-white/10 pt-2 flex items-center justify-between">
                           <span className="text-[8px] font-mono text-amber-300 font-bold uppercase tracking-wider">
-                            {dynamicCount} Gourmet Spots
+                            {hasActiveFilters ? `${filteredCount} / ${totalCount} Matches` : `${totalCount} Gourmet Spots`}
                           </span>
                           <span className="text-[8px] font-mono text-neutral-400 flex items-center gap-1 font-bold">
                             EXPLORE AREA →
@@ -705,6 +835,11 @@ export default function App() {
               setFocusedNeighborhoodId(neighborhoodId);
               setActiveTab('map');
             }}
+            selectedDistinction={selectedDistinction}
+            selectedCuisine={selectedCuisine}
+            selectedPrice={selectedPrice}
+            searchQuery={searchQuery}
+            selectedCity={selectedCity}
           />
         )}
 

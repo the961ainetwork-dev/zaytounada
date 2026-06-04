@@ -10,6 +10,11 @@ interface NeighborhoodsViewProps {
   // Deep-link to selected neighborhood on homepage click
   initialSelectedNeighborhood?: string;
   onViewOnMap?: (neighborhoodId: string, city: string) => void;
+  selectedDistinction?: string;
+  selectedCuisine?: string;
+  selectedPrice?: string;
+  searchQuery?: string;
+  selectedCity?: string;
 }
 
 interface NeighborhoodData {
@@ -183,11 +188,55 @@ export default function NeighborhoodsView({
   savedRestaurantIds,
   onToggleSave,
   initialSelectedNeighborhood,
-  onViewOnMap
+  onViewOnMap,
+  selectedDistinction = 'All Distinctions',
+  selectedCuisine = 'All Cuisines',
+  selectedPrice = 'All Prices',
+  searchQuery = '',
+  selectedCity = 'All Cities'
 }: NeighborhoodsViewProps) {
   const [selectedNeighborhoodId, setSelectedNeighborhoodId] = useState<'hamra' | 'mar_mikhael' | 'sassine' | 'sodeco' | 'badaro' | 'antelias' | null>(
     (initialSelectedNeighborhood as any) || null
   );
+
+  const hasActiveFilters = useMemo(() => {
+    return selectedDistinction !== 'All Distinctions' ||
+           selectedCuisine !== 'All Cuisines' ||
+           selectedPrice !== 'All Prices' ||
+           searchQuery !== '' ||
+           selectedCity !== 'All Cities';
+  }, [selectedDistinction, selectedCuisine, selectedPrice, searchQuery, selectedCity]);
+
+  const getFilteredSpotsCount = React.useCallback((neighborhoodId: string) => {
+    return RESTAURANTS.filter(rest => {
+      if (rest.neighborhood !== neighborhoodId) return false;
+      
+      const cityMatch = selectedCity === 'All Cities' || rest.city.toLowerCase() === selectedCity.toLowerCase();
+      
+      const matchesSearch = !searchQuery ? true : (
+        rest.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        rest.chef.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        rest.cuisine.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        rest.country.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+
+      let matchesDistinction = true;
+      if (selectedDistinction !== 'All Distinctions') {
+        if (selectedDistinction === 'Stars') {
+          matchesDistinction = rest.stars > 0;
+        } else if (selectedDistinction === 'Bib Gourmand') {
+          matchesDistinction = rest.distinction === 'BIB_GOURMAND';
+        } else if (selectedDistinction === 'Selected') {
+          matchesDistinction = rest.distinction === 'SELECTED';
+        }
+      }
+
+      const matchesCuisine = selectedCuisine === 'All Cuisines' || rest.cuisine === selectedCuisine;
+      const matchesPrice = selectedPrice === 'All Prices' || rest.priceRange === selectedPrice;
+
+      return cityMatch && matchesSearch && matchesDistinction && matchesCuisine && matchesPrice;
+    }).length;
+  }, [selectedDistinction, selectedCuisine, selectedPrice, searchQuery, selectedCity]);
 
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
@@ -314,6 +363,7 @@ export default function NeighborhoodsView({
               const starredCount = RESTAURANTS.filter(r => r.neighborhood === n.id && r.stars > 0).length;
               const bibCount = RESTAURANTS.filter(r => r.neighborhood === n.id && r.distinction === 'BIB_GOURMAND').length;
               const recommendedCount = RESTAURANTS.filter(r => r.neighborhood === n.id && r.distinction === 'SELECTED').length;
+              const filteredCount = getFilteredSpotsCount(n.id);
 
               return (
                 <div
@@ -350,7 +400,7 @@ export default function NeighborhoodsView({
                         <MapPin className="w-3.5 h-3.5 text-red-600 fill-red-100/50" />
                         <span>View on Map</span>
                       </button>
-
+                      
                       <button
                         onClick={(e) => handleShare(n.id, e)}
                         className={`px-2.5 py-1.5 rounded-lg text-[9px] font-bold tracking-wider border flex items-center gap-1.5 shadow-sm transition-all duration-305 hover:scale-105 active:scale-95 cursor-pointer uppercase select-none font-mono ${
@@ -390,8 +440,66 @@ export default function NeighborhoodsView({
                         {n.name}
                       </h3>
                     </div>
-                    <div className="absolute top-4 right-4 bg-emerald-950/90 text-white backdrop-blur-md px-3 py-1.5 rounded-full text-[9px] font-mono tracking-widest font-black border border-amber-400/20">
-                      {totalItems} PROPERTIES
+                    
+                    <div className="absolute top-4 right-4 flex flex-col items-end gap-1.5 z-10">
+                      <div className="bg-emerald-950/90 text-white backdrop-blur-md px-3 py-1.5 rounded-full text-[9px] font-mono tracking-widest font-black border border-amber-400/20">
+                        {totalItems} PROPERTIES
+                      </div>
+                      {hasActiveFilters && (
+                        <div className="bg-amber-500 text-emerald-950 px-2.5 py-1 rounded-full text-[9px] font-mono font-black tracking-widest uppercase shadow border border-amber-300">
+                          {filteredCount} MATCHED
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Interactive Hover Tooltip Overlay (z-20) */}
+                    <div className="absolute inset-0 bg-neutral-950/95 p-5 flex flex-col justify-between opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-20 text-left">
+                      <div className="space-y-1.5">
+                        <span className="text-[9px] font-mono text-emerald-400 font-extrabold uppercase tracking-widest block font-bold">
+                          ✻ GOURMET VETTING INSIGHT
+                        </span>
+                        <h4 className="font-serif text-base font-bold text-white tracking-tight leading-none">
+                          {n.name} ({n.arabicName})
+                        </h4>
+                        <p className="text-xs text-neutral-300 leading-relaxed mt-2 font-sans font-light">
+                          {hasActiveFilters ? (
+                            <>
+                              There {filteredCount === 1 ? 'is' : 'are'} currently <span className="text-amber-300 font-bold">{filteredCount}</span> gourmet choice{filteredCount === 1 ? '' : 's'} matching your active filters in this neighborhood.
+                            </>
+                          ) : (
+                            `Explore all ${totalItems} vetted epicurean venues, historical bistros, and local traditional suppliers.`
+                          )}
+                        </p>
+
+                        {hasActiveFilters && (
+                          <div className="text-[8px] font-mono text-neutral-400 mt-2 uppercase tracking-wider space-y-0.5">
+                            {selectedDistinction !== 'All Distinctions' && (
+                              <div>• {selectedDistinction}</div>
+                            )}
+                            {selectedCuisine !== 'All Cuisines' && (
+                              <div>• Cuisine: {selectedCuisine}</div>
+                            )}
+                            {selectedPrice !== 'All Prices' && (
+                              <div>• Price: {selectedPrice}</div>
+                            )}
+                            {selectedCity !== 'All Cities' && (
+                              <div>• City: {selectedCity}</div>
+                            )}
+                            {searchQuery && (
+                              <div className="truncate">• Search: "{searchQuery}"</div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="border-t border-white/10 pt-2 flex items-center justify-between mt-1">
+                        <span className="text-[9px] font-mono text-amber-300 font-bold uppercase tracking-wider">
+                          {hasActiveFilters ? `${filteredCount} / ${totalItems} Matches` : `${totalItems} Gourmet Spots`}
+                        </span>
+                        <span className="text-[9px] font-mono text-neutral-400 flex items-center gap-1 font-bold">
+                          INSPECT AREA →
+                        </span>
+                      </div>
                     </div>
                   </div>
 

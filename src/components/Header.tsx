@@ -9,7 +9,25 @@ interface HeaderProps {
   setSelectedCity: (city: string) => void;
   onOpenConcierge: () => void;
   savedCount: number;
+  pagesConfig?: any[];
 }
+
+const iconsMap: Record<string, any> = {
+  Compass,
+  MapPin,
+  Grid,
+  Coffee,
+  Flame,
+  Store,
+  Navigation,
+  Calendar,
+  Gift,
+  Music,
+  BookOpen,
+  Sparkles,
+  Lock,
+  Info
+};
 
 export default function Header({
   activeTab,
@@ -19,7 +37,8 @@ export default function Header({
   selectedCity,
   setSelectedCity,
   onOpenConcierge,
-  savedCount
+  savedCount,
+  pagesConfig
 }: HeaderProps) {
   const cities = ['All Cities', 'Beirut', 'Byblos', 'Batroun', 'Tripoli'];
 
@@ -86,205 +105,259 @@ export default function Header({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center justify-between gap-4 py-3">
           {/* Primary View Selector Tabs */}
           <nav className="flex space-x-1.5 overflow-x-auto pb-1.5 md:pb-0 scrollbar-none flex-1 max-w-full" aria-label="Tabs">
-            <button
-              id="tab-discovery"
-              onClick={() => setActiveTab('discovery')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
-                activeTab === 'discovery'
-                  ? 'bg-emerald-750 bg-emerald-700 text-white shadow-sm font-semibold'
-                  : 'text-emerald-900 hover:text-emerald-950 hover:bg-emerald-100/60'
-              }`}
-            >
-              <Compass className="w-3.5 h-3.5" />
-              <span>Explore Restaurants</span>
-            </button>
+            {pagesConfig && pagesConfig.length > 0 ? (
+              pagesConfig
+                .filter((p: any) => p.active)
+                .map((p: any) => {
+                  const LucideIcon = iconsMap[p.icon] || Compass;
 
-            <button
-              id="tab-neighborhoods"
-              onClick={() => setActiveTab('neighborhoods')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
-                activeTab === 'neighborhoods'
-                  ? 'bg-emerald-700 text-white shadow-sm font-semibold'
-                  : 'text-emerald-900 hover:text-emerald-950 hover:bg-emerald-100/60'
-              }`}
-            >
-              <MapPin className="w-3.5 h-3.5 text-amber-500" />
-              <span>Neighborhoods</span>
-            </button>
-
-            {/* DEDICATED NEW TAB: ZAYTOUNADA CATALOGUE (Moved from homepage as requested) */}
-            <button
-              id="tab-catalogue"
-              onClick={() => {
-                setActiveTab('discovery');
-                setTimeout(() => {
-                  const el = document.getElementById('lebanese-hero-sliders');
-                  if (el) {
-                    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  // Keep specific catalogue click modifier intact
+                  if (p.id === 'catalogue') {
+                    return (
+                      <button
+                        key={p.id}
+                        id="tab-catalogue"
+                        onClick={() => {
+                          setActiveTab('discovery');
+                          setTimeout(() => {
+                            const el = document.getElementById('lebanese-hero-sliders');
+                            if (el) {
+                              el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }
+                          }, 100);
+                        }}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer text-emerald-800 hover:text-neutral-900 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/40`}
+                      >
+                        <Grid className="w-3.5 h-3.5 text-emerald-850 font-black" />
+                        <span>{p.label}</span>
+                      </button>
+                    );
                   }
-                }, 100);
-              }}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer text-emerald-800 hover:text-neutral-900 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/40`}
-            >
-              <Grid className="w-3.5 h-3.5 text-emerald-850 font-black" />
-              <span>Zaytounada Catalogue</span>
-            </button>
 
-            <button
-              id="tab-pubs-cafes"
-              onClick={() => setActiveTab('pubs-cafes')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
-                activeTab === 'pubs-cafes'
-                  ? 'bg-emerald-700 text-white shadow-sm font-semibold'
-                  : 'text-emerald-950 hover:text-emerald-950 hover:bg-emerald-105/50 hover:bg-emerald-100/60'
-              }`}
-            >
-              <Coffee className="w-3.5 h-3.5 text-amber-550" />
-              <span>Pubs & Cafes</span>
-            </button>
+                  // Handle normal page tabs
+                  return (
+                    <button
+                      key={p.id}
+                      id={`tab-${p.id}`}
+                      onClick={() => setActiveTab(p.id)}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
+                        activeTab === p.id
+                          ? p.id === 'admin'
+                            ? 'bg-neutral-900 border border-amber-350 text-amber-350 shadow-md font-bold'
+                            : p.id === 'get-started'
+                              ? 'bg-gradient-to-r from-emerald-800 to-amber-500 text-emerald-950 font-bold border border-amber-300'
+                              : 'bg-emerald-700 text-white shadow-sm font-semibold'
+                          : 'text-emerald-900 hover:text-emerald-950 hover:bg-emerald-100/60'
+                      }`}
+                    >
+                      <LucideIcon className={`w-3.5 h-3.5 ${p.id === 'admin' ? '' : p.id === 'vibes' ? 'text-amber-500' : p.id === 'pubs-cafes' ? 'text-amber-550' : 'text-emerald-700'}`} />
+                      <span>{p.label}</span>
+                    </button>
+                  );
+                })
+            ) : (
+              <>
+                <button
+                  id="tab-discovery"
+                  onClick={() => setActiveTab('discovery')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
+                    activeTab === 'discovery'
+                      ? 'bg-emerald-755 bg-emerald-700 text-white shadow-sm font-semibold'
+                      : 'text-emerald-900 hover:text-emerald-950 hover:bg-emerald-100/60'
+                  }`}
+                >
+                  <Compass className="w-3.5 h-3.5" />
+                  <span>Explore Restaurants</span>
+                </button>
 
-            <button
-              id="tab-vibes"
-              onClick={() => setActiveTab('vibes')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
-                activeTab === 'vibes'
-                  ? 'bg-emerald-700 text-white shadow-sm font-semibold'
-                  : 'text-emerald-950 hover:text-emerald-950 hover:bg-emerald-100/60'
-              }`}
-            >
-              <Flame className="w-3.5 h-3.5 text-amber-500" />
-              <span>Lebanese Vibes</span>
-            </button>
+                <button
+                  id="tab-neighborhoods"
+                  onClick={() => setActiveTab('neighborhoods')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
+                    activeTab === 'neighborhoods'
+                      ? 'bg-emerald-700 text-white shadow-sm font-semibold'
+                      : 'text-emerald-900 hover:text-emerald-950 hover:bg-emerald-100/60'
+                  }`}
+                >
+                  <MapPin className="w-3.5 h-3.5 text-amber-500" />
+                  <span>Neighborhoods</span>
+                </button>
 
-            <button
-              id="tab-takeaways-bakeries"
-              onClick={() => setActiveTab('takeaways-bakeries')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
-                activeTab === 'takeaways-bakeries'
-                  ? 'bg-emerald-700 text-white shadow-sm font-semibold'
-                  : 'text-emerald-955 hover:text-emerald-950 hover:bg-emerald-100/60'
-              }`}
-            >
-              <Store className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Bakeries & Produce</span>
-            </button>
+                {/* DEDICATED NEW TAB: ZAYTOUNADA CATALOGUE */}
+                <button
+                  id="tab-catalogue"
+                  onClick={() => {
+                    setActiveTab('discovery');
+                    setTimeout(() => {
+                      const el = document.getElementById('lebanese-hero-sliders');
+                      if (el) {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      }
+                    }, 100);
+                  }}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer text-emerald-800 hover:text-neutral-900 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/40`}
+                >
+                  <Grid className="w-3.5 h-3.5 text-emerald-850 font-black" />
+                  <span>Zaytounada Catalogue</span>
+                </button>
 
-            <button
-              id="tab-curation-explorer"
-              onClick={() => setActiveTab('curation-explorer')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
-                activeTab === 'curation-explorer'
-                  ? 'bg-emerald-700 text-white shadow-sm font-semibold'
-                  : 'text-emerald-955 hover:text-emerald-950 hover:bg-emerald-100/60'
-              }`}
-            >
-              <Compass className="w-3.5 h-3.5 text-amber-600" />
-              <span>Curation Guide</span>
-            </button>
+                <button
+                  id="tab-pubs-cafes"
+                  onClick={() => setActiveTab('pubs-cafes')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
+                    activeTab === 'pubs-cafes'
+                      ? 'bg-emerald-700 text-white shadow-sm font-semibold'
+                      : 'text-emerald-950 hover:text-emerald-955 hover:bg-emerald-100/60'
+                  }`}
+                >
+                  <Coffee className="w-3.5 h-3.5 text-amber-550" />
+                  <span>Pubs & Cafes</span>
+                </button>
 
-            <button
-              id="tab-map"
-              onClick={() => setActiveTab('map')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
-                activeTab === 'map'
-                  ? 'bg-emerald-700 text-white shadow-sm font-semibold'
-                  : 'text-emerald-955 hover:text-emerald-950 hover:bg-emerald-100/60'
-              }`}
-            >
-              <Navigation className="w-3.5 h-3.5 text-neutral-500" />
-              <span>Gastronomic Map</span>
-            </button>
+                <button
+                  id="tab-vibes"
+                  onClick={() => setActiveTab('vibes')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
+                    activeTab === 'vibes'
+                      ? 'bg-emerald-700 text-white shadow-sm font-semibold'
+                      : 'text-emerald-955 hover:text-emerald-950 hover:bg-emerald-100/60'
+                  }`}
+                >
+                  <Flame className="w-3.5 h-3.5 text-amber-500" />
+                  <span>Lebanese Vibes</span>
+                </button>
 
-            <button
-              id="tab-plan-dining"
-              onClick={() => setActiveTab('plan-dining')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
-                activeTab === 'plan-dining'
-                  ? 'bg-emerald-700 text-white shadow-sm font-semibold border border-emerald-600/35'
-                  : 'text-emerald-955 hover:text-emerald-950 hover:bg-emerald-100/60'
-              }`}
-            >
-              <Calendar className="w-3.5 h-3.5 text-emerald-700" />
-              <span>Plan My Dining</span>
-            </button>
+                <button
+                  id="tab-takeaways-bakeries"
+                  onClick={() => setActiveTab('takeaways-bakeries')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
+                    activeTab === 'takeaways-bakeries'
+                      ? 'bg-emerald-700 text-white shadow-sm font-semibold'
+                      : 'text-emerald-955 hover:text-emerald-950 hover:bg-emerald-100/60'
+                  }`}
+                >
+                  <Store className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Bakeries & Produce</span>
+                </button>
 
-            <button
-              id="tab-gift-cards"
-              onClick={() => setActiveTab('gift-cards')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
-                activeTab === 'gift-cards'
-                  ? 'bg-emerald-700 text-white shadow-sm font-semibold'
-                  : 'text-emerald-955 hover:text-emerald-950 hover:bg-emerald-100/60'
-              }`}
-            >
-              <Gift className="w-3.5 h-3.5 text-amber-600" />
-              <span>Gift Vouchers</span>
-            </button>
+                <button
+                  id="tab-curation-explorer"
+                  onClick={() => setActiveTab('curation-explorer')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
+                    activeTab === 'curation-explorer'
+                      ? 'bg-emerald-700 text-white shadow-sm font-semibold'
+                      : 'text-emerald-955 hover:text-emerald-950 hover:bg-emerald-100/60'
+                  }`}
+                >
+                  <Compass className="w-3.5 h-3.5 text-amber-600" />
+                  <span>Curation Guide</span>
+                </button>
 
-            <button
-              id="tab-live-shows"
-              onClick={() => setActiveTab('live-shows')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
-                activeTab === 'live-shows'
-                  ? 'bg-emerald-700 text-white shadow-sm font-semibold'
-                  : 'text-emerald-955 hover:text-emerald-955 hover:bg-emerald-100/60'
-              }`}
-            >
-              <Music className="w-3.5 h-3.5 text-emerald-800" />
-              <span>Live Shows</span>
-            </button>
+                <button
+                  id="tab-map"
+                  onClick={() => setActiveTab('map')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
+                    activeTab === 'map'
+                      ? 'bg-emerald-700 text-white shadow-sm font-semibold'
+                      : 'text-emerald-955 hover:text-emerald-950 hover:bg-emerald-100/60'
+                  }`}
+                >
+                  <Navigation className="w-3.5 h-3.5 text-neutral-500" />
+                  <span>Gastronomic Map</span>
+                </button>
 
-            <button
-              id="tab-magazine"
-              onClick={() => setActiveTab('magazine')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
-                activeTab === 'magazine'
-                  ? 'bg-emerald-700 text-white shadow-sm'
-                  : 'text-emerald-955 hover:text-emerald-950 hover:bg-emerald-100/60'
-              }`}
-            >
-              <BookOpen className="w-3.5 h-3.5 text-neutral-500" />
-              <span>Editorial Magazine</span>
-            </button>
+                <button
+                  id="tab-plan-dining"
+                  onClick={() => setActiveTab('plan-dining')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
+                    activeTab === 'plan-dining'
+                      ? 'bg-emerald-700 text-white shadow-sm font-semibold'
+                      : 'text-emerald-955 hover:text-emerald-950 hover:bg-emerald-100/60'
+                  }`}
+                >
+                  <Calendar className="w-3.5 h-3.5 text-emerald-700" />
+                  <span>Plan My Dining</span>
+                </button>
 
-            <button
-              id="tab-my-guide"
-              onClick={() => setActiveTab('my-guide')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
-                activeTab === 'my-guide'
-                  ? 'bg-emerald-700 text-white shadow-sm font-semibold'
-                  : 'text-emerald-955 hover:text-emerald-955 hover:bg-emerald-100/60'
-              }`}
-            >
-              <Sparkles className="w-3.5 h-3.5 text-amber-550" />
-              <span>Itineraries</span>
-            </button>
+                <button
+                  id="tab-gift-cards"
+                  onClick={() => setActiveTab('gift-cards')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
+                    activeTab === 'gift-cards'
+                      ? 'bg-emerald-700 text-white shadow-sm font-semibold'
+                      : 'text-emerald-955 hover:text-emerald-955 hover:bg-emerald-100/60'
+                  }`}
+                >
+                  <Gift className="w-3.5 h-3.5 text-amber-600" />
+                  <span>Gift Vouchers</span>
+                </button>
 
-            <button
-              id="tab-admin"
-              onClick={() => setActiveTab('admin')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
-                activeTab === 'admin'
-                  ? 'bg-neutral-900 border border-amber-350 text-amber-350 shadow-md font-bold'
-                  : 'text-neutral-500 hover:text-neutral-950 hover:bg-neutral-100'
-              }`}
-            >
-              <Lock className="w-3.5 h-3.5" />
-              <span>Admin Lockbox</span>
-            </button>
+                <button
+                  id="tab-live-shows"
+                  onClick={() => setActiveTab('live-shows')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
+                    activeTab === 'live-shows'
+                      ? 'bg-emerald-700 text-white shadow-sm font-semibold'
+                      : 'text-emerald-955 hover:text-emerald-955 hover:bg-emerald-100/60'
+                  }`}
+                >
+                  <Music className="w-3.5 h-3.5 text-emerald-800" />
+                  <span>Live Shows</span>
+                </button>
 
-            <button
-              id="tab-get-started"
-              onClick={() => setActiveTab('get-started')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
-                activeTab === 'get-started'
-                  ? 'bg-gradient-to-r from-emerald-800 to-amber-500 text-emerald-950 font-bold border border-amber-300'
-                  : 'text-emerald-800 hover:text-emerald-900 hover:bg-emerald-100/60 font-medium'
-              }`}
-            >
-              <Info className="w-3.5 h-3.5" />
-              <span>Get Started</span>
-            </button>
+                <button
+                  id="tab-magazine"
+                  onClick={() => setActiveTab('magazine')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
+                    activeTab === 'magazine'
+                      ? 'bg-emerald-700 text-white shadow-sm'
+                      : 'text-emerald-955 hover:text-emerald-950 hover:bg-emerald-100/60'
+                  }`}
+                >
+                  <BookOpen className="w-3.5 h-3.5 text-neutral-500" />
+                  <span>Editorial Magazine</span>
+                </button>
+
+                <button
+                  id="tab-my-guide"
+                  onClick={() => setActiveTab('my-guide')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
+                    activeTab === 'my-guide'
+                      ? 'bg-emerald-700 text-white shadow-sm font-semibold'
+                      : 'text-emerald-955 hover:text-emerald-955 hover:bg-emerald-100/60'
+                  }`}
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-amber-550" />
+                  <span>Itineraries</span>
+                </button>
+
+                <button
+                  id="tab-admin"
+                  onClick={() => setActiveTab('admin')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
+                    activeTab === 'admin'
+                      ? 'bg-neutral-900 border border-amber-350 text-amber-350 shadow-md font-bold'
+                      : 'text-neutral-550 hover:text-neutral-950 hover:bg-neutral-100'
+                  }`}
+                >
+                  <Lock className="w-3.5 h-3.5" />
+                  <span>Admin Lockbox</span>
+                </button>
+
+                <button
+                  id="tab-get-started"
+                  onClick={() => setActiveTab('get-started')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
+                    activeTab === 'get-started'
+                      ? 'bg-gradient-to-r from-emerald-800 to-amber-500 text-emerald-950 font-bold border border-amber-300'
+                      : 'text-emerald-800 hover:text-emerald-900 hover:bg-emerald-100/60 font-medium'
+                  }`}
+                >
+                  <Info className="w-3.5 h-3.5" />
+                  <span>Get Started</span>
+                </button>
+              </>
+            )}
           </nav>
 
           {/* Quick Filter Controls for Discovery and Map tab in Emerald and Gold theme */}

@@ -1,12 +1,32 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Article } from '../types';
-import { ARTICLES } from '../data/restaurants';
+import { ARTICLES as staticArticles } from '../data/restaurants';
 import { BookOpen, Calendar, User, ArrowLeft, Clock, Share2, Award, Heart, Scroll } from 'lucide-react';
 
 export default function MagazineView() {
+  const [articles, setArticles] = useState<Article[]>([]);
   const [selectedArticleId, setSelectedArticleId] = useState<string | null>(null);
 
-  const selectedArticle = ARTICLES.find(a => a.id === selectedArticleId);
+  useEffect(() => {
+    fetch('/api/articles')
+      .then(r => {
+        if (r.ok) return r.json();
+        throw new Error('Fallback');
+      })
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          setArticles(data);
+        } else {
+          setArticles(staticArticles);
+        }
+      })
+      .catch(() => {
+        setArticles(staticArticles);
+      });
+  }, []);
+
+  const currentArticles = articles.length > 0 ? articles : staticArticles;
+  const selectedArticle = currentArticles.find(a => a.id === selectedArticleId);
 
   // If article is selected, render editorial reading format
   if (selectedArticle) {
@@ -105,7 +125,7 @@ export default function MagazineView() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {ARTICLES.map((article) => (
+        {currentArticles.map((article) => (
           <div
             key={article.id}
             onClick={() => setSelectedArticleId(article.id)}
