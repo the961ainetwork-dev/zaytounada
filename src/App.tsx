@@ -18,7 +18,7 @@ import NeighborhoodsView from './components/NeighborhoodsView';
 import AdminDashboardView from './components/AdminDashboardView';
 import { Restaurant, SavedItinerary, Booking } from './types';
 import { RESTAURANTS } from './data/restaurants';
-import { Award, Compass, Heart, Award as AwardIcon, MapPin, Grid, Plus, Sparkles, BookOpen, Calendar, Star, Gift, ArrowRight, Share2 } from 'lucide-react';
+import { Award, Compass, Heart, Award as AwardIcon, MapPin, Grid, Plus, Sparkles, BookOpen, Calendar, Star, Gift, ArrowRight, Share2, Check } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>('discovery');
@@ -306,15 +306,35 @@ export default function App() {
                           e.stopPropagation();
                           handleShareNeighborhood(nb.id);
                         }}
-                        className="absolute top-2 left-2 z-30 bg-white/95 text-neutral-600 hover:text-emerald-800 px-1.5 py-1 rounded-md border border-neutral-200 shadow-xs transition-all hover:scale-105 active:scale-95 cursor-pointer flex items-center justify-center gap-1 font-mono hover:bg-neutral-50"
+                        className={`absolute top-2 left-2 z-30 px-1.5 py-1 rounded-md border shadow-xs transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer flex items-center justify-center gap-1 font-mono ${
+                          copiedNeighborhoodId === nb.id 
+                            ? 'bg-emerald-650 bg-emerald-600 text-white border-emerald-650 scale-105 shadow-md shadow-emerald-200' 
+                            : 'bg-white/95 text-neutral-600 hover:text-emerald-800 border-neutral-200 hover:bg-neutral-50'
+                        }`}
                         title={`Copy Share Link for ${nb.name}`}
                         id={`banner-tile-share-${nb.id}`}
                       >
-                        <Share2 className="w-3 h-3 text-emerald-600" />
-                        <span className="text-[7px] font-black uppercase tracking-wider text-emerald-800">
-                          {copiedNeighborhoodId === nb.id ? 'Copied' : 'Share'}
+                        {copiedNeighborhoodId === nb.id ? (
+                          <Check className="w-3 h-3 text-white stroke-[3px] animate-pulse" />
+                        ) : (
+                          <Share2 className="w-3 h-3 text-emerald-600" />
+                        )}
+                        <span className={`text-[7px] font-black uppercase tracking-wider ${
+                          copiedNeighborhoodId === nb.id ? 'text-white' : 'text-emerald-800'
+                        }`}>
+                          {copiedNeighborhoodId === nb.id ? 'Copied!' : 'Share'}
                         </span>
                       </button>
+
+                      {/* Immediate Float-up Visual Feedback Toast Layer (z-30) */}
+                      {copiedNeighborhoodId === nb.id && (
+                        <div className="absolute inset-x-2 top-11 z-30 flex justify-center animate-[bounce_1s_infinite]">
+                          <div className="bg-emerald-950/95 text-white text-[8px] font-mono tracking-wider px-2 py-1 rounded-md border border-emerald-500/30 shadow-lg flex items-center gap-1 font-bold uppercase backdrop-blur-sm">
+                            <Check className="w-2.5 h-2.5 text-emerald-400 stroke-[3px]" />
+                            <span>Link Copied!</span>
+                          </div>
+                        </div>
+                      )}
 
                       <div className="absolute bottom-3 left-3 right-3 text-left">
                         <span className="text-[8px] font-mono text-amber-300 font-bold uppercase tracking-wider block">

@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Restaurant } from '../types';
 import { RESTAURANTS } from '../data/restaurants';
-import { MapPin, ArrowLeft, Star, Compass, Table, Eye, DollarSign, Calendar, Heart, Share2, Award, Sparkles, Building, Footprints } from 'lucide-react';
+import { MapPin, ArrowLeft, Star, Compass, Table, Eye, DollarSign, Calendar, Heart, Share2, Award, Sparkles, Building, Footprints, Check } from 'lucide-react';
 
 interface NeighborhoodsViewProps {
   onSelectRestaurant: (restaurant: Restaurant) => void;
@@ -353,13 +353,33 @@ export default function NeighborhoodsView({
 
                       <button
                         onClick={(e) => handleShare(n.id, e)}
-                        className="bg-white/95 text-neutral-600 hover:text-emerald-800 px-2.5 py-1.5 rounded-lg text-[9px] font-bold tracking-wider border border-neutral-200 flex items-center gap-1.5 hover:bg-neutral-50 shadow-sm transition-all hover:scale-105 active:scale-95 cursor-pointer uppercase select-none font-mono"
+                        className={`px-2.5 py-1.5 rounded-lg text-[9px] font-bold tracking-wider border flex items-center gap-1.5 shadow-sm transition-all duration-305 hover:scale-105 active:scale-95 cursor-pointer uppercase select-none font-mono ${
+                          copiedId === n.id 
+                            ? 'bg-emerald-600 text-white border-emerald-600 px-2.5 shadow-md shadow-emerald-250' 
+                            : 'bg-white/95 text-neutral-600 hover:text-emerald-800 border-neutral-200 hover:bg-neutral-50'
+                        }`}
                         title={`Copy Share Link for ${n.name}`}
                         id={`btn-share-${n.id}`}
                       >
-                        <Share2 className="w-3.5 h-3.5 text-emerald-600" />
-                        <span>{copiedId === n.id ? 'Copied' : 'Share'}</span>
+                        {copiedId === n.id ? (
+                          <Check className="w-3.5 h-3.5 text-white stroke-[3px] animate-pulse" />
+                        ) : (
+                          <Share2 className="w-3.5 h-3.5 text-emerald-600" />
+                        )}
+                        <span className={copiedId === n.id ? 'text-white font-black' : ''}>
+                          {copiedId === n.id ? 'Copied!' : 'Share'}
+                        </span>
                       </button>
+
+                      {/* Immediate Float-up Visual Feedback Toast Layer (z-20) */}
+                      {copiedId === n.id && (
+                        <div className="absolute inset-x-4 top-16 z-20 flex justify-center animate-[bounce_1s_infinite]">
+                          <div className="bg-emerald-950/95 text-white text-[10px] font-mono tracking-wider px-3.5 py-2 rounded-full border border-emerald-500/30 shadow-lg flex items-center gap-1.5 font-bold uppercase backdrop-blur-sm">
+                            <Check className="w-3.5 h-3.5 text-emerald-400 stroke-[3px]" />
+                            <span>District Link Copied!</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     <div className="absolute bottom-4 left-4 text-left">
