@@ -100,11 +100,12 @@ async function startServer() {
   app.use(express.json());
 
   // Redirect any direct /admin browser page accesses to serverless-friendly /#admin to prevent CDN/Hosting 404 errors
-  app.get("/admin", (req, res) => {
-    res.redirect(302, "/#admin");
-  });
-  app.get("/admin/", (req, res) => {
-    res.redirect(302, "/#admin");
+  app.use((req, res, next) => {
+    const urlPath = req.path.toLowerCase();
+    if (urlPath === "/admin" || urlPath === "/admin/" || urlPath.startsWith("/admin/")) {
+      return res.redirect(302, "/#admin");
+    }
+    next();
   });
 
   // --- RESTAURANTS REST API ENDPOINTS ---
