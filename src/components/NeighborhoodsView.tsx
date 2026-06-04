@@ -9,6 +9,7 @@ interface NeighborhoodsViewProps {
   onToggleSave: (id: string, e: React.MouseEvent) => void;
   // Deep-link to selected neighborhood on homepage click
   initialSelectedNeighborhood?: string;
+  onViewOnMap?: (neighborhoodId: string, city: string) => void;
 }
 
 interface NeighborhoodData {
@@ -30,7 +31,7 @@ interface NeighborhoodData {
   localStreets: { name: string; path: string; isMain?: boolean }[];
 }
 
-const NEIGHBORHOODS: NeighborhoodData[] = [
+export const NEIGHBORHOODS: NeighborhoodData[] = [
   {
     id: 'hamra',
     name: 'Hamra',
@@ -181,11 +182,47 @@ export default function NeighborhoodsView({
   onSelectRestaurant,
   savedRestaurantIds,
   onToggleSave,
-  initialSelectedNeighborhood
+  initialSelectedNeighborhood,
+  onViewOnMap
 }: NeighborhoodsViewProps) {
   const [selectedNeighborhoodId, setSelectedNeighborhoodId] = useState<'hamra' | 'mar_mikhael' | 'sassine' | 'sodeco' | 'badaro' | 'antelias' | null>(
     (initialSelectedNeighborhood as any) || null
   );
+
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (initialSelectedNeighborhood) {
+      setSelectedNeighborhoodId(initialSelectedNeighborhood as any);
+    }
+  }, [initialSelectedNeighborhood]);
+
+  const handleShare = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const shareUrl = `${window.location.origin}${window.location.pathname}?tab=neighborhoods&neighborhood=${id}`;
+    
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(shareUrl).then(() => {
+          setCopiedId(id);
+          setTimeout(() => setCopiedId(null), 2000);
+        });
+      } else {
+        const textArea = document.createElement("textarea");
+        textArea.value = shareUrl;
+        textArea.style.position = "fixed";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        setCopiedId(id);
+        setTimeout(() => setCopiedId(null), 2000);
+      }
+    } catch (err) {
+      console.error("Clipboard copy failed:", err);
+    }
+  };
   
   const [activeSpecialty, setActiveSpecialty] = useState<string>('All');
   const [hoveredRestaurantId, setHoveredRestaurantId] = useState<string | null>(null);
@@ -274,6 +311,10 @@ export default function NeighborhoodsView({
             {NEIGHBORHOODS.map((n) => {
               // Get restaurant representative items
               const totalItems = RESTAURANTS.filter(r => r.neighborhood === n.id).length;
+              const starredCount = RESTAURANTS.filter(r => r.neighborhood === n.id && r.stars > 0).length;
+              const bibCount = RESTAURANTS.filter(r => r.neighborhood === n.id && r.distinction === 'BIB_GOURMAND').length;
+              const recommendedCount = RESTAURANTS.filter(r => r.neighborhood === n.id && r.distinction === 'SELECTED').length;
+
               return (
                 <div
                   key={n.id}
@@ -292,6 +333,35 @@ export default function NeighborhoodsView({
                       referrerPolicy="no-referrer"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                    
+                    {/* FLOATING ACTION OVERLAYS: VIEW ON MAP & SHARE DIRECT LINK */}
+                    <div className="absolute top-4 left-4 z-10 flex gap-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (onViewOnMap) {
+                            onViewOnMap(n.id, n.id === 'antelias' ? 'Antelias' : 'Beirut');
+                          }
+                        }}
+                        className="bg-white/95 text-emerald-800 hover:text-emerald-950 px-2.5 py-1.5 rounded-lg text-[9px] font-bold tracking-wider border border-neutral-200 flex items-center gap-1.5 hover:bg-neutral-50 shadow-sm transition-all hover:scale-105 active:scale-95 cursor-pointer uppercase select-none font-mono"
+                        title={`Locate ${n.name} on the Map`}
+                        id={`btn-map-locate-${n.id}`}
+                      >
+                        <MapPin className="w-3.5 h-3.5 text-red-600 fill-red-100/50" />
+                        <span>View on Map</span>
+                      </button>
+
+                      <button
+                        onClick={(e) => handleShare(n.id, e)}
+                        className="bg-white/95 text-neutral-600 hover:text-emerald-800 px-2.5 py-1.5 rounded-lg text-[9px] font-bold tracking-wider border border-neutral-200 flex items-center gap-1.5 hover:bg-neutral-50 shadow-sm transition-all hover:scale-105 active:scale-95 cursor-pointer uppercase select-none font-mono"
+                        title={`Copy Share Link for ${n.name}`}
+                        id={`btn-share-${n.id}`}
+                      >
+                        <Share2 className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>{copiedId === n.id ? 'Copied' : 'Share'}</span>
+                      </button>
+                    </div>
+
                     <div className="absolute bottom-4 left-4 text-left">
                       <span className="text-[10px] font-mono text-amber-400 font-bold uppercase tracking-[0.2em] block">
                         {n.arabicName}
@@ -313,15 +383,15 @@ export default function NeighborhoodsView({
                     <div className="flex gap-2.5">
                       <div className="flex-1 p-2 bg-neutral-50 border border-neutral-100 rounded-lg text-center">
                         <span className="text-[10px] font-mono text-neutral-400 uppercase tracking-wider block">Starred</span>
-                        <span className="text-sm font-black text-emerald-800">{n.stats.starred > 0 ? `✻ ${n.stats.starred}` : '0'}</span>
+                        <span className="text-sm font-black text-emerald-800">{starredCount > 0 ? `✻ ${starredCount}` : '0'}</span>
                       </div>
                       <div className="flex-1 p-2 bg-neutral-50 border border-neutral-100 rounded-lg text-center">
                         <span className="text-[10px] font-mono text-neutral-400 uppercase tracking-wider block">Bibs</span>
-                        <span className="text-sm font-black text-emerald-800">{n.stats.bib > 0 ? `☺ ${n.stats.bib}` : '0'}</span>
+                        <span className="text-sm font-black text-emerald-800">{bibCount > 0 ? `☺ ${bibCount}` : '0'}</span>
                       </div>
                       <div className="flex-1 p-2 bg-neutral-50 border border-neutral-100 rounded-lg text-center">
                         <span className="text-[10px] font-mono text-neutral-400 uppercase tracking-wider block">Selected</span>
-                        <span className="text-sm font-black text-emerald-800">{n.stats.recommended}</span>
+                        <span className="text-sm font-black text-emerald-850 text-emerald-800">{recommendedCount}</span>
                       </div>
                     </div>
 
@@ -361,6 +431,21 @@ export default function NeighborhoodsView({
             </div>
             <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/70 to-transparent" />
             
+            {/* FLOATING CORNER INTERACTIVE MAP DEEPLINK */}
+            <button
+              onClick={() => {
+                if (onViewOnMap) {
+                  onViewOnMap(selectedNeighborhood.id, selectedNeighborhood.id === 'antelias' ? 'Antelias' : 'Beirut');
+                }
+              }}
+              className="absolute top-6 right-6 z-20 bg-emerald-700/90 hover:bg-emerald-800 border border-white/20 text-white backdrop-blur-md px-4 py-2.5 rounded-full text-xs font-bold tracking-wider flex items-center gap-2 hover:scale-105 active:scale-95 shadow-lg transition-all cursor-pointer uppercase select-none font-sans"
+              title={`Locate ${selectedNeighborhood.name} on map`}
+              id={`btn-map-locate-header-${selectedNeighborhood.id}`}
+            >
+              <Compass className="w-4 h-4 text-amber-300 animate-spin-slow" />
+              <span>Locate on Map</span>
+            </button>
+
             <div className="relative p-8 md:p-12 space-y-5 max-w-4xl text-left z-10">
               <div className="flex items-center gap-3">
                 <span className="bg-amber-400 text-emerald-950 text-[10px] uppercase font-mono font-black px-3.5 py-1.5 rounded-full flex items-center gap-1 shadow">

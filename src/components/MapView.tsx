@@ -1,22 +1,56 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Restaurant } from '../types';
 import { RESTAURANTS } from '../data/restaurants';
-import { Award, Navigation, Star, Compass, Table, Eye, DollarSign, Locate, RefreshCw, Map, Globe, Ruler } from 'lucide-react';
+import { Award, Navigation, Star, Compass, Table, Eye, DollarSign, Locate, RefreshCw, Map, Globe, Ruler, MapPin } from 'lucide-react';
+import { NEIGHBORHOODS } from './NeighborhoodsView';
 
 interface MapViewProps {
   selectedCity: string;
   setSelectedCity: (city: string) => void;
   onSelectRestaurant: (restaurant: Restaurant) => void;
+  focusedNeighborhoodId?: string | null;
+  onClearFocusedNeighborhood?: () => void;
 }
 
 export default function MapView({
   selectedCity,
   setSelectedCity,
-  onSelectRestaurant
+  onSelectRestaurant,
+  focusedNeighborhoodId = null,
+  onClearFocusedNeighborhood
 }: MapViewProps) {
   const [activePinId, setActivePinId] = useState<string | null>(null);
   const [showGrid, setShowGrid] = useState(true);
   const [mapMode, setMapMode] = useState<'street' | 'satellite'>('street');
+
+  // Dynamic neighborhood center-point coordinate evaluation on the 2D grid matrix
+  const neighborhoodCenter = useMemo(() => {
+    if (!focusedNeighborhoodId) return null;
+    const matches = RESTAURANTS.filter(r => r.neighborhood === focusedNeighborhoodId);
+    if (matches.length === 0) return null;
+    const avgX = matches.reduce((sum, r) => sum + r.coordinates.x, 0) / matches.length;
+    const avgY = matches.reduce((sum, r) => sum + r.coordinates.y, 0) / matches.length;
+    return { x: avgX, y: avgY };
+  }, [focusedNeighborhoodId]);
+
+  // Automatically activate the first evaluation pin in the focused target neighborhood
+  useEffect(() => {
+    if (focusedNeighborhoodId) {
+      const matches = RESTAURANTS.filter(r => r.neighborhood === focusedNeighborhoodId);
+      if (matches.length > 0) {
+        setActivePinId(matches[0].id);
+      }
+    }
+  }, [focusedNeighborhoodId]);
+
+  // Clear focused neighborhood on unmount
+  useEffect(() => {
+    return () => {
+      if (onClearFocusedNeighborhood) {
+        onClearFocusedNeighborhood();
+      }
+    };
+  }, [onClearFocusedNeighborhood]);
 
   // Measurement tool states
   const [isMeasuring, setIsMeasuring] = useState(false);
@@ -106,6 +140,22 @@ export default function MapView({
             { cx: 55, cy: 60, rx: 12, ry: 10, label: "+65M" }
           ]
         };
+      case 'Antelias':
+        return {
+          bg: 'bg-neutral-50',
+          title: 'Antelias Coastal & Valley Map',
+          subtitle: 'Fawwar Spring River, Seaside Sunset Deck & Sweet Houses',
+          landmarks: [
+            { name: 'Mediterranean Sea', x: 20, y: 22, type: 'river' },
+            { name: 'Saint Elie Church', x: 65, y: 65 },
+            { name: 'Fawwar Spring River', x: 50, y: 45 },
+            { name: 'Coastal Harbor Front', x: 15, y: 30 }
+          ],
+          terrainContours: [
+            { cx: 80, cy: 55, rx: 36, ry: 28, label: "METN FOOTHILLS • +150M" },
+            { cx: 80, cy: 55, rx: 22, ry: 17, label: "+95M" }
+          ]
+        };
       default:
         return {
           bg: 'bg-neutral-50',
@@ -134,6 +184,7 @@ export default function MapView({
       case 'Byblos': return 28;
       case 'Batroun': return 18;
       case 'Tripoli': return 42;
+      case 'Antelias': return 25;
       default: return 35;
     }
   }, [currentCityForMap]);
@@ -248,6 +299,16 @@ export default function MapView({
             { name: 'Historic Grand Souk Alleys', x: 45, y: 48, w: 20, h: 15, color: 'bg-amber-100/30 border-amber-300/20 text-amber-805/85' }
           ]
         };
+      case 'Antelias':
+        return {
+          streets: [
+            { name: 'Fawwar Antelias Street', x1: 50, y1: 0, x2: 50, y2: 100 },
+            { name: 'Coastal Seaside Highway', x1: 0, y1: 30, x2: 100, y2: 30 }
+          ],
+          satelliteZones: [
+            { name: 'Saint Elie Church Square', x: 65, y: 62, w: 14, h: 10, color: 'bg-amber-100/30 border-amber-300/20 text-amber-805/85' }
+          ]
+        };
       default:
         return {
           streets: [
@@ -277,7 +338,7 @@ export default function MapView({
 
         {/* City Toggle Filters */}
         <div className="flex flex-wrap gap-2.5">
-          {['Beirut', 'Byblos', 'Batroun', 'Tripoli'].map((city) => (
+          {['Beirut', 'Byblos', 'Batroun', 'Tripoli', 'Antelias'].map((city) => (
             <button
               key={city}
               onClick={() => {
@@ -285,6 +346,9 @@ export default function MapView({
                 setActivePinId(null);
                 setMeasureStart(null);
                 setMeasureEnd(null);
+                if (onClearFocusedNeighborhood) {
+                  onClearFocusedNeighborhood();
+                }
               }}
               className={`px-4 py-2 text-xs font-semibold rounded cursor-pointer transition-all border ${
                 currentCityForMap === city
@@ -325,6 +389,9 @@ export default function MapView({
                   setActivePinId(null);
                   setMeasureStart(null);
                   setMeasureEnd(null);
+                  if (onClearFocusedNeighborhood) {
+                    onClearFocusedNeighborhood();
+                  }
                 }} 
                 className="flex items-center gap-1 hover:text-emerald-700 select-none cursor-pointer text-neutral-450 hover:text-neutral-900 transition-colors ml-auto font-bold"
               >
@@ -649,6 +716,28 @@ export default function MapView({
                 ⋄ {landmark.name}
               </div>
             ))}
+
+            {/* Highly Polished Pulsing Neighborhood Center Hub Spot Radar */}
+            {neighborhoodCenter && (
+              <div 
+                style={{ left: `${neighborhoodCenter.x}%`, top: `${neighborhoodCenter.y}%` }}
+                className="absolute -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none"
+              >
+                {/* Center targeting ring */}
+                <div className="w-5 h-5 bg-emerald-700/90 border-2 border-white rounded-full shadow-lg relative flex items-center justify-center">
+                  <span className="text-[9px] text-amber-300 font-extrabold font-serif">⋄</span>
+                  <div className="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-60" />
+                </div>
+                {/* Concentric expanding telemetry radar halos */}
+                <div className="w-16 h-16 rounded-full border-2 border-emerald-600/30 absolute -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2 animate-pulse scale-90" />
+                <div className="w-28 h-28 rounded-full border border-dashed border-emerald-500/25 absolute -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2 animate-spin-slow" />
+                
+                {/* Informative tactical locator tag */}
+                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2.5 bg-emerald-950/95 border border-amber-400/30 text-white backdrop-blur-md px-2.5 py-1 rounded text-[9px] font-mono tracking-widest font-black whitespace-nowrap shadow-md uppercase">
+                  ⚡ {NEIGHBORHOODS.find(n => n.id === focusedNeighborhoodId)?.name || 'District Center'}
+                </div>
+              </div>
+            )}
 
             {/* Geodesic Ruler Measurement SVG overlay */}
             {isMeasuring && measureStart && (

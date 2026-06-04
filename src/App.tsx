@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Header from './components/Header';
 import RestaurantCard from './components/RestaurantCard';
 import RestaurantDetailModal from './components/RestaurantDetailModal';
@@ -18,7 +18,7 @@ import NeighborhoodsView from './components/NeighborhoodsView';
 import AdminDashboardView from './components/AdminDashboardView';
 import { Restaurant, SavedItinerary, Booking } from './types';
 import { RESTAURANTS } from './data/restaurants';
-import { Award, Compass, Heart, Award as AwardIcon, MapPin, Grid, Plus, Sparkles, BookOpen, Calendar, Star, Gift, ArrowRight } from 'lucide-react';
+import { Award, Compass, Heart, Award as AwardIcon, MapPin, Grid, Plus, Sparkles, BookOpen, Calendar, Star, Gift, ArrowRight, Share2 } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>('discovery');
@@ -43,6 +43,38 @@ export default function App() {
   }, []);
 
   const [selectedNeighborhoodId, setSelectedNeighborhoodId] = useState<string | null>(null);
+  const [focusedNeighborhoodId, setFocusedNeighborhoodId] = useState<string | null>(null);
+  const [copiedNeighborhoodId, setCopiedNeighborhoodId] = useState<string | null>(null);
+
+  const handleShareNeighborhood = (id: string, e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation();
+    }
+    const shareUrl = `${window.location.origin}${window.location.pathname}?tab=neighborhoods&neighborhood=${id}`;
+    
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(shareUrl).then(() => {
+          setCopiedNeighborhoodId(id);
+          setTimeout(() => setCopiedNeighborhoodId(null), 2000);
+        });
+      } else {
+        const textArea = document.createElement("textarea");
+        textArea.value = shareUrl;
+        textArea.style.position = "fixed";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        setCopiedNeighborhoodId(id);
+        setTimeout(() => setCopiedNeighborhoodId(null), 2000);
+      }
+    } catch (err) {
+      console.error("Share copy failed:", err);
+    }
+  };
+
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCity, setSelectedCity] = useState<string>('All Cities');
   
@@ -87,6 +119,16 @@ export default function App() {
         if (found) {
           setSelectedRestaurant(found);
         }
+      }
+
+      const tabParam = params.get('tab');
+      if (tabParam) {
+        setActiveTab(tabParam);
+      }
+      const neighborhoodParam = params.get('neighborhood');
+      if (neighborhoodParam) {
+        setSelectedNeighborhoodId(neighborhoodParam);
+        setActiveTab('neighborhoods');
       }
     } catch (err) {
       console.error("Storage Mount & Deep-linking Loading error:", err);
@@ -238,41 +280,83 @@ export default function App() {
                   { id: 'sodeco', name: 'Sodeco', label: 'سوديكو', desc: 'Crossroads & Sandstone Estates', count: 6, bg: 'https://images.unsplash.com/photo-1541532713592-79a0317b6b77?auto=format&fit=crop&q=80&w=350' },
                   { id: 'badaro', name: 'Badaro', label: 'بدارو', desc: 'Leafy Terraces & Sidewalk Lunches', count: 3, bg: 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&q=80&w=350' },
                   { id: 'antelias', name: 'Antelias', label: 'أنطلياس', desc: 'Coastal Seafood Feasts', count: 2, bg: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&q=80&w=350' }
-                ].map((nb) => (
-                  <div
-                    key={nb.id}
-                    onClick={() => {
-                      setSelectedNeighborhoodId(nb.id);
-                      setActiveTab('neighborhoods');
-                    }}
-                    className="group relative h-40 rounded-2xl overflow-hidden border border-neutral-200 shadow-xs hover:shadow-lg hover:border-emerald-600/30 transition-all duration-300 transform hover:-translate-y-1 cursor-pointer text-left"
-                    id={`banner-tile-${nb.id}`}
-                  >
-                    <img
-                      src={nb.bg}
-                      alt={nb.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 saturate-110"
-                      referrerPolicy="no-referrer"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/45 to-transparent" />
-                    
-                    <div className="absolute bottom-3 left-3 right-3 text-left">
-                      <span className="text-[8px] font-mono text-amber-300 font-bold uppercase tracking-wider block">
-                        {nb.label}
-                      </span>
-                      <h4 className="font-serif text-sm font-bold text-white tracking-tight leading-tight mt-0.5 group-hover:text-amber-300 transition-colors">
-                        {nb.name}
-                      </h4>
-                      <p className="text-[8.5px] text-neutral-300 leading-none mt-1 truncate">
-                        {nb.desc}
-                      </p>
-                    </div>
+                ].map((nb) => {
+                  const dynamicCount = RESTAURANTS.filter(r => r.neighborhood === nb.id).length || nb.count;
+                  return (
+                    <div
+                      key={nb.id}
+                      onClick={() => {
+                        setSelectedNeighborhoodId(nb.id);
+                        setActiveTab('neighborhoods');
+                      }}
+                      className="group relative h-40 rounded-2xl overflow-hidden border border-neutral-200 shadow-xs hover:shadow-lg hover:border-emerald-600/30 transition-all duration-300 transform hover:-translate-y-1 cursor-pointer text-left"
+                      id={`banner-tile-${nb.id}`}
+                    >
+                      <img
+                        src={nb.bg}
+                        alt={nb.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 saturate-110"
+                        referrerPolicy="no-referrer"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/45 to-transparent" />
+                      
+                      {/* Floating Share Button widget with responsive micro-feedback states (placed at z-30 for active clickability) */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleShareNeighborhood(nb.id);
+                        }}
+                        className="absolute top-2 left-2 z-30 bg-white/95 text-neutral-600 hover:text-emerald-800 px-1.5 py-1 rounded-md border border-neutral-200 shadow-xs transition-all hover:scale-105 active:scale-95 cursor-pointer flex items-center justify-center gap-1 font-mono hover:bg-neutral-50"
+                        title={`Copy Share Link for ${nb.name}`}
+                        id={`banner-tile-share-${nb.id}`}
+                      >
+                        <Share2 className="w-3 h-3 text-emerald-600" />
+                        <span className="text-[7px] font-black uppercase tracking-wider text-emerald-800">
+                          {copiedNeighborhoodId === nb.id ? 'Copied' : 'Share'}
+                        </span>
+                      </button>
 
-                    <div className="absolute top-2 right-2 bg-emerald-950/90 text-white border border-white/5 backdrop-blur-md px-1.5 py-0.5 rounded text-[7.5px] font-mono font-bold tracking-widest">
-                      {nb.count} SPOTS
+                      <div className="absolute bottom-3 left-3 right-3 text-left">
+                        <span className="text-[8px] font-mono text-amber-300 font-bold uppercase tracking-wider block">
+                          {nb.label}
+                        </span>
+                        <h4 className="font-serif text-sm font-bold text-white tracking-tight leading-tight mt-0.5 group-hover:text-amber-300 transition-colors">
+                          {nb.name}
+                        </h4>
+                        <p className="text-[8.5px] text-neutral-300 leading-none mt-1 truncate">
+                          {nb.desc}
+                        </p>
+                      </div>
+
+                      <div className="absolute top-2 right-2 bg-emerald-950/90 text-white border border-white/5 backdrop-blur-md px-1.5 py-0.5 rounded text-[7.5px] font-mono font-bold tracking-widest z-10">
+                        {dynamicCount} SPOTS
+                      </div>
+
+                      {/* Editorial Interactive Hover Tooltip Overlay (z-20) */}
+                      <div className="absolute inset-0 bg-neutral-950/95 p-4 flex flex-col justify-between opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-20 text-left">
+                        <div className="space-y-1">
+                          <span className="text-[8px] font-mono text-emerald-400 font-extrabold uppercase tracking-widest block">
+                            ✻ NEIGHBORHOOD INSIGHT
+                          </span>
+                          <h4 className="font-serif text-sm font-bold text-white tracking-tight leading-tight">
+                            {nb.name} ({nb.label})
+                          </h4>
+                          <p className="text-[9px] text-neutral-300 leading-relaxed mt-1.5 font-sans">
+                            Explore {dynamicCount} exquisite dining spots, including historic bistros and local sourdough bakeries.
+                          </p>
+                        </div>
+                        <div className="border-t border-white/10 pt-2 flex items-center justify-between">
+                          <span className="text-[8px] font-mono text-amber-300 font-bold uppercase tracking-wider">
+                            {dynamicCount} Gourmet Spots
+                          </span>
+                          <span className="text-[8px] font-mono text-neutral-400 flex items-center gap-1 font-bold">
+                            EXPLORE AREA →
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
@@ -596,6 +680,11 @@ export default function App() {
               handleToggleSaveRestaurant(id);
             }}
             onSelectRestaurant={(rest) => setSelectedRestaurant(rest)}
+            onViewOnMap={(neighborhoodId, city) => {
+              setSelectedCity(city);
+              setFocusedNeighborhoodId(neighborhoodId);
+              setActiveTab('map');
+            }}
           />
         )}
 
@@ -649,6 +738,8 @@ export default function App() {
             selectedCity={selectedCity}
             setSelectedCity={setSelectedCity}
             onSelectRestaurant={(rest) => setSelectedRestaurant(rest)}
+            focusedNeighborhoodId={focusedNeighborhoodId}
+            onClearFocusedNeighborhood={() => setFocusedNeighborhoodId(null)}
           />
         )}
 
