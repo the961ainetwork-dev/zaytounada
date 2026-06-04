@@ -34,6 +34,9 @@ export default function App() {
     }
     return 'discovery';
   });
+  const [selectedNeighborhoodId, setSelectedNeighborhoodId] = useState<string | null>(null);
+  const [focusedNeighborhoodId, setFocusedNeighborhoodId] = useState<string | null>(null);
+  const [copiedNeighborhoodId, setCopiedNeighborhoodId] = useState<string | null>(null);
   const [restaurants, setRestaurants] = useState<Restaurant[]>(RESTAURANTS);
   const [pagesConfig, setPagesConfig] = useState<any[]>([]);
   const [siteSettings, setSiteSettings] = useState<any>({
@@ -100,28 +103,76 @@ export default function App() {
     }
   }, [activeTab]);
 
+  // Synchronize activeTab and selectedNeighborhoodId in the query parameters gracefully
+  useEffect(() => {
+    if (activeTab === 'admin') return;
+    try {
+      const url = new URL(window.location.href);
+      let changed = false;
+      
+      const currentTab = url.searchParams.get('tab');
+      if (activeTab !== 'discovery') {
+        if (currentTab !== activeTab) {
+          url.searchParams.set('tab', activeTab);
+          changed = true;
+        }
+      } else {
+        if (url.searchParams.has('tab')) {
+          url.searchParams.delete('tab');
+          changed = true;
+        }
+      }
+
+      const currentNb = url.searchParams.get('neighborhood');
+      if (activeTab === 'neighborhoods' && selectedNeighborhoodId) {
+        if (currentNb !== selectedNeighborhoodId) {
+          url.searchParams.set('neighborhood', selectedNeighborhoodId);
+          changed = true;
+        }
+      } else {
+        if (url.searchParams.has('neighborhood')) {
+          url.searchParams.delete('neighborhood');
+          changed = true;
+        }
+      }
+
+      if (changed) {
+        window.history.pushState(null, '', url.pathname + url.search);
+      }
+    } catch (err) {
+      console.error("Failed to sync URL parameters:", err);
+    }
+  }, [activeTab, selectedNeighborhoodId]);
+
   useEffect(() => {
     const handlePopState = () => {
       const path = window.location.pathname;
       if (path === '/admin' || path.startsWith('/admin/')) {
         setActiveTab('admin');
       } else {
-        setActiveTab(prev => prev === 'admin' ? 'discovery' : prev);
+        const params = new URLSearchParams(window.location.search);
+        const tabParam = params.get('tab');
+        const neighborhoodParam = params.get('neighborhood');
+        if (neighborhoodParam) {
+          setSelectedNeighborhoodId(neighborhoodParam);
+          setActiveTab('neighborhoods');
+        } else if (tabParam) {
+          setActiveTab(tabParam);
+        } else {
+          setActiveTab('discovery');
+        }
       }
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
-  const [selectedNeighborhoodId, setSelectedNeighborhoodId] = useState<string | null>(null);
-  const [focusedNeighborhoodId, setFocusedNeighborhoodId] = useState<string | null>(null);
-  const [copiedNeighborhoodId, setCopiedNeighborhoodId] = useState<string | null>(null);
-
   const handleShareNeighborhood = (id: string, e?: React.MouseEvent) => {
     if (e) {
       e.stopPropagation();
     }
-    const shareUrl = `${window.location.origin}${window.location.pathname}?tab=neighborhoods&neighborhood=${id}`;
+    const cleanPath = window.location.pathname === '/admin' ? '/' : window.location.pathname;
+    const shareUrl = `${window.location.origin}${cleanPath.endsWith('/') ? cleanPath : cleanPath + '/'}?tab=neighborhoods&neighborhood=${id}`;
     
     try {
       if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -434,26 +485,26 @@ export default function App() {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/45 to-transparent" />
                       
-                      {/* Floating Share Button widget with responsive micro-feedback states (placed at z-30 for active clickability) */}
+                      {/* Floating Share Button widget with responsive micro-feedback states (placed at z-35 for active clickability above any overlays) */}
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           handleShareNeighborhood(nb.id);
                         }}
-                        className={`absolute top-2 left-2 z-30 px-1.5 py-1 rounded-md border shadow-xs transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer flex items-center justify-center gap-1 font-mono ${
+                        className={`absolute top-2 left-2 z-35 px-2 py-1 rounded-md border text-[9px] font-medium shadow-xs transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer flex items-center justify-center gap-1 font-mono ${
                           copiedNeighborhoodId === nb.id 
-                            ? 'bg-emerald-650 bg-emerald-600 text-white border-emerald-650 scale-105 shadow-md shadow-emerald-200' 
+                            ? 'bg-emerald-600 border-emerald-600 text-white shadow-md shadow-emerald-900/20' 
                             : 'bg-white/95 text-neutral-600 hover:text-emerald-800 border-neutral-200 hover:bg-neutral-50'
                         }`}
                         title={`Copy Share Link for ${nb.name}`}
                         id={`banner-tile-share-${nb.id}`}
                       >
                         {copiedNeighborhoodId === nb.id ? (
-                          <Check className="w-3 h-3 text-white stroke-[3px] animate-pulse" />
+                          <Check className="w-3 h-3 text-white stroke-[3px]" />
                         ) : (
                           <Share2 className="w-3 h-3 text-emerald-600" />
                         )}
-                        <span className={`text-[7px] font-black uppercase tracking-wider ${
+                        <span className={`text-[8px] font-bold uppercase tracking-wider ${
                           copiedNeighborhoodId === nb.id ? 'text-white' : 'text-emerald-800'
                         }`}>
                           {copiedNeighborhoodId === nb.id ? 'Copied!' : 'Share'}

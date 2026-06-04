@@ -22,10 +22,10 @@ export const RESTAURANTS: Restaurant[] = [
       'Fattoush with Pomegranate: Crispy flatbread shards, fresh purslane, sumac, and rich molasses pomegranate dressing',
       'Kabab Karaz: Tender charcoal lamb skewers glazed in a sweet-and-sour wild mountain cherry reduction'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1541532713592-79a0317b6b77?auto=format&fit=crop&q=80&w=800',
+    imageUrl: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=800',
     images: [
-      'https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&q=80&w=800',
-      'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&q=80&w=800'
+      'https://images.unsplash.com/photo-1533777857889-4be7c70b33f7?auto=format&fit=crop&q=80&w=800',
+      'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=800'
     ],
     features: ['Live Traditional Oud Player', 'Opulent Oriental Decor', 'Ultra-Premium Ingredients', 'Sequential Feasting Ritual'],
     instagram: '@emsherifrestaurant',
