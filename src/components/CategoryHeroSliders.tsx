@@ -158,7 +158,7 @@ export default function CategoryHeroSliders({
           Inspectors <span className="font-bold text-emerald-800">Specialized Curation</span>
         </h2>
         <p className="text-sm text-neutral-500 font-light max-w-3xl leading-relaxed">
-          Embark on highly specialized gastronomical expeditions. Slide through seven distinct categories, meticulously vetted by anonymous Zaytouynda tasters. Each catalog layout is tailored to tell the unique story of the food style inside.
+          Embark on highly specialized gastronomical expeditions. Slide through seven distinct categories, meticulously vetted by anonymous Zaytounada tasters. Each catalog layout is tailored to tell the unique story of the food style inside.
         </p>
       </div>
 
@@ -640,7 +640,7 @@ export default function CategoryHeroSliders({
                     <div className="absolute top-3.5 left-3.5 bg-neutral-950/95 border border-amber-400 p-2 py-1.5 rounded-sm text-left shadow flex items-center gap-1">
                       <Award className="w-3.5 h-3.5 text-amber-400" />
                       <span className="text-[8px] font-mono text-amber-400 uppercase font-black tracking-widest">
-                        {m.stars > 0 ? `${m.stars} ZAYTOUYNDA STARS` : 'AUTHENTIFIED'}
+                        {m.stars > 0 ? `${m.stars} ZAYTOUNADA STARS` : 'AUTHENTIFIED'}
                       </span>
                     </div>
 

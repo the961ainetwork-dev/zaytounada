@@ -14,19 +14,42 @@ import LiveEntertainmentView from './components/LiveEntertainmentView';
 import CategoryHeroSliders from './components/CategoryHeroSliders';
 import SpecialtySectionView from './components/SpecialtySectionView';
 import HeroSlider from './components/HeroSlider';
+import NeighborhoodsView from './components/NeighborhoodsView';
+import AdminDashboardView from './components/AdminDashboardView';
 import { Restaurant, SavedItinerary, Booking } from './types';
 import { RESTAURANTS } from './data/restaurants';
 import { Award, Compass, Heart, Award as AwardIcon, MapPin, Grid, Plus, Sparkles, BookOpen, Calendar, Star, Gift, ArrowRight } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>('discovery');
+  const [restaurants, setRestaurants] = useState<Restaurant[]>(RESTAURANTS);
+
+  const fetchRestaurants = async () => {
+    try {
+      const res = await fetch('/api/restaurants');
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) {
+          setRestaurants(data);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to fetch restaurants:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchRestaurants();
+  }, []);
+
+  const [selectedNeighborhoodId, setSelectedNeighborhoodId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCity, setSelectedCity] = useState<string>('All Cities');
   
   // Custom featured spot calculated robustly
   const thisWeeksChoice = useMemo<Restaurant>(() => {
-    return RESTAURANTS.find(r => r.id === 'rest-1' || r.stars === 3) || RESTAURANTS[0];
-  }, []);
+    return restaurants.find(r => r.id === 'rest-1' || r.stars === 3) || restaurants[0];
+  }, [restaurants]);
   
   // Advanced Filter Categories
   const [selectedDistinction, setSelectedDistinction] = useState<string>('All Distinctions');
@@ -47,20 +70,20 @@ export default function App() {
   // Load Saved parameters and query-string deep link on Mount
   useEffect(() => {
     try {
-      const storedSaved = localStorage.getItem('zaytouynda_saved_restaurants') || localStorage.getItem('michelin_saved_restaurants');
+      const storedSaved = localStorage.getItem('zaytounada_saved_restaurants') || localStorage.getItem('michelin_saved_restaurants');
       if (storedSaved) setSavedRestaurantIds(JSON.parse(storedSaved));
 
-      const storedItineraries = localStorage.getItem('zaytouynda_itineraries') || localStorage.getItem('michelin_itineraries');
+      const storedItineraries = localStorage.getItem('zaytounada_itineraries') || localStorage.getItem('michelin_itineraries');
       if (storedItineraries) setSavedItineraries(JSON.parse(storedItineraries));
 
-      const storedBookings = localStorage.getItem('zaytouynda_bookings') || localStorage.getItem('michelin_bookings');
+      const storedBookings = localStorage.getItem('zaytounada_bookings') || localStorage.getItem('michelin_bookings');
       if (storedBookings) setBookings(JSON.parse(storedBookings));
 
       // Parse and apply deep-link query parameter
       const params = new URLSearchParams(window.location.search);
       const restaurantId = params.get('restaurant') || params.get('id');
       if (restaurantId) {
-        const found = RESTAURANTS.find(r => r.id === restaurantId);
+        const found = restaurants.find(r => r.id === restaurantId);
         if (found) {
           setSelectedRestaurant(found);
         }
@@ -68,7 +91,7 @@ export default function App() {
     } catch (err) {
       console.error("Storage Mount & Deep-linking Loading error:", err);
     }
-  }, []);
+  }, [restaurants]);
 
   const handleCloseDetailModal = () => {
     setSelectedRestaurant(null);
@@ -99,42 +122,42 @@ export default function App() {
       next = [...savedRestaurantIds, id];
     }
     setSavedRestaurantIds(next);
-    saveToStorage('zaytouynda_saved_restaurants', next);
+    saveToStorage('zaytounada_saved_restaurants', next);
   };
 
   const handleAddItinerary = (itinerary: SavedItinerary) => {
     const next = [itinerary, ...savedItineraries];
     setSavedItineraries(next);
-    saveToStorage('zaytouynda_itineraries', next);
+    saveToStorage('zaytounada_itineraries', next);
   };
 
   const handleDeleteItinerary = (id: string) => {
     const next = savedItineraries.filter(it => it.id !== id);
     setSavedItineraries(next);
-    saveToStorage('zaytouynda_itineraries', next);
+    saveToStorage('zaytounada_itineraries', next);
   };
 
   const handleAddBooking = (booking: Booking) => {
     const next = [booking, ...bookings];
     setBookings(next);
-    saveToStorage('zaytouynda_bookings', next);
+    saveToStorage('zaytounada_bookings', next);
   };
 
   const handleClearAllBookings = () => {
     setBookings([]);
-    saveToStorage('zaytouynda_bookings', []);
+    saveToStorage('zaytounada_bookings', []);
   };
 
   // Extract unique Cuisines dynamically for filtering option values
   const uniqueCuisinesList = useMemo(() => {
     const cuisinesSet = new Set<string>();
-    RESTAURANTS.forEach(r => cuisinesSet.add(r.cuisine));
+    restaurants.forEach(r => cuisinesSet.add(r.cuisine));
     return ['All Cuisines', ...Array.from(cuisinesSet)];
-  }, []);
+  }, [restaurants]);
 
   // Filter restaurants list based on grid combinations
   const filteredRestaurants = useMemo(() => {
-    return RESTAURANTS.filter((rest) => {
+    return restaurants.filter((rest) => {
       // City Match
       const cityMatch = selectedCity === 'All Cities' || rest.city.toLowerCase() === selectedCity.toLowerCase();
       
@@ -165,10 +188,10 @@ export default function App() {
 
       return cityMatch && matchesSearch && matchesDistinction && matchesCuisine && matchesPrice;
     });
-  }, [searchQuery, selectedCity, selectedDistinction, selectedCuisine, selectedPrice]);
+  }, [restaurants, searchQuery, selectedCity, selectedDistinction, selectedCuisine, selectedPrice]);
 
   return (
-    <div className="min-h-screen bg-white text-neutral-900 flex flex-col font-sans" id="zaytouynda-app-root">
+    <div className="min-h-screen bg-white text-neutral-900 flex flex-col font-sans" id="zaytounada-app-root">
       
       {/* Brand & Filter Header Navigation */}
       <Header
@@ -196,6 +219,63 @@ export default function App() {
               onOpenConcierge={() => setIsConciergeActive(true)}
             />
 
+            {/* NEIGHBORHOODS HERO BANNER CARDS GRID */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-left" id="neighborhoods-directory-banner-rail">
+              <div className="border-b border-neutral-100 pb-3 mb-6">
+                <span className="text-[10px] font-mono uppercase tracking-[0.25em] font-extrabold text-amber-500 block">
+                  CULTURAL QUARTERS DIRECTORY
+                </span>
+                <h3 className="font-serif font-light text-2xl text-neutral-900 mt-1 uppercase tracking-wider">
+                  Select <span className="font-medium text-emerald-800">Gourmet Neighborhoods</span>
+                </h3>
+              </div>
+
+              <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
+                {[
+                  { id: 'hamra', name: 'Hamra', label: 'الحمراء', desc: 'Intellectual & Cozy Cafes', count: 2, bg: 'https://images.unsplash.com/photo-1543007630-9710e4a00a20?auto=format&fit=crop&q=80&w=350' },
+                  { id: 'mar_mikhael', name: 'Mar Mikhael', label: 'مار ميخائيل', desc: 'Arts District & Bistro Chic', count: 8, bg: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&q=80&w=350' },
+                  { id: 'sassine', name: 'Sassine / Achrafieh', label: 'الأشرفية ساسين', desc: 'Aristocratic & Starred Fine Dining', count: 4, bg: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=350' },
+                  { id: 'sodeco', name: 'Sodeco', label: 'سوديكو', desc: 'Crossroads & Sandstone Estates', count: 6, bg: 'https://images.unsplash.com/photo-1541532713592-79a0317b6b77?auto=format&fit=crop&q=80&w=350' },
+                  { id: 'badaro', name: 'Badaro', label: 'بدارو', desc: 'Leafy Terraces & Sidewalk Lunches', count: 3, bg: 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&q=80&w=350' },
+                  { id: 'antelias', name: 'Antelias', label: 'أنطلياس', desc: 'Coastal Seafood Feasts', count: 2, bg: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&q=80&w=350' }
+                ].map((nb) => (
+                  <div
+                    key={nb.id}
+                    onClick={() => {
+                      setSelectedNeighborhoodId(nb.id);
+                      setActiveTab('neighborhoods');
+                    }}
+                    className="group relative h-40 rounded-2xl overflow-hidden border border-neutral-200 shadow-xs hover:shadow-lg hover:border-emerald-600/30 transition-all duration-300 transform hover:-translate-y-1 cursor-pointer text-left"
+                    id={`banner-tile-${nb.id}`}
+                  >
+                    <img
+                      src={nb.bg}
+                      alt={nb.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 saturate-110"
+                      referrerPolicy="no-referrer"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/45 to-transparent" />
+                    
+                    <div className="absolute bottom-3 left-3 right-3 text-left">
+                      <span className="text-[8px] font-mono text-amber-300 font-bold uppercase tracking-wider block">
+                        {nb.label}
+                      </span>
+                      <h4 className="font-serif text-sm font-bold text-white tracking-tight leading-tight mt-0.5 group-hover:text-amber-300 transition-colors">
+                        {nb.name}
+                      </h4>
+                      <p className="text-[8.5px] text-neutral-300 leading-none mt-1 truncate">
+                        {nb.desc}
+                      </p>
+                    </div>
+
+                    <div className="absolute top-2 right-2 bg-emerald-950/90 text-white border border-white/5 backdrop-blur-md px-1.5 py-0.5 rounded text-[7.5px] font-mono font-bold tracking-widest">
+                      {nb.count} SPOTS
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             {/* Structured Advanced Filtering Rail */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-4 flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between shadow-sm">
@@ -211,7 +291,7 @@ export default function App() {
                     id="distinction-dropdown-select"
                   >
                     <option value="All Distinctions" className="bg-white text-neutral-900">All Distinctions</option>
-                    <option value="Stars" className="bg-white text-neutral-900">Zaytouynda Stars (✻)</option>
+                    <option value="Stars" className="bg-white text-neutral-900">Zaytounada Stars (✻)</option>
                     <option value="Bib Gourmand" className="bg-white text-neutral-900">Bib Gourmand (☺)</option>
                     <option value="Selected" className="bg-white text-neutral-900">Selected Recommendations</option>
                   </select>
@@ -331,7 +411,7 @@ export default function App() {
                   
                   <div className="absolute bottom-6 right-6 bg-emerald-950/90 border border-amber-400/30 backdrop-blur-md p-4 rounded-xl text-left max-w-xs shadow-lg">
                     <span className="text-[10px] font-mono text-amber-400 uppercase font-bold tracking-widest block mb-1">OFFICIAL CITATION</span>
-                    <p className="font-serif text-xs font-bold text-white mb-0.5">3 ZAYTOUYNDA STARS AWARDED</p>
+                    <p className="font-serif text-xs font-bold text-white mb-0.5">3 ZAYTOUNADA STARS AWARDED</p>
                     <p className="text-[10px] text-neutral-300 font-light">Considered by food tasters to be the absolute pinnacle of Levantine culinary art.</p>
                   </div>
                 </div>
@@ -434,7 +514,7 @@ export default function App() {
                 <div className="flex-1 space-y-3.5 z-10 relative">
                   <span className="text-amber-400 text-xs font-mono uppercase tracking-[0.3em] font-extrabold flex items-center gap-1.5 leading-none">
                     <Gift className="w-4 h-4 text-amber-400" />
-                    <span>Zaytouynda Luxury Vouchers</span>
+                    <span>Zaytounada Luxury Vouchers</span>
                   </span>
                   
                   <h3 className="font-serif text-2xl md:text-3.5xl font-light text-white leading-tight uppercase tracking-wider">
@@ -478,7 +558,7 @@ export default function App() {
                   <div className="flex justify-between items-start relative z-10 text-emerald-950">
                     <div>
                       <span className="font-serif font-black tracking-widest text-emerald-900 text-xl">Z</span>
-                      <p className="text-[6px] tracking-widest text-emerald-950 uppercase font-mono font-bold">ZAYTOUYNDA VIP</p>
+                      <p className="text-[6px] tracking-widest text-emerald-950 uppercase font-mono font-bold">ZAYTOUNADA VIP</p>
                     </div>
                     <Gift className="w-5.5 h-5.5 text-emerald-900 opacity-80" />
                   </div>
@@ -506,7 +586,20 @@ export default function App() {
           </div>
         )}
 
-        {/* VIEW: NEW DEDICATED ZAYTOUYNDA CATALOGUE PAGE */}
+        {/* VIEW: NEIGHBORHOODS MAP & ATLAS */}
+        {activeTab === 'neighborhoods' && (
+          <NeighborhoodsView
+            initialSelectedNeighborhood={selectedNeighborhoodId || undefined}
+            savedRestaurantIds={savedRestaurantIds}
+            onToggleSave={(id, e) => {
+              e.stopPropagation();
+              handleToggleSaveRestaurant(id);
+            }}
+            onSelectRestaurant={(rest) => setSelectedRestaurant(rest)}
+          />
+        )}
+
+        {/* VIEW: NEW DEDICATED ZAYTOUNADA CATALOGUE PAGE */}
         {activeTab === 'catalogue' && (
           <div className="animate-fade-in" id="catalogue-view-pane">
             <CategoryHeroSliders 
@@ -649,7 +742,7 @@ export default function App() {
                   <Heart className="w-8 h-8 text-amber-500 fill-amber-500" />
                   <span>My Saved Guides</span>
                 </h2>
-                <p className="text-xs text-neutral-500 mt-1 tracking-wide">Quick listing of Zaytouynda properties marked for your notebook.</p>
+                <p className="text-xs text-neutral-500 mt-1 tracking-wide">Quick listing of Zaytounada properties marked for your notebook.</p>
               </div>
               <button
                 onClick={() => setActiveTab('my-guide')}
@@ -676,7 +769,7 @@ export default function App() {
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                {RESTAURANTS.filter(r => savedRestaurantIds.includes(r.id)).map((restaurant) => (
+                {restaurants.filter(r => savedRestaurantIds.includes(r.id)).map((restaurant) => (
                   <RestaurantCard
                     key={restaurant.id}
                     restaurant={restaurant}
@@ -760,11 +853,16 @@ export default function App() {
           />
         )}
 
+        {/* VIEW: ADMIN LOCKBOX DASHBOARD */}
+        {activeTab === 'admin' && (
+          <AdminDashboardView onRestaurantsUpdated={fetchRestaurants} />
+        )}
+
       </main>
 
       {/* FOOTER */}
       <footer className="h-16 bg-neutral-50 border-t border-neutral-200 flex items-center justify-between px-10 text-[9px] uppercase tracking-[0.2em] text-neutral-500 shrink-0 select-none mt-auto">
-        <div>© 2026 ZAYTOUYNDA GUIDE DIGITAL</div>
+        <div>© 2026 ZAYTOUNADA GUIDE DIGITAL</div>
         <div className="flex gap-8">
           <span onClick={() => setActiveTab('get-started')} className="hover:text-neutral-900 transition-colors cursor-pointer">Privacy Policy</span>
           <span onClick={() => setActiveTab('get-started')} className="hover:text-neutral-900 transition-colors cursor-pointer">Cookies Manager</span>
@@ -787,7 +885,7 @@ export default function App() {
       <AIConcierge
         isOpen={isConciergeActive}
         onClose={() => setIsConciergeActive(false)}
-        savedRestaurants={RESTAURANTS.filter(r => savedRestaurantIds.includes(r.id)).map(r => ({
+        savedRestaurants={restaurants.filter(r => savedRestaurantIds.includes(r.id)).map(r => ({
           id: r.id,
           name: r.name,
           city: r.city,

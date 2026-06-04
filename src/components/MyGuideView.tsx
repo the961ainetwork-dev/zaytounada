@@ -79,7 +79,7 @@ export default function MyGuideView({
     if (itinerary.notes) {
       text += `NOTES:\n"${itinerary.notes}"\n`;
     }
-    text += `\nShared via Gourmet Zaytouynda Guide App`;
+    text += `\nShared via Gourmet Zaytounada Guide App`;
 
     navigator.clipboard.writeText(text);
     alert('Itinerary copied to clipboard! Share with your culinary companions.');
@@ -94,7 +94,7 @@ export default function MyGuideView({
           <span>My Curated Culinary Guide</span>
         </h2>
         <p className="text-xs text-neutral-500 mt-1 tracking-wide">
-          Keep track of your favorite Zaytouynda-starred locations and coordinate premium dining travel itineraries.
+          Keep track of your favorite Zaytounada-starred locations and coordinate premium dining travel itineraries.
         </p>
       </div>
 
@@ -319,7 +319,7 @@ export default function MyGuideView({
                 <Calendar className="w-12 h-12 text-neutral-300 mb-3" />
                 <p className="font-serif italic text-sm text-neutral-700">No culinary plans drafted yet.</p>
                 <p className="text-xs text-neutral-500 mt-1 max-w-sm leading-relaxed font-light">
-                  Draft a personalized Zaytouynda travel sequence to organize specific dates, guest notes, and dining timelines.
+                  Draft a personalized Zaytounada travel sequence to organize specific dates, guest notes, and dining timelines.
                 </p>
                 {!isCreating && (
                   <button

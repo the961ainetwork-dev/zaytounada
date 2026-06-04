@@ -87,7 +87,7 @@ export default function PlanMyDiningView({
     }
 
     // Prepare prompt for live Gemini counselor matching
-    const aiPrompt = `Recommend fine dining experiences in ${location} for the gourmet craving ${cuisine} cuisine with a budget category of ${price}. The preferred seating layout is "${tablePreference}". Specifically suggest existing matching options from the database or compatible local gems, and explain why this selection represents elite Zaytouynda culinary value. Formulate the response with elegant, scannable paragraphs and bullet points. Do not include pricing metadata or logs.`;
+    const aiPrompt = `Recommend fine dining experiences in ${location} for the gourmet craving ${cuisine} cuisine with a budget category of ${price}. The preferred seating layout is "${tablePreference}". Specifically suggest existing matching options from the database or compatible local gems, and explain why this selection represents elite Zaytounada culinary value. Formulate the response with elegant, scannable paragraphs and bullet points. Do not include pricing metadata or logs.`;
 
     startTransition(async () => {
       try {
@@ -389,7 +389,7 @@ Please proceed to secure your allocation slot below, and our concierge will forw
                     <Sparkles className="w-5 h-5 animate-spin-slow" />
                   </div>
                   <div>
-                    <h3 className="font-serif text-lg text-neutral-950 font-semibold leading-tight">Zaytouynda Inspection Brief</h3>
+                    <h3 className="font-serif text-lg text-neutral-950 font-semibold leading-tight">Zaytounada Inspection Brief</h3>
                     <p className="text-[10px] text-neutral-500 font-mono uppercase tracking-wider mt-0.5">Exclusive Matching Output</p>
                   </div>
                 </div>
@@ -540,7 +540,7 @@ Please proceed to secure your allocation slot below, and our concierge will forw
                     <span>Instant Seating Reservation</span>
                   </h3>
                   <p className="text-xs text-neutral-500 mt-1 max-w-sm font-light">
-                    Submit your details using our Zaytouynda luxury portal to secure a placing list at **{selectedBookableRestaurant?.name || 'Levantine Diner'}** directly.
+                    Submit your details using our Zaytounada luxury portal to secure a placing list at **{selectedBookableRestaurant?.name || 'Levantine Diner'}** directly.
                   </p>
                 </div>
 

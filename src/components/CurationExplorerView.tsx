@@ -173,7 +173,7 @@ export default function CurationExplorerView({
                   <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-transparent" />
                 </div>
                 <div className="absolute bottom-4 left-5 right-5 space-y-1 z-10">
-                  <span className="text-[9px] font-mono tracking-widest text-red-600 font-bold uppercase">Zaytouynda Category</span>
+                  <span className="text-[9px] font-mono tracking-widest text-red-600 font-bold uppercase">Zaytounada Category</span>
                   <h4 className="font-serif font-bold text-base text-neutral-950">{c.name}</h4>
                   <p className="text-[10px] text-neutral-600 font-light leading-tight">{c.desc}</p>
                 </div>

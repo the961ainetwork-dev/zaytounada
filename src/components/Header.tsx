@@ -1,4 +1,4 @@
-import { Search, Compass, MapPin, BookOpen, Heart, Sparkles, Navigation, Info, Gift, Music, Calendar, Coffee, Flame, Store, X, Grid } from 'lucide-react';
+import { Search, Compass, MapPin, BookOpen, Heart, Sparkles, Navigation, Info, Gift, Music, Calendar, Coffee, Flame, Store, X, Grid, Lock } from 'lucide-react';
 
 interface HeaderProps {
   activeTab: string;
@@ -31,7 +31,7 @@ export default function Header({
         <div 
           onClick={() => setActiveTab('discovery')} 
           className="flex items-center gap-2.5 cursor-pointer select-none group"
-          id="zaytouynda-logo-btn"
+          id="zaytounada-logo-btn"
         >
           {/* Olive Logo Icon Block */}
           <div className="relative flex items-center justify-center w-11 h-11 bg-gradient-to-br from-emerald-800 to-emerald-650 text-white rounded-xl shadow-md transition-all duration-300 group-hover:scale-105">
@@ -42,7 +42,7 @@ export default function Header({
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="font-serif tracking-widest text-emerald-800 font-bold uppercase text-xl">Zaytouynda <span className="text-amber-550 font-light">Guide</span></span>
+              <span className="font-serif tracking-widest text-emerald-800 font-bold uppercase text-xl">Zaytounada <span className="text-amber-550 font-light">Guide</span></span>
             </div>
             <p className="text-[10px] font-mono text-emerald-600/80 tracking-widest uppercase font-bold">Culinary Excellence</p>
           </div>
@@ -99,7 +99,20 @@ export default function Header({
               <span>Explore Restaurants</span>
             </button>
 
-            {/* DEDICATED NEW TAB: ZAYTOUYNDA CATALOGUE (Moved from homepage as requested) */}
+            <button
+              id="tab-neighborhoods"
+              onClick={() => setActiveTab('neighborhoods')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
+                activeTab === 'neighborhoods'
+                  ? 'bg-emerald-700 text-white shadow-sm font-semibold'
+                  : 'text-emerald-900 hover:text-emerald-950 hover:bg-emerald-100/60'
+              }`}
+            >
+              <MapPin className="w-3.5 h-3.5 text-amber-500" />
+              <span>Neighborhoods</span>
+            </button>
+
+            {/* DEDICATED NEW TAB: ZAYTOUNADA CATALOGUE (Moved from homepage as requested) */}
             <button
               id="tab-catalogue"
               onClick={() => {
@@ -114,7 +127,7 @@ export default function Header({
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer text-emerald-800 hover:text-neutral-900 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/40`}
             >
               <Grid className="w-3.5 h-3.5 text-emerald-850 font-black" />
-              <span>Zaytouynda Catalogue</span>
+              <span>Zaytounada Catalogue</span>
             </button>
 
             <button
@@ -245,6 +258,19 @@ export default function Header({
             >
               <Sparkles className="w-3.5 h-3.5 text-amber-550" />
               <span>Itineraries</span>
+            </button>
+
+            <button
+              id="tab-admin"
+              onClick={() => setActiveTab('admin')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
+                activeTab === 'admin'
+                  ? 'bg-neutral-900 border border-amber-350 text-amber-350 shadow-md font-bold'
+                  : 'text-neutral-500 hover:text-neutral-950 hover:bg-neutral-100'
+              }`}
+            >
+              <Lock className="w-3.5 h-3.5" />
+              <span>Admin Lockbox</span>
             </button>
 
             <button

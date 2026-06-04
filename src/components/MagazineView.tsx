@@ -83,7 +83,7 @@ export default function MagazineView() {
             <div className="text-center p-6 bg-neutral-50 rounded border border-neutral-200 w-full shadow-xs">
               <Scroll className="w-8 h-8 text-red-650 mx-auto mb-2.5" />
               <p className="font-serif font-light text-sm text-neutral-900">This concludes the official editorial report.</p>
-              <p className="text-[10px] text-neutral-500 font-mono uppercase tracking-widest mt-1 font-bold">Zaytouynda Guide Editorial, Beirut HQ.</p>
+              <p className="text-[10px] text-neutral-500 font-mono uppercase tracking-widest mt-1 font-bold">Zaytounada Guide Editorial, Beirut HQ.</p>
             </div>
           </div>
         </article>
@@ -97,7 +97,7 @@ export default function MagazineView() {
       <div className="mb-10 text-center md:text-left">
         <h2 className="font-serif font-light text-3xl text-neutral-900 flex items-center justify-center md:justify-start gap-2">
           <BookOpen className="w-8 h-8 text-red-650" />
-          <span>The Zaytouynda Magazine</span>
+          <span>The Zaytounada Magazine</span>
         </h2>
         <p className="text-xs text-neutral-500 mt-1 max-w-xl font-light tracking-wide">
           Taste stories from inside kitchens, historical diaries, chef chronicles, and international culinary reporting.

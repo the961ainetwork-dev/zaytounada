@@ -40,16 +40,16 @@ export default function GetStartedView({ onNavigateTab, onOpenConcierge }: GetSt
 
   const faqs = [
     {
-      q: "What is the story behind Zaytouynda Guide?",
-      a: "Zaytouynda is an independent, premium gastronomic index dedicated to mapping culinary genius across Lebanon (Beirut, coastal Jbeil, Tyre, mountains, and beyond) and matching world-class gastronomic landmarks. We aim to celebrate artisanal, highly creative food crafts."
+      q: "What is the story behind Zaytounada Guide?",
+      a: "Zaytounada is an independent, premium gastronomic index dedicated to mapping culinary genius across Lebanon (Beirut, coastal Jbeil, Tyre, mountains, and beyond) and matching world-class gastronomic landmarks. We aim to celebrate artisanal, highly creative food crafts."
     },
     {
-      q: "How are the Zaytouynda Stars (✻) evaluated?",
+      q: "How are the Zaytounada Stars (✻) evaluated?",
       a: "Our inspectors operate under strict anonymity, judging 100% based on five core criteria: premium ingredients quality, chefs skill pairing and balance, creative personality on the dish, budget-to-value integrity, and consistency across multiple secret visits."
     },
     {
       q: "Are the social media services and integrations real?",
-      a: "Yes! Restaurant listings in our Zaytouynda program sync directly with Instagram handle markers and Facebook services, allowing gourmet travelers to see organic media streams directly from the app."
+      a: "Yes! Restaurant listings in our Zaytounada program sync directly with Instagram handle markers and Facebook services, allowing gourmet travelers to see organic media streams directly from the app."
     },
     {
       q: "How does the Gourmet AI Concierge counselor work?",
@@ -71,7 +71,7 @@ export default function GetStartedView({ onNavigateTab, onOpenConcierge }: GetSt
             <span>Interactive Guide Center</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-serif font-light text-neutral-950 leading-tight">
-            Welcome to <span className="font-semibold text-red-650">Zaytouynda</span>
+            Welcome to <span className="font-semibold text-red-650">Zaytounada</span>
           </h1>
           <p className="text-sm text-neutral-600 leading-relaxed font-light">
             An elite gastronomic map matching Lebanese legacy and global masterpieces. 
@@ -142,10 +142,10 @@ export default function GetStartedView({ onNavigateTab, onOpenConcierge }: GetSt
               <div className="border border-neutral-200 bg-white rounded-xl p-6 md:p-8 space-y-6 shadow-sm">
                 <h2 className="font-serif text-2xl text-neutral-950 font-normal flex items-center gap-2">
                   <Globe className="w-6 h-6 text-red-605" />
-                  <span>Explore the Zaytouynda Universe</span>
+                  <span>Explore the Zaytounada Universe</span>
                 </h2>
                 <p className="text-neutral-550 text-xs leading-relaxed font-light">
-                  Zaytouynda is an ecosystem for elite culinary discovery. Here is exactly how to navigate our platform:
+                  Zaytounada is an ecosystem for elite culinary discovery. Here is exactly how to navigate our platform:
                 </p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
@@ -200,10 +200,10 @@ export default function GetStartedView({ onNavigateTab, onOpenConcierge }: GetSt
               <div className="border border-neutral-200 bg-white rounded-xl p-6 md:p-8 space-y-6 shadow-sm">
                 <h2 className="font-serif text-2xl text-neutral-950 font-normal flex items-center gap-2">
                   <Users className="w-6 h-6 text-red-650" />
-                  <span>Partner With Zaytouynda: Join Our Program</span>
+                  <span>Partner With Zaytounada: Join Our Program</span>
                 </h2>
                 <p className="text-neutral-550 text-xs leading-relaxed font-light">
-                  Are you a restaurant owner or chef in Lebanon or global culinary centers? Zaytouynda offers unmatched features 
+                  Are you a restaurant owner or chef in Lebanon or global culinary centers? Zaytounada offers unmatched features 
                   to put your kitchen directly in front of highly vetted, wealthy epicureans.
                 </p>
 
@@ -313,13 +313,13 @@ export default function GetStartedView({ onNavigateTab, onOpenConcierge }: GetSt
                   <h2 className="font-serif text-2xl text-neutral-950 font-normal">Advertise With Us</h2>
                 </div>
                 <p className="text-neutral-550 text-xs leading-relaxed font-light font-sans">
-                  Align your business with Zaytouynda’s prestigious culinary network. We provide multiple elegant, high-impact channels to display your brand to sophisticated consumers.
+                  Align your business with Zaytounada’s prestigious culinary network. We provide multiple elegant, high-impact channels to display your brand to sophisticated consumers.
                 </p>
 
                 {/* All possible ways to advertise menu */}
                 <div className="border border-neutral-200 rounded-lg overflow-hidden bg-white shadow-xs text-left">
                   <div className="p-4 bg-neutral-50 border-b border-neutral-200 text-left">
-                    <h3 className="text-xs font-mono font-bold text-neutral-700 uppercase tracking-widest">Zaytouynda Channels & Promotion Catalog</h3>
+                    <h3 className="text-xs font-mono font-bold text-neutral-700 uppercase tracking-widest">Zaytounada Channels & Promotion Catalog</h3>
                   </div>
                   <div className="divide-y divide-neutral-150 text-left">
                     
@@ -377,10 +377,10 @@ export default function GetStartedView({ onNavigateTab, onOpenConcierge }: GetSt
                     <p className="text-[10px] text-neutral-550 mt-0.5 font-light">Let our campaign coordinates manager build a beautiful strategy for your kitchen.</p>
                   </div>
                   <button 
-                    onClick={() => triggerCopy('partners@zaytouynda.app')}
+                    onClick={() => triggerCopy('partners@zaytounada.app')}
                     className="px-4 py-2.5 bg-neutral-900 hover:bg-neutral-950 text-white text-[9px] font-mono uppercase tracking-[0.2em] font-semibold rounded shrink-0 cursor-pointer transition-all"
                   >
-                    {copiedNotification === 'partners@zaytouynda.app' ? 'Copied Email Address!' : 'Copy Partner Inquiry Email'}
+                    {copiedNotification === 'partners@zaytounada.app' ? 'Copied Email Address!' : 'Copy Partner Inquiry Email'}
                   </button>
                 </div>
 
@@ -397,7 +397,7 @@ export default function GetStartedView({ onNavigateTab, onOpenConcierge }: GetSt
                   <h2 className="font-serif text-2xl text-neutral-950 font-normal">Frequently Asked Questions</h2>
                 </div>
                 <p className="text-neutral-555 text-xs leading-relaxed font-light font-sans">
-                  Common guidelines and inquiries about Zaytouynda’s independent ratings, booking allocations, and visual maps interface.
+                  Common guidelines and inquiries about Zaytounada’s independent ratings, booking allocations, and visual maps interface.
                 </p>
 
                 {/* FAQ list */}
@@ -524,7 +524,7 @@ export default function GetStartedView({ onNavigateTab, onOpenConcierge }: GetSt
           
           {/* Vetted Quick Summary Widget */}
           <div className="p-6 rounded-xl bg-white border border-neutral-200 text-left h-auto space-y-4 shadow-sm text-neutral-900">
-            <h3 className="font-serif text-sm font-bold uppercase tracking-wider text-neutral-950 text-left">Your Zaytouynda Hub Info</h3>
+            <h3 className="font-serif text-sm font-bold uppercase tracking-wider text-neutral-950 text-left">Your Zaytounada Hub Info</h3>
             
             <div className="space-y-3 text-xs font-light text-left">
               <div className="flex justify-between border-b border-neutral-100 pb-2 text-[10px] text-neutral-450 font-mono tracking-wider font-bold">

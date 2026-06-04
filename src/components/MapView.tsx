@@ -401,14 +401,14 @@ export default function MapView({
 
           {/* Permanent Map Legend */}
           <div className="absolute bottom-6 left-6 z-20 flex flex-col gap-2.5 bg-white/95 border border-neutral-200 p-3.5 rounded shadow-lg backdrop-blur-md text-left min-w-[205px] max-w-[225px]" id="restaurant-map-legend">
-            <span className="text-[9px] font-mono tracking-widest text-emerald-800 uppercase font-black select-none">Zaytouynda Legend</span>
+            <span className="text-[9px] font-mono tracking-widest text-emerald-800 uppercase font-black select-none">Zaytounada Legend</span>
             <div className="space-y-2.5">
               <div className="flex items-center gap-2.5 text-left">
                 <div className="w-6 h-6 rounded-full bg-emerald-700 border border-emerald-500/20 flex items-center justify-center shrink-0 shadow-sm text-white transition-all duration-300 hover:scale-120 hover:shadow-md hover:translate-y-[-2px] hover:ring-2 hover:ring-amber-400 active:scale-95 cursor-pointer select-none">
                   <span className="font-bold text-[10px] leading-none mb-0.5 select-none text-amber-300">✻</span>
                 </div>
                 <div>
-                  <h4 className="text-[9.5px] uppercase font-bold font-mono text-neutral-900 leading-none">Zaytouynda Star</h4>
+                  <h4 className="text-[9.5px] uppercase font-bold font-mono text-neutral-900 leading-none">Zaytounada Star</h4>
                   <p className="text-[8.5px] text-neutral-500 font-light mt-0.5 leading-tight">Elite cuisine of excellent status.</p>
                 </div>
               </div>

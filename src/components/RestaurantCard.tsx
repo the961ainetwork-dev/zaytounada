@@ -38,21 +38,21 @@ export default function RestaurantCard({
         return (
           <div className="flex items-center gap-1.5 bg-emerald-900 text-white font-serif px-3 py-1.5 uppercase tracking-wider text-[10px] font-bold border border-amber-400/65 shadow-md rounded">
             <span className="text-amber-400 font-bold text-xs tracking-tighter">✻ ✻ ✻</span>
-            <span className="text-amber-100 font-mono tracking-widest text-[9px]">3 Zaytouynda Stars</span>
+            <span className="text-amber-100 font-mono tracking-widest text-[9px]">3 Zaytounada Stars</span>
           </div>
         );
       case 'STAR_2':
         return (
           <div className="flex items-center gap-1.5 bg-emerald-850 bg-emerald-800 text-white font-serif px-3 py-1.5 uppercase tracking-wider text-[10px] font-bold border border-amber-400/40 shadow-sm rounded">
             <span className="text-amber-400 font-bold text-xs tracking-tighter">✻ ✻</span>
-            <span className="text-amber-100 font-mono tracking-widest text-[9px]">2 Zaytouynda Stars</span>
+            <span className="text-amber-100 font-mono tracking-widest text-[9px]">2 Zaytounada Stars</span>
           </div>
         );
       case 'STAR_1':
         return (
           <div className="flex items-center gap-1.5 bg-emerald-800/90 text-white font-serif px-3 py-1.5 uppercase tracking-wider text-[10px] font-bold border border-emerald-500/30 shadow-sm rounded">
             <span className="text-amber-400 font-bold text-xs tracking-tighter">✻</span>
-            <span className="text-amber-100 font-mono tracking-widest text-[9px]">1 Zaytouynda Star</span>
+            <span className="text-amber-100 font-mono tracking-widest text-[9px]">1 Zaytounada Star</span>
           </div>
         );
       case 'BIB_GOURMAND':

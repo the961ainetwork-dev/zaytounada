@@ -17,7 +17,7 @@ export default function AIConcierge({
     {
       id: 'welcome',
       role: 'model',
-      content: "Welcome to the Zaytouynda Guide AI Concierge. I am your discrete culinary counselor. How may I refine your gourmet plans today? I can suggest custom itineraries, explain Zaytouynda Stars (✻), match wine pairings, or recommend elite local restaurants in Lebanon.",
+      content: "Welcome to the Zaytounada Guide AI Concierge. I am your discrete culinary counselor. How may I refine your gourmet plans today? I can suggest custom itineraries, explain Zaytounada Stars (✻), match wine pairings, or recommend elite local restaurants in Lebanon.",
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
   ]);
@@ -35,7 +35,7 @@ export default function AIConcierge({
   if (!isOpen) return null;
 
   const suggestions = [
-    "Explain the difference between 1, 2, and 3 Zaytouynda Stars (✻).",
+    "Explain the difference between 1, 2, and 3 Zaytounada Stars (✻).",
     "Draft a 2-day premium mezza and seaside dining itinerary in Beirut.",
     "Recommend traditional coastal culinary highlights in Lebanon.",
     "Tell me about the famous traditional lamb and seafood dishes in Lebanon."
@@ -127,7 +127,7 @@ export default function AIConcierge({
                 <h3 className="font-serif font-semibold text-base tracking-widest uppercase text-neutral-900">Gourmet Concierge</h3>
                 <span className="text-[9px] bg-red-600 text-white px-1.5 py-0.5 rounded font-mono font-bold">AI</span>
               </div>
-              <p className="text-[10px] font-mono text-neutral-500 tracking-wider">The Zaytouynda Inspection AI Assistant</p>
+              <p className="text-[10px] font-mono text-neutral-500 tracking-wider">The Zaytounada Inspection AI Assistant</p>
             </div>
           </div>
 
@@ -208,7 +208,7 @@ export default function AIConcierge({
                     <div className="w-2 h-2 bg-red-600 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
                     <div className="w-2 h-2 bg-red-500 rounded-full animate-bounce"></div>
                   </div>
-                  <span className="font-serif italic text-neutral-500 font-light">Zaytouynda expert counselor computing fine details...</span>
+                  <span className="font-serif italic text-neutral-500 font-light">Zaytounada expert counselor computing fine details...</span>
                 </div>
               </div>
             )}
@@ -276,7 +276,7 @@ export default function AIConcierge({
             </button>
           </form>
           <p className="text-[8px] text-neutral-450 font-mono text-center mt-3 uppercase tracking-widest">
-            Powered by Gemini AI Studio • Zaytouynda Counselor Program.
+            Powered by Gemini AI Studio • Zaytounada Counselor Program.
           </p>
         </div>
 

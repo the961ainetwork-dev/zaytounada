@@ -26,6 +26,7 @@ export interface Restaurant {
   instagram?: string;
   facebook?: string;
   category?: 'fine_dining' | 'pub_cafe' | 'vibe' | 'takeaway_bakery_produce';
+  neighborhood?: 'hamra' | 'mar_mikhael' | 'sassine' | 'sodeco' | 'badaro' | 'antelias';
 }
 
 export interface Article {

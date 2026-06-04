@@ -36,7 +36,7 @@ export default function GiftCardView() {
   // Active Gift cards stored locally
   const [localVouchers, setLocalVouchers] = useState<GiftCardVoucher[]>(() => {
     try {
-      const stored = localStorage.getItem('zaytouynda_purchased_gift_cards');
+      const stored = localStorage.getItem('zaytounada_purchased_gift_cards');
       return stored ? JSON.parse(stored) : [];
     } catch {
       return [];
@@ -88,7 +88,7 @@ export default function GiftCardView() {
 
       const updated = [newVoucher, ...localVouchers];
       setLocalVouchers(updated);
-      localStorage.setItem('zaytouynda_purchased_gift_cards', JSON.stringify(updated));
+      localStorage.setItem('zaytounada_purchased_gift_cards', JSON.stringify(updated));
 
       setPurchasedVoucher(newVoucher);
       setIsProcessing(false);
@@ -111,7 +111,7 @@ export default function GiftCardView() {
           <span>The Gastronomy Gift Voucher Center</span>
         </h2>
         <p className="text-xs text-neutral-500 mt-1 max-w-xl font-light">
-          Sanctify special anniversaries, coordinate executive rewards, or gift high-end VIP tables with our authentic, gorgeous digital Zaytouynda gift cards.
+          Sanctify special anniversaries, coordinate executive rewards, or gift high-end VIP tables with our authentic, gorgeous digital Zaytounada gift cards.
         </p>
       </div>
 
@@ -318,7 +318,7 @@ export default function GiftCardView() {
                 <span className="text-[8px] font-mono uppercase bg-red-600 text-white font-extrabold px-2 py-0.5 rounded tracking-widest">
                   VIP REGISTRY
                 </span>
-                <h4 className="font-serif font-bold text-lg text-white/90 mt-2">Zaytouynda Lounge Card</h4>
+                <h4 className="font-serif font-bold text-lg text-white/90 mt-2">Zaytounada Lounge Card</h4>
               </div>
               <Sparkles className="w-5 h-5 text-amber-400 animate-pulse" />
             </div>
@@ -364,7 +364,7 @@ export default function GiftCardView() {
                 <Gift className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-serif text-xl text-neutral-950 font-bold uppercase tracking-wide">Zaytouynda Luxury Voucher</h3>
+                <h3 className="font-serif text-xl text-neutral-950 font-bold uppercase tracking-wide">Zaytounada Luxury Voucher</h3>
                 <p className="text-[10px] text-neutral-500 font-mono uppercase tracking-widest mt-0.5">Officially Certified Registry Document</p>
               </div>
             </div>
@@ -509,7 +509,7 @@ export default function GiftCardView() {
               </div>
 
               <div className="p-3 bg-neutral-50 rounded-lg border border-neutral-200 text-[9.5px] text-neutral-500 font-mono leading-relaxed">
-                * Note: Zaytouynda demo settlement portal handles secure simulation protocols. No actual transactions execute downstream.
+                * Note: Zaytounada demo settlement portal handles secure simulation protocols. No actual transactions execute downstream.
               </div>
 
               <button

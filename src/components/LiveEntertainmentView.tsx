@@ -22,7 +22,7 @@ export default function LiveEntertainmentView({
   const [customRequests, setCustomRequests] = useState<string>('');
   const [bookingSuccess, setBookingSuccess] = useState<boolean>(false);
 
-  // Elite live music & entertainment happening near you (focused on Beirut & international Zaytouynda venues)
+  // Elite live music & entertainment happening near you (focused on Beirut & international Zaytounada venues)
   const entertainmentShows = [
     {
       id: 'show-1',
@@ -167,7 +167,7 @@ export default function LiveEntertainmentView({
                   <div className="text-left w-full sm:w-auto">
                     <span className="text-[9px] text-neutral-450 font-mono uppercase tracking-wider block font-bold">Inspections Standard:</span>
                     <span className="text-amber-550 text-xs tracking-tighter block mt-0.5 font-bold">
-                      {'✻'.repeat(matchingRestaurant?.stars || 3)} Zaytouynda Stars (✻)
+                      {'✻'.repeat(matchingRestaurant?.stars || 3)} Zaytounada Stars (✻)
                     </span>
                   </div>
                   

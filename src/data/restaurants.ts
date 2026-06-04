@@ -648,30 +648,206 @@ export const RESTAURANTS: Restaurant[] = [
     ],
     features: ['Neighborhood Breakfast Legend', 'Warm Cozy Family Seating', 'Live Counter Preparation', 'Extremely Speedy Service'],
     instagram: '@abouabdallah_beirut',
-    category: 'takeaway_bakery_produce'
+    category: 'takeaway_bakery_produce',
+    neighborhood: 'badaro'
+  },
+  // NEW NEIGHBORHOOD RESTAURANTS
+  {
+    id: 'rest-antelias-1',
+    name: 'Al Sultan Brahim',
+    city: 'Antelias',
+    country: 'Lebanon',
+    coordinates: { lat: 33.9168, lng: 35.5912, x: 45, y: 35 },
+    stars: 1,
+    distinction: 'STAR_1',
+    priceRange: '$$$$',
+    cuisine: 'Lebanese Seafood & Coastal Grill',
+    address: 'Antelias Seaside Road, Antelias, Lebanon',
+    phone: '+961 4 712 111',
+    website: 'https://al-sultanbrahim.com',
+    chef: 'Ramy El-Sultan',
+    description: 'A legendary Beirut institution located on the Antelias coastline, celebrated for its masterfully grilled fresh catches, immaculate raw seafood, and pristine traditional cold mezze.',
+    inspectorNote: 'Al Sultan Brahim in Antelias continues a family history of seafood excellence since 1961. The selection of fresh fish is unrivaled—diners choose their catch from a mountain of crushed ice. The signature raw sea bass with olive oil, the warm spicy red pepper muhammara, and the perfectly salted grilled red mullet are spectacular.',
+    signatureDishes: [
+      'Raw Sea Bass Sashimi: Pristine thin cuts of local sea bass with exceptional wild sea salt, fresh mint, and cold-pressed olive oil',
+      'Fried Red Mullet (Sultan Ibrahim): Crisped gold-brown, incredibly fresh, and flakey',
+      'Muhammara: Silky walnut paste blended with Aleppo red pepper flakes, olive oil, and sweet pomegranate molasses'
+    ],
+    imageUrl: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&q=80&w=800',
+    images: [
+      'https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&q=80&w=800'
+    ],
+    features: ['Direct Seaside Sunset Deck', 'Fresh Fish Selection Counter', 'Historic Multi-Generation Family Legacy', 'Valet Parking & Fine Dining Service'],
+    instagram: '@alsultanbrahim',
+    category: 'fine_dining',
+    neighborhood: 'antelias'
+  },
+  {
+    id: 'rest-antelias-2',
+    name: 'Seray Antelias',
+    city: 'Antelias',
+    country: 'Lebanon',
+    coordinates: { lat: 33.9155, lng: 35.5898, x: 55, y: 45 },
+    stars: 0,
+    distinction: 'BIB_GOURMAND',
+    priceRange: '$$$',
+    cuisine: 'Traditional Lebanese Haute Cuisine',
+    address: 'Fawwar Antelias Street, Antelias, Lebanon',
+    phone: '+961 4 521 222',
+    website: 'https://instagram.com/serayrestaurant',
+    chef: 'George Chamoun',
+    description: 'Set in a beautifully restored Lebanese home with grand stone arches in Fawwar Antelias, Seray serves polished, majestic Lebanese favorites with an exquisite modern touch.',
+    inspectorNote: 'Tucked away along the green hills of Fawwar Antelias, Seray is a fantastic retreat with high stone ceilings and an airy terrace. Their signature Hummus with warm slow-braised beef filet cubes and toasted almonds is highly addictive, and the freshly baked puffed pita bread is perfection.',
+    signatureDishes: [
+      'Hummus Seray: Warm, smooth garlic-chickpea purée topped with sautéed beef tenderloin cubes and toasted pine nuts',
+      'Mixed Grill Skewers: Shish taouk, kafta, and lamb skewers marinated in mountain garlic and rosemary, cooked over charcoal',
+      'Knefe with Ashta: Traditional sweet warm golden cheese kataifi pastry served with fresh regional rose-water ashta cream'
+    ],
+    imageUrl: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&q=80&w=800',
+    images: [
+      'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=800'
+    ],
+    features: ['Authentic Stone House Setting', 'Amazing Mountain & Valley Breezes', 'Lush Shaded Garden Terrace', 'Outstanding Traditional Shisha Selection'],
+    instagram: '@serayrestaurant',
+    category: 'fine_dining',
+    neighborhood: 'antelias'
+  },
+  {
+    id: 'rest-badaro-1',
+    name: 'Onno Badaro',
+    city: 'Beirut',
+    country: 'Lebanon',
+    coordinates: { lat: 33.8812, lng: 35.5122, x: 55, y: 65 },
+    stars: 1,
+    distinction: 'STAR_1',
+    priceRange: '$$',
+    cuisine: 'Armenian-Lebanese Homestyle',
+    address: 'Badaro Main Street, Badaro, Beirut, Lebanon',
+    phone: '+961 1 382 444',
+    website: 'https://facebook.com/onnorestaurant',
+    chef: 'Maida Onno',
+    description: 'Onno is widely loved for its incredibly authentic, home-cooked Armenian dishes. Located in the tree-lined neighborhood of Badaro, this cozy dining room serves rich, spiced, comforting family recipes.',
+    inspectorNote: 'The armenian spices are warm and fragrant. Their Cherry Kebab (skewered spiced ground beef in a glossy, sweet-and-sour wild sour cherry reduction) is the absolute best in the country. The vibe is welcoming, like entering a family home.',
+    signatureDishes: [
+      'Kabab Karaz: Spiced lean beef skewers covered in a sweet wild mountain sour cherry coulis and toasted pine nuts',
+      'Itch Salad: Fragrant Armenian bulgur salad tossed with hand-pressed tomatoes, spring green onions, olive oil, and sumac',
+      'Onno Manté: Baked parcel-shaped dumplings stuffed with highly spiced lamb, covered in rich garlic-yogurt and paprika oil'
+    ],
+    imageUrl: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&q=80&w=800',
+    images: [
+      'https://images.unsplash.com/photo-1541532713592-79a0317b6b77?auto=format&fit=crop&q=80&w=800'
+    ],
+    features: ['Charming Brick Interior', 'Friendly Family-Owned Hospitality', 'Phenomenal Armenian Spiced Specialties', 'Cozy Street-Side Seating'],
+    instagram: '@onno_badaro',
+    category: 'fine_dining',
+    neighborhood: 'badaro'
+  },
+  {
+    id: 'rest-hamra-1',
+    name: 'Barbar Hamra',
+    city: 'Beirut',
+    country: 'Lebanon',
+    coordinates: { lat: 33.8955, lng: 35.4841, x: 35, y: 55 },
+    stars: 0,
+    distinction: 'SELECTED',
+    priceRange: '$',
+    cuisine: 'Legendary Street-Food Takeaway',
+    address: 'Piccadilly Street, Hamra, Beirut, Lebanon',
+    phone: '+961 1 350 000',
+    website: 'https://barbarrestaurant.com',
+    chef: 'Mohammad Ghaziri',
+    description: 'An absolute, unmissable Beirut landmark open 24/7 since 1979 in the heart of Hamra. Famous for serving the absolute best shawarmas, falafels, and hot manoushehs under buzzing municipal neon signs.',
+    inspectorNote: 'Barbar is the beating heart of Hamra street food culture. Having fed generations of locals, their beef and chicken shawarmas represent a golden standard—wrapped in fresh bread with highly custom ratios of garlic paste, tahini, and wild green pickled peppers.',
+    signatureDishes: [
+      'Beef Shawarma Sandwich: Spit-roasted grass-fed beef shaved into fresh pita bread with fresh green parsley, onions, and tahini tarator sauce',
+      'Crispy Falafel Duo: Spiced chickpea croquettes fried gold, loaded with juicy fresh tomatoes, mint, radish, and pickled turnips',
+      'Spicy Sujuk Manousheh: Puffed clay dough spread with highly spiced ground beef paste, akkawi cheese, and fresh mint leaves'
+    ],
+    imageUrl: 'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&q=80&w=800',
+    images: [
+      'https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&q=80&w=800'
+    ],
+    features: ['Legendary 24/7 Service', 'Stall Counter & Fast Takeaway Only', 'Iconic Historic Brand since 1979', 'Ultra-Affordable Classic Comforts'],
+    instagram: '@barbarbeirut',
+    category: 'takeaway_bakery_produce',
+    neighborhood: 'hamra'
+  },
+  {
+    id: 'rest-sassine-1',
+    name: 'Seza Achrafieh',
+    city: 'Beirut',
+    country: 'Lebanon',
+    coordinates: { lat: 33.8885, lng: 35.5188, x: 74, y: 72 },
+    stars: 1,
+    distinction: 'STAR_1',
+    priceRange: '$$$',
+    cuisine: 'Armenian-Lebanese Homestyle',
+    address: 'Sursock District, Achrafieh, Beirut, Lebanon',
+    phone: '+961 1 561 222',
+    website: 'https://instagram.com/seza.beirut',
+    chef: 'Seza Sarafian',
+    description: 'An absolute visual and culinary gem and secret garden in the Sursock district near Sassine. Seza serves refined, exceptional Armenian and Lebanese homestyle recipes in a beautifully designed old house.',
+    inspectorNote: 'Seza Sarafian creates a magical, fairy-lit sanctuary. Plates are prepared with incredible care. The wild cherry kebabs are sensational, and the subeoreg (cheese-filled baked layers) is flakey and buttery. A superb 1-star destination.',
+    signatureDishes: [
+      'Subeoreg Cheese Squares: Delicate puff layers containing akkawi and kashkaval melting cheeses with black caraway seed',
+      'Kabab Karaz: Hand-rolled charcoal meat skewers steeped in a wild sour cherry glaze and fresh pine nuts',
+      ' Armenian Lentil Salad: Spicy red lentils, fresh green coriander, organic cold olive oil, and sumac'
+    ],
+    imageUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=800',
+    images: [
+      'https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&q=80&w=800'
+    ],
+    features: ['Fairy-Lit Secret Garden', 'Charming 20th Century Mansion', 'Highly Refined Armenian Classics', 'Exceptional Wine Selection'],
+    instagram: '@seza.beirut',
+    category: 'fine_dining',
+    neighborhood: 'sassine'
   }
 ];
+
+// Rich map logic to assign neighborhood tags to existing restaurants in memory dynamically before export
+const NEIGHBORHOOD_ASSIGNMENTS: Record<string, string> = {
+  'rest-1': 'sodeco',
+  'rest-12': 'mar_mikhael',
+  'rest-21': 'sodeco',
+  'rest-22': 'badaro',
+  'rest-8': 'hamra',
+  'rest-4': 'mar_mikhael',
+  'rest-9': 'mar_mikhael',
+  'rest-10': 'mar_mikhael',
+  'rest-19': 'mar_mikhael',
+  'rest-2': 'sassine',
+  'rest-5': 'mar_mikhael',
+  'rest-6': 'sodeco',
+  'rest-14': 'sodeco'
+};
+
+RESTAURANTS.forEach(r => {
+  if (NEIGHBORHOOD_ASSIGNMENTS[r.id]) {
+    r.neighborhood = NEIGHBORHOOD_ASSIGNMENTS[r.id] as any;
+  }
+});
+
 
 export const ARTICLES: Article[] = [
   {
     id: 'art-1',
-    title: 'How the Zaytouynda Guide Redefined Levantine Cooking Honor',
+    title: 'How the Zaytounada Guide Redefined Levantine Cooking Honor',
     subtitle: 'From a simple notebook listing of organic family olive presses to the ultimate seal of gastronomic mastery.',
     category: 'History',
     readTime: '6 min read',
     imageUrl: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&q=80&w=800',
     date: 'May 15, 2026',
-    author: 'Jean-Luc Zaytouynda',
+    author: 'Jean-Luc Zaytounada',
     content: [
-      'At its inception, Zaytouynda (named after the ancient, sacred wild olive trees of the Levant) began as a secret journal shared among master olive oil pressers, chefs, and culinary families. Our mission was simple: cataloging pure, magnificent olive oil presses and exceptional family kitchens across historical ports.',
-      'Our directory was widely circulated among true culinary purists. Recognizing that "true craftsmanship is defined by integrity and passion," Zaytouynda launched its official guide, introducing anonymous inspections and strict tasting protocols.',
+      'At its inception, Zaytounada (named after the ancient, sacred wild olive trees of the Levant) began as a secret journal shared among master olive oil pressers, chefs, and culinary families. Our mission was simple: cataloging pure, magnificent olive oil presses and exceptional family kitchens across historical ports.',
+      'Our directory was widely circulated among true culinary purists. Recognizing that "true craftsmanship is defined by integrity and passion," Zaytounada launched its official guide, introducing anonymous inspections and strict tasting protocols.',
       'As the guide grew popular, we hired a team of anonymous culinary inspectors to visit and review eating establishments in Lebanon. In 1926, the guide introduced its famous single star rosettes. By 1931, the hierarchy expanded to include two and three stars, codifying a grading system that has remained unchanged for nearly a century.',
-      'Today, Zaytouynda Stars (✻) remain the most prestigious honor a chef can receive, symbolising absolute technical accuracy, emotional expression, and culinary consistency.'
+      'Today, Zaytounada Stars (✻) remain the most prestigious honor a chef can receive, symbolising absolute technical accuracy, emotional expression, and culinary consistency.'
     ]
   },
   {
     id: 'art-2',
-    title: 'What Actually Happens on a Zaytouynda Inspector\'s Lebanese Tour?',
+    title: 'What Actually Happens on a Zaytounada Inspector\'s Lebanese Tour?',
     subtitle: 'Behind the veil of anonymity, secret checklists, and the pressure of a meal in Gemmayze and Byblos.',
     category: 'Behind The Scenes',
     readTime: '8 min read',
@@ -681,7 +857,7 @@ export const ARTICLES: Article[] = [
     content: [
       'Anonymity is our oxygen. We do not write reviews under our own names, we pay for every single meal we eat, and we never carry notebooks into the dining room. To the restaurateurs, we are merely lone, quiet travelers enjoying a dinner in Mar Mikhael.',
       'But what are we looking for? Our evaluations are based on five strict, globally consistent criteria: the quality of the ingredients, the mastery of culinary combinations and flavors, the chef\'s unique culinary personality on the plate, value for money, and consistency across both the whole menu and multiple visits.',
-      'Common myths suggest we look for silver service, starch linen, or golden chandeliers. This is false. Service and decor are rated separately using exclusive comfort tags. A Zaytouynda star belongs strictly to what is curated on the plate.',
+      'Common myths suggest we look for silver service, starch linen, or golden chandeliers. This is false. Service and decor are rated separately using exclusive comfort tags. A Zaytounada star belongs strictly to what is curated on the plate.',
       'It is a beautiful, demanding life. We travel constantly, tasting up to 250 restaurants a year. But when we experience that perfect harmony of flavors, texture, and creativity, the exhaustion fades, replaced by the thrill of discovering another masterpiece.'
     ]
   },
@@ -702,7 +878,7 @@ export const ARTICLES: Article[] = [
   },
   {
     id: 'art-4',
-    title: 'Understanding the Zaytouynda Stars (✻): 1, 2, and 3',
+    title: 'Understanding the Zaytounada Stars (✻): 1, 2, and 3',
     subtitle: 'What do the distinctions actually mean for travelers and gourmands in Lebanon?',
     category: 'Guides',
     readTime: '4 min read',
@@ -710,7 +886,7 @@ export const ARTICLES: Article[] = [
     date: 'January 20, 2026',
     author: 'Gourmet Travel Team',
     content: [
-      'The Zaytouynda Guide uses three distinct star classifications, defined precisely to guide culinary travelers planning unique dining escapes:',
+      'The Zaytounada Guide uses three distinct star classifications, defined precisely to guide culinary travelers planning unique dining escapes:',
       '★ One Star: "High quality cooking, worth a stop!" The food is prepared to a consistently high standard and shows clear, distinct flavors. Excellent in its category.',
       '★★ Two Stars: "Excellent cooking, worth a detour!" The chef\'s personality and talent are clearly evident in their refined, expertly crafted plates. Exceptional cellars and precision preparation.',
       '★★★ Three Stars: "Exceptional cuisine, worth a special journey!" Our highest award. The cooking is elevated to an art form. Some signature dishes become absolute historic benchmarks. Superlative execution.',

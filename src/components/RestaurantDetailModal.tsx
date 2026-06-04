@@ -146,13 +146,13 @@ export default function RestaurantDetailModal({
                       <div className="flex items-center gap-1 text-neutral-900">
                         <span className="text-amber-550 text-lg leading-none font-bold">✻</span>
                         <span className="font-serif text-sm font-bold text-neutral-850">
-                          {restaurant.stars} Zaytouynda Star{restaurant.stars > 1 ? 's' : ''} (✻)
+                          {restaurant.stars} Zaytounada Star{restaurant.stars > 1 ? 's' : ''} (✻)
                         </span>
                       </div>
                     ) : restaurant.distinction === 'BIB_GOURMAND' ? (
                       <span className="text-amber-700 font-bold text-sm">☺ Exceptional Value Bib Gourmand</span>
                     ) : (
-                      <span className="text-neutral-700 font-semibold text-sm">Selected Zaytouynda Guide Spot</span>
+                      <span className="text-neutral-700 font-semibold text-sm">Selected Zaytounada Guide Spot</span>
                     )}
                   </div>
                 </div>
@@ -205,7 +205,7 @@ export default function RestaurantDetailModal({
               <section id="inspector-analysis">
                 <div className="flex items-center gap-2 text-emerald-700 font-serif font-black text-sm uppercase tracking-widest mb-3 border-b border-neutral-200 pb-1">
                   <Award className="w-4.5 h-4.5" />
-                  <span>Zaytouynda Inspection Report</span>
+                  <span>Zaytounada Inspection Report</span>
                 </div>
                 
                 {/* Master Chef block */}
@@ -281,7 +281,7 @@ export default function RestaurantDetailModal({
                         <h4 className="font-serif font-black text-lg text-emerald-950 uppercase tracking-wide">Gourmet Booking Desk</h4>
                       </div>
                       <p className="text-xs text-neutral-555 mb-4 leading-relaxed font-light font-sans text-left">
-                        Zaytouynda Guide tables are highly coveted. Request a seat placement, and details will be forwarded directly to our Maitre D'.
+                        Zaytounada Guide tables are highly coveted. Request a seat placement, and details will be forwarded directly to our Maitre D'.
                       </p>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
