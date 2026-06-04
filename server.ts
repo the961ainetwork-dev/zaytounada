@@ -517,7 +517,25 @@ async function startServer() {
       appType: "spa",
     });
     app.use(vite.middlewares);
-    console.log("Vite dev middleware mounted successfully.");
+
+    // Catch-all HTML fallback for client-side routing in development
+    app.get('*', async (req, res, next) => {
+      if (req.originalUrl.startsWith('/api/')) {
+        return next();
+      }
+      try {
+        const fs = await import("fs");
+        const templatePath = path.join(process.cwd(), 'index.html');
+        let template = fs.readFileSync(templatePath, 'utf-8');
+        template = await vite.transformIndexHtml(req.originalUrl, template);
+        res.status(200).set({ 'Content-Type': 'text/html' }).end(template);
+      } catch (e: any) {
+        vite.ssrFixStacktrace(e);
+        next(e);
+      }
+    });
+
+    console.log("Vite dev middleware mounted successfully with SPA route fallback.");
   } else {
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
