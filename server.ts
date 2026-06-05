@@ -26,8 +26,9 @@ let pagesConfigList: any[] = [
   { id: 'live-shows', label: 'Live Shows', icon: 'Music', active: true, order: 10 },
   { id: 'magazine', label: 'Editorial Magazine', icon: 'BookOpen', active: true, order: 11 },
   { id: 'my-guide', label: 'Itineraries', icon: 'Sparkles', active: true, order: 12 },
-  { id: 'admin', label: 'Admin Lockbox', icon: 'Lock', active: true, order: 13, cannotDisable: true },
-  { id: 'get-started', label: 'Get Started', icon: 'Info', active: true, order: 14 }
+  { id: 'suppliers', label: 'Insider Partners', icon: 'Store', active: true, order: 13 },
+  { id: 'admin', label: 'Admin Lockbox', icon: 'Lock', active: true, order: 14, cannotDisable: true },
+  { id: 'get-started', label: 'Get Started', icon: 'Info', active: true, order: 15 }
 ];
 
 let siteSettings = {
@@ -68,6 +69,37 @@ let bookingsList: any[] = [
 let subscribersList: any[] = [
   { id: "sub-1", email: "maanbarazy@gmail.com", date: "2026-06-03T05:00:00Z" },
   { id: "sub-2", email: "gourmet@lavigneprime.com", date: "2026-06-03T05:08:00Z" }
+];
+
+let suppliersList: any[] = [
+  {
+    id: "supp-1",
+    businessName: "Iris Sunset Beirut",
+    contactName: "Phillippe Karam",
+    email: "philippe@irisbeirut.com",
+    phone: "+961 1 971 111",
+    category: "nightlife",
+    discountOffer: "20% off entry tickets and drinks stacks",
+    description: "Beirut's premier rooftop lounge experience offering stunning coastal sunset panoramas, handcrafted signature cocktails, and live DJ line-ups.",
+    instagram: "@irisbeirut",
+    area: "Beirut Port, Beirut",
+    status: "approved",
+    date: "2026-06-03T11:20:00Z"
+  },
+  {
+    id: "supp-2",
+    businessName: "Sursock Museum Resto",
+    contactName: "Jean-Luc Maroun",
+    email: "jeanluc@sursockresto.com",
+    phone: "+961 1 200 456",
+    category: "dining",
+    discountOffer: "20% off selected food items and drinks",
+    description: "Dine inside Beirut's aristocratic heritage backyard. Offering organic high-culinary Levant fusion amidst contemporary Lebanese artwork.",
+    instagram: "@sursockresto",
+    area: "Sursock Street, Achrafieh",
+    status: "pending",
+    date: "2026-06-04T09:40:00Z"
+  }
 ];
 
 let emailLogs: any[] = [];
@@ -346,6 +378,100 @@ async function startServer() {
     }
     const removed = subscribersList.splice(index, 1);
     res.json({ message: "Subscriber removed successfully.", deleted: removed[0] });
+  });
+
+  // --- SUPPLIERS / PARTNERS ECOSYSTEM REST API ENDPOINTS ---
+  app.get("/api/suppliers", (req, res) => {
+    res.json(suppliersList);
+  });
+
+  app.post("/api/suppliers", (req, res) => {
+    const { businessName, contactName, email, phone, category, discountOffer, description, instagram, area } = req.body;
+    if (!businessName || !contactName || !email || !phone) {
+      res.status(400).json({ error: "Business name, contact person, email, and phone coordinates are required." });
+      return;
+    }
+
+    const newSupplier = {
+      id: `supp-${Math.random().toString(36).substr(2, 9)}`,
+      businessName,
+      contactName,
+      email,
+      phone,
+      category: category || "dining",
+      discountOffer: discountOffer || "20% off everything at any time",
+      description: description || "Selected partner of the Insider Pass ecosystem.",
+      instagram: instagram || "@brandhandle",
+      area: area || "Beirut",
+      status: "pending",
+      date: new Date().toISOString()
+    };
+
+    suppliersList.unshift(newSupplier);
+
+    // Record welcome email dispatch log for on-boarded suppliers
+    const emailHTML = `
+      <div style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 30px; border: 1px solid #e2e8f0; border-radius: 16px; background-color: #ffffff; color: #1e293b; text-align: left;">
+        <div style="text-align: center; border-bottom: 2px solid #065f46; padding-bottom: 20px; margin-bottom: 24px;">
+          <span style="font-family: serif; font-size: 26px; font-weight: bold; letter-spacing: 0.1em; color: #065f46;">INSIDER PASS • SUPPLIER BOARD</span>
+        </div>
+        <h2 style="font-family: serif; font-size: 20px; color: #0f172a; margin-top: 0;">Application Received</h2>
+        <p>Dear <strong>${contactName}</strong>,</p>
+        <p>Thank you for submitting your partner application to merge <strong>${businessName}</strong> with Lebanon's elite digital-meets-physical lifestyle ecosystem.</p>
+        
+        <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 20px; border-radius: 12px; margin: 20px 0; font-size: 13.5px; line-height: 1.6;">
+          <strong>📋 BRAND REGISTRATION SUMMARY:</strong><br />
+          🏛️ <strong>Venue:</strong> ${businessName}<br />
+          🥂 <strong>Category:</strong> ${category}<br />
+          📍 <strong>Cover Region:</strong> ${area}<br />
+          🎟️ <strong>Specified 20% Offer:</strong> ${discountOffer}<br />
+          Instagram : <code>${instagram}</code>
+        </div>
+        
+        <p>Our review team will verify your Instagram presence and construct your <strong>Bespoke Merchant Page</strong> dashboard layout within 24 business hours.</p>
+        
+        <p style="font-size: 11px; color: #94a3b8; font-family: monospace; text-align: center; margin-top: 30px; border-top: 1px solid #f1f5f9; padding-top: 15px;">
+          WhatsOnLebanon & Zaytounada Joint Partner Services. All privileges reserved.
+        </p>
+      </div>
+    `;
+
+    const dispatchedMail = {
+      id: `mail-${Math.random().toString(36).substr(2, 9)}`,
+      to: email,
+      subject: `[Insider Pass Partner] Application Pending Vetting for ${businessName}`,
+      html: emailHTML,
+      date: new Date().toISOString()
+    };
+
+    emailLogs.unshift(dispatchedMail);
+
+    res.status(201).json(newSupplier);
+  });
+
+  app.put("/api/suppliers/:id", (req, res) => {
+    const { id } = req.params;
+    const index = suppliersList.findIndex(s => s.id === id);
+    if (index === -1) {
+      res.status(404).json({ error: "Supplier not found." });
+      return;
+    }
+    suppliersList[index] = {
+      ...suppliersList[index],
+      ...req.body
+    };
+    res.json(suppliersList[index]);
+  });
+
+  app.delete("/api/suppliers/:id", (req, res) => {
+    const { id } = req.params;
+    const index = suppliersList.findIndex(s => s.id === id);
+    if (index === -1) {
+      res.status(404).json({ error: "Supplier not found." });
+      return;
+    }
+    const removed = suppliersList.splice(index, 1);
+    res.json({ message: "Supplier application removed successfully.", deleted: removed[0] });
   });
 
   // --- EMAIL LOGGER ROUTER SEND BOX ENDPOINT ---

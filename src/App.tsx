@@ -16,6 +16,8 @@ import SpecialtySectionView from './components/SpecialtySectionView';
 import HeroSlider from './components/HeroSlider';
 import NeighborhoodsView from './components/NeighborhoodsView';
 import AdminDashboardView from './components/AdminDashboardView';
+import SupplierOnboardingView from './components/SupplierOnboardingView';
+import MerchantOfferLoyaltyView from './components/MerchantOfferLoyaltyView';
 import { Restaurant, SavedItinerary, Booking } from './types';
 import { RESTAURANTS } from './data/restaurants';
 import { Award, Compass, Heart, Award as AwardIcon, MapPin, Grid, Plus, Sparkles, BookOpen, Calendar, Star, Gift, ArrowRight, Share2, Check } from 'lucide-react';
@@ -432,6 +434,51 @@ export default function App() {
               onSelectDistinction={setSelectedDistinction}
               onOpenConcierge={() => setIsConciergeActive(true)}
             />
+
+            {/* HIGH-FIDELITY LOYALTY PROGRAM PROMOTIONAL BANNER */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4" id="home-loyalty-promo-banner-rail">
+              <div className="relative bg-gradient-to-br from-[#0c2e1f] via-[#051c13] to-emerald-950 border border-emerald-800/80 rounded-3xl p-6 md:p-8 xl:p-10 overflow-hidden shadow-xl flex flex-col md:flex-row items-center gap-6 text-left transition-all hover:border-emerald-600/80">
+                {/* Decorative background visual elements */}
+                <div className="absolute top-0 right-0 w-80 h-80 bg-amber-400/5 rounded-full filter blur-3xl pointer-events-none" />
+                <div className="absolute -bottom-16 -left-16 w-64 h-64 bg-emerald-500/10 rounded-full filter blur-2xl pointer-events-none" />
+                
+                {/* Badge, Icon, Content layout */}
+                <div className="flex-1 space-y-4 z-10 relative">
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    <span className="text-[10px] font-mono uppercase bg-amber-400 text-neutral-950 font-black px-3 py-1 rounded tracking-widest leading-none">
+                      ★ VIP LOYALTY CARD
+                    </span>
+                    <span className="text-[9.5px] font-mono text-emerald-350 border border-emerald-850/80 uppercase px-2.5 py-0.5 rounded font-bold">
+                      Flat 20% Off Outposts
+                    </span>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <h2 className="font-serif text-2xl md:text-3xl font-extrabold text-white tracking-tight uppercase leading-tight">
+                      JOIN THE WHATSONLEBANON.BUZZ <br className="hidden md:block"/>
+                      <span className="text-amber-400 underline decoration-emerald-500 decoration-2">LOYALTY ECOSYSTEM</span>
+                    </h2>
+                    <p className="text-xs md:text-sm text-neutral-300 leading-relaxed font-light max-w-2xl">
+                      Beirut's premier digital network connecting elite consumers with top-tier venues, brands, and service providers. Enjoy a flat <strong className="text-white font-semibold">20% discount on all food & services</strong>, custom content campaigns, and real-time "What's Popping" privileges.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Right Action Trigger Box */}
+                <div className="shrink-0 z-10 relative flex flex-col gap-2.5 w-full md:w-auto text-center md:text-right">
+                  <button
+                    onClick={() => setActiveTab('merchant-offers')}
+                    className="px-6 py-4 bg-amber-400 hover:bg-amber-500 active:scale-98 text-emerald-950 font-mono font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-md cursor-pointer inline-flex items-center justify-center gap-2"
+                  >
+                    <span>Claim Free Digital Pass</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                  <p className="text-[9px] font-mono text-neutral-400">
+                    Settle checkouts elegantly with smartphone QR scans
+                  </p>
+                </div>
+              </div>
+            </div>
 
             {/* NEIGHBORHOODS HERO BANNER CARDS GRID */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-left" id="neighborhoods-directory-banner-rail">
@@ -1215,6 +1262,16 @@ export default function App() {
           />
         )}
 
+        {/* VIEW: ONBOARD AND REGISTER IN THE DISCOUNTS LOYALTY CARD PUSH SYSTEM */}
+        {activeTab === 'suppliers' && (
+          <SupplierOnboardingView />
+        )}
+
+        {/* VIEW: MERCHANT OFFERS & LOYALTY ECOSYSTEM */}
+        {activeTab === 'merchant-offers' && (
+          <MerchantOfferLoyaltyView setActiveTab={setActiveTab} />
+        )}
+
         {/* VIEW: ADMIN LOCKBOX DASHBOARD */}
         {activeTab === 'admin' && (
           <AdminDashboardView onRestaurantsUpdated={fetchRestaurants} />
@@ -1228,7 +1285,7 @@ export default function App() {
         <div className="flex gap-8">
           <span onClick={() => setActiveTab('get-started')} className="hover:text-neutral-900 transition-colors cursor-pointer">Privacy Policy</span>
           <span onClick={() => setActiveTab('get-started')} className="hover:text-neutral-900 transition-colors cursor-pointer">Cookies Manager</span>
-          <span onClick={() => setActiveTab('get-started')} className="hover:text-neutral-900 transition-colors cursor-pointer">FAQ & Partners</span>
+          <span onClick={() => setActiveTab('suppliers')} className="hover:text-neutral-900 transition-colors cursor-pointer text-emerald-800 font-bold">FAQ & Partners (Join Us)</span>
         </div>
       </footer>
 

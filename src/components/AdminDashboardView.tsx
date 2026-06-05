@@ -18,7 +18,7 @@ export default function AdminDashboardView({ onRestaurantsUpdated }: AdminDashbo
   const [authError, setAuthError] = useState('');
 
   // Active sub-section of admin controls
-  const [adminTab, setAdminTab] = useState<'reservations' | 'restaurants' | 'subscribers' | 'emails' | 'stories' | 'pages-sections'>('reservations');
+  const [adminTab, setAdminTab] = useState<'reservations' | 'restaurants' | 'subscribers' | 'emails' | 'stories' | 'pages-sections' | 'suppliers'>('reservations');
 
   // Server state data
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -27,6 +27,7 @@ export default function AdminDashboardView({ onRestaurantsUpdated }: AdminDashbo
   const [emailLogs, setEmailLogs] = useState<{ id: string; to: string; subject: string; html: string; date: string }[]>([]);
   const [articles, setArticles] = useState<Article[]>([]);
   const [pagesConfig, setPagesConfig] = useState<any[]>([]);
+  const [suppliers, setSuppliers] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   // Search/Filters in admin lists
@@ -114,14 +115,15 @@ export default function AdminDashboardView({ onRestaurantsUpdated }: AdminDashbo
   const fetchAllData = async () => {
     setIsLoading(true);
     try {
-      const [resB, resR, resS, resE, resA, resP, resSettings] = await Promise.all([
+      const [resB, resR, resS, resE, resA, resP, resSettings, resSuppliers] = await Promise.all([
         fetch('/api/bookings').then(r => r.json()),
         fetch('/api/restaurants').then(r => r.json()),
         fetch('/api/subscribers').then(r => r.json()),
         fetch('/api/email-logs').then(r => r.json()),
         fetch('/api/articles').then(r => r.json()),
         fetch('/api/pages').then(r => r.json()),
-        fetch('/api/settings').then(r => r.json())
+        fetch('/api/settings').then(r => r.json()),
+        fetch('/api/suppliers').then(r => r.json()).catch(() => [])
       ]);
 
       if (Array.isArray(resB)) setBookings(resB);
@@ -130,6 +132,7 @@ export default function AdminDashboardView({ onRestaurantsUpdated }: AdminDashbo
       if (Array.isArray(resE)) setEmailLogs(resE);
       if (Array.isArray(resA)) setArticles(resA);
       if (Array.isArray(resP)) setPagesConfig(resP.sort((a: any, b: any) => a.order - b.order));
+      if (Array.isArray(resSuppliers)) setSuppliers(resSuppliers);
       if (resSettings && !resSettings.error) {
         setSettingsFormData({
           heroTagline: resSettings.heroTagline || '',
@@ -525,6 +528,40 @@ export default function AdminDashboardView({ onRestaurantsUpdated }: AdminDashbo
     }
   };
 
+  // --- SUPPLIER ACTIONS ---
+  const handleUpdateSupplierStatus = async (id: string, status: 'approved' | 'rejected') => {
+    try {
+      const res = await fetch(`/api/suppliers/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      });
+      if (res.ok) {
+        triggerAlert('success', `Supplier application status updated to ${status}.`);
+        fetchAllData();
+      } else {
+        triggerAlert('err', 'Failed to update partner status.');
+      }
+    } catch (err) {
+      triggerAlert('err', 'Network error updating partner status.');
+    }
+  };
+
+  const handleDeleteSupplier = async (id: string) => {
+    if (!confirm('Are you serious about deleting this supplier application from the master pass network database?')) return;
+    try {
+      const res = await fetch(`/api/suppliers/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        triggerAlert('success', 'Supplier record deleted cleanly.');
+        fetchAllData();
+      } else {
+        triggerAlert('err', 'Failed to delete supplier record.');
+      }
+    } catch (err) {
+      triggerAlert('err', 'Error connecting to suppliers API.');
+    }
+  };
+
   // Filters logic
   const filteredBookings = bookings.filter(b => 
     b.userName.toLowerCase().includes(bookingFilter.toLowerCase()) ||
@@ -727,6 +764,18 @@ export default function AdminDashboardView({ onRestaurantsUpdated }: AdminDashbo
           >
             <Compass className="w-4 h-4 text-amber-550" />
             <span>Edit Sections & Pages</span>
+          </button>
+
+          <button
+            onClick={() => setAdminTab('suppliers')}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
+              adminTab === 'suppliers'
+                ? 'bg-emerald-800 text-white shadow-md'
+                : 'bg-white text-neutral-600 hover:bg-neutral-100 border border-neutral-200 shadow-2xs'
+            }`}
+          >
+            <Building2 className="w-4 h-4 text-amber-500" />
+            <span>Suppliers Vetting ({suppliers.length})</span>
           </button>
         </div>
 
@@ -1168,6 +1217,132 @@ export default function AdminDashboardView({ onRestaurantsUpdated }: AdminDashbo
         )}
 
         {/* TABLE CONTROL 6: EDIT SECTIONS & PAGES ORDERING */}
+        {/* TABLE CONTROL 6: SUPPLIERS VETTING MANAGEMENT */}
+        {adminTab === 'suppliers' && (
+          <div className="bg-white border border-neutral-200 rounded-2xl shadow-sm overflow-hidden animate-fade-in text-left">
+            <div className="p-4 border-b border-neutral-100 bg-neutral-50/50 flex flex-col sm:flex-row justify-between items-center gap-4">
+              <div>
+                <span className="text-xs font-mono font-bold text-neutral-800 uppercase block tracking-wider">
+                  🤝 Partnership Applications Registry ({suppliers.length})
+                </span>
+                <span className="text-[10px] text-neutral-400 block mt-0.5">
+                  Review and authorize prospective venues requesting inclusion in the digital 20% discount program.
+                </span>
+              </div>
+              <div className="text-[10px] font-mono bg-emerald-800 text-amber-300 font-bold px-3 py-1 rounded">
+                SECURE PARTNERS MASTER SHEET
+              </div>
+            </div>
+
+            {suppliers.length === 0 ? (
+              <div className="p-16 text-center text-neutral-500">
+                <Users className="w-12 h-12 text-neutral-300 mx-auto mb-4" />
+                <h4 className="font-semibold text-neutral-900">No partner registrations.</h4>
+                <p className="text-xs text-neutral-500 max-w-sm mx-auto mt-1 leading-normal">
+                  No prospective venues have completed registrations through our Partner program. Try submitting an application form on the Partner page first!
+                </p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-neutral-50 border-b border-neutral-150 text-[10px] font-mono uppercase tracking-wider text-neutral-600">
+                      <th className="px-6 py-4">Brand / Area</th>
+                      <th className="px-6 py-4">Volunteered 20% Offer</th>
+                      <th className="px-6 py-4">Primary Contact Details</th>
+                      <th className="px-6 py-4">Instagram Bio</th>
+                      <th className="px-6 py-4">Application Date</th>
+                      <th className="px-6 py-4">Privilege Status</th>
+                      <th className="px-6 py-4 text-right">Actions Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-neutral-100 text-xs">
+                    {suppliers.map((app) => (
+                      <tr key={app.id} className="hover:bg-neutral-50/60 transition-colors">
+                        <td className="px-6 py-4">
+                          <div className="font-serif font-black text-neutral-900 text-sm uppercase">{app.businessName}</div>
+                          <div className="flex items-center gap-1.5 mt-1 text-[10px] text-neutral-500 font-mono font-bold uppercase">
+                            <MapPin className="w-3.5 h-3.5" />
+                            <span>{app.area}</span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 font-serif">
+                          <span className="text-emerald-900 bg-emerald-50 border border-emerald-150 rounded px-2 py-0.5 text-[10px] font-mono font-bold">
+                            {app.category ? app.category.toUpperCase() : 'DINING'}
+                          </span>
+                          <span className="block mt-1 text-xs text-neutral-700 max-w-xs font-semibold leading-relaxed">
+                            {app.discountOffer}
+                          </span>
+                          {app.description && (
+                            <span className="block text-[10px] text-neutral-400 italic font-light truncate max-w-xs mt-0.5">
+                              "{app.description}"
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="font-semibold text-neutral-900">{app.contactName}</div>
+                          <div className="text-neutral-500 font-mono text-[10px]">{app.email}</div>
+                          <div className="text-neutral-500 font-mono text-[10px]">{app.phone}</div>
+                        </td>
+                        <td className="px-6 py-4 font-mono">
+                          <a 
+                            href={`https://instagram.com/${app.instagram.replace('@', '')}`} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-emerald-800 hover:text-emerald-900 font-semibold underline"
+                          >
+                            {app.instagram}
+                          </a>
+                        </td>
+                        <td className="px-6 py-4 font-mono text-neutral-400">
+                          {new Date(app.date).toLocaleDateString()}
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-mono tracking-wider font-extrabold uppercase ${
+                            app.status === 'approved' 
+                              ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' 
+                              : app.status === 'rejected'
+                              ? 'bg-rose-50 text-rose-800 border border-rose-200'
+                              : 'bg-amber-450 bg-amber-400/15 text-amber-800 border border-amber-300'
+                          }`}>
+                            ● {app.status || 'PENDING'}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <div className="flex items-center justify-end gap-1.5">
+                            {app.status !== 'approved' && (
+                              <button
+                                onClick={() => handleUpdateSupplierStatus(app.id, 'approved')}
+                                className="p-1 px-2 bg-emerald-700 hover:bg-emerald-800 text-white font-mono text-[9px] uppercase font-bold rounded shadow-xs transition-colors cursor-pointer"
+                              >
+                                APPROVE
+                              </button>
+                            )}
+                            {app.status !== 'rejected' && (
+                              <button
+                                onClick={() => handleUpdateSupplierStatus(app.id, 'rejected')}
+                                className="p-1 px-2 bg-neutral-150 hover:bg-neutral-200 text-neutral-750 font-mono text-[9px] uppercase font-bold rounded border border-neutral-200 transition-colors cursor-pointer"
+                              >
+                                REJECT
+                              </button>
+                            )}
+                            <button
+                              onClick={() => handleDeleteSupplier(app.id)}
+                              className="p-1 px-2.5 bg-neutral-50 hover:bg-rose-50 hover:text-rose-800 text-rose-650 hover:border-rose-300 font-mono text-[9px] uppercase font-bold rounded border border-neutral-200 transition-colors cursor-pointer"
+                            >
+                              DELETE
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+
         {adminTab === 'pages-sections' && (
           <div className="space-y-8 animate-fade-in text-left">
             {/* General Site Content Headings Customization */}

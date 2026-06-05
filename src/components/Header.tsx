@@ -1,4 +1,4 @@
-import { Search, Compass, MapPin, BookOpen, Heart, Sparkles, Navigation, Info, Gift, Music, Calendar, Coffee, Flame, Store, X, Grid, Lock } from 'lucide-react';
+import { Search, Compass, MapPin, BookOpen, Heart, Sparkles, Navigation, Info, Gift, Music, Calendar, Coffee, Flame, Store, X, Grid, Lock, Award } from 'lucide-react';
 
 interface HeaderProps {
   activeTab: string;
@@ -329,6 +329,32 @@ export default function Header({
                 >
                   <Sparkles className="w-3.5 h-3.5 text-amber-550" />
                   <span>Itineraries</span>
+                </button>
+
+                <button
+                  id="tab-merchant-offers"
+                  onClick={() => setActiveTab('merchant-offers')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
+                    activeTab === 'merchant-offers'
+                      ? 'bg-emerald-700 text-white shadow-sm font-semibold'
+                      : 'text-emerald-955 hover:text-emerald-955 hover:bg-emerald-100/60 font-medium'
+                  }`}
+                >
+                  <Award className="w-3.5 h-3.5 text-amber-500" />
+                  <span>Loyalty & Offers</span>
+                </button>
+
+                <button
+                  id="tab-suppliers"
+                  onClick={() => setActiveTab('suppliers')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
+                    activeTab === 'suppliers'
+                      ? 'bg-emerald-700 text-white shadow-sm font-semibold'
+                      : 'text-emerald-955 hover:text-emerald-955 hover:bg-emerald-100/60 font-medium'
+                  }`}
+                >
+                  <Store className="w-3.5 h-3.5" />
+                  <span>Insider Partners</span>
                 </button>
 
                 <button
