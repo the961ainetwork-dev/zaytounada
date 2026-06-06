@@ -431,6 +431,10 @@ export default function App() {
     }
   };
 
+  const handleSocialClick = (platform: string) => {
+    console.log(`[Analytics] Social Link Engagement Tracked | Platform: ${platform} | Timestamp: ${new Date().toISOString()}`);
+  };
+
   // Extract unique Cuisines dynamically for filtering option values
   const uniqueCuisinesList = useMemo(() => {
     const cuisinesSet = new Set<string>();
@@ -1635,6 +1639,7 @@ export default function App() {
                 target="_blank" 
                 rel="noopener noreferrer" 
                 id="social-instagram-link"
+                onClick={() => handleSocialClick('Instagram')}
                 className="p-2 border border-neutral-200 rounded-full hover:border-red-650 hover:text-red-650 hover:scale-105 active:scale-95 transition-all text-neutral-500 bg-white hover:-translate-y-0.5 cursor-pointer flex items-center justify-center shadow-3xs"
                 title="Instagram"
               >
@@ -1645,6 +1650,7 @@ export default function App() {
                 target="_blank" 
                 rel="noopener noreferrer" 
                 id="social-facebook-link"
+                onClick={() => handleSocialClick('Facebook')}
                 className="p-2 border border-neutral-200 rounded-full hover:border-red-650 hover:text-red-650 hover:scale-105 active:scale-95 transition-all text-neutral-500 bg-white hover:-translate-y-0.5 cursor-pointer flex items-center justify-center shadow-3xs"
                 title="Facebook"
               >
@@ -1655,6 +1661,7 @@ export default function App() {
                 target="_blank" 
                 rel="noopener noreferrer" 
                 id="social-linkedin-link"
+                onClick={() => handleSocialClick('LinkedIn')}
                 className="p-2 border border-neutral-200 rounded-full hover:border-red-650 hover:text-red-650 hover:scale-105 active:scale-95 transition-all text-neutral-500 bg-white hover:-translate-y-0.5 cursor-pointer flex items-center justify-center shadow-3xs"
                 title="LinkedIn"
               >
