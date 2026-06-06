@@ -13,6 +13,7 @@ interface NeighborhoodsViewProps {
   selectedDistinction?: string;
   selectedCuisine?: string;
   selectedPrice?: string;
+  selectedDietary?: string;
   searchQuery?: string;
   selectedCity?: string;
 }
@@ -192,6 +193,7 @@ export default function NeighborhoodsView({
   selectedDistinction = 'All Distinctions',
   selectedCuisine = 'All Cuisines',
   selectedPrice = 'All Prices',
+  selectedDietary = 'All Dietary Options',
   searchQuery = '',
   selectedCity = 'All Cities'
 }: NeighborhoodsViewProps) {
@@ -203,9 +205,10 @@ export default function NeighborhoodsView({
     return selectedDistinction !== 'All Distinctions' ||
            selectedCuisine !== 'All Cuisines' ||
            selectedPrice !== 'All Prices' ||
+           selectedDietary !== 'All Dietary Options' ||
            searchQuery !== '' ||
            selectedCity !== 'All Cities';
-  }, [selectedDistinction, selectedCuisine, selectedPrice, searchQuery, selectedCity]);
+  }, [selectedDistinction, selectedCuisine, selectedPrice, selectedDietary, searchQuery, selectedCity]);
 
   const getFilteredSpotsCount = React.useCallback((neighborhoodId: string) => {
     return RESTAURANTS.filter(rest => {
@@ -234,9 +237,53 @@ export default function NeighborhoodsView({
       const matchesCuisine = selectedCuisine === 'All Cuisines' || rest.cuisine === selectedCuisine;
       const matchesPrice = selectedPrice === 'All Prices' || rest.priceRange === selectedPrice;
 
-      return cityMatch && matchesSearch && matchesDistinction && matchesCuisine && matchesPrice;
+      // Dietary Option Match
+      let matchesDietary = true;
+      if (selectedDietary !== 'All Dietary Options') {
+        const searchString = `${rest.name} ${rest.cuisine} ${rest.description} ${rest.inspectorNote} ${(rest.features || []).join(' ')} ${(rest.signatureDishes || []).join(' ')}`.toLowerCase();
+        
+        if (selectedDietary === 'Vegan / Vegetarian') {
+          matchesDietary = 
+            searchString.includes('vegan') || 
+            searchString.includes('vegetarian') || 
+            searchString.includes('plant-based') || 
+            searchString.includes('hummus') || 
+            searchString.includes('falafel') ||
+            searchString.includes('mezza') ||
+            searchString.includes('salad') ||
+            searchString.includes('za\'atar') ||
+            searchString.includes('thyme') ||
+            searchString.includes('bakery') ||
+            searchString.includes('knefeh');
+        } else if (selectedDietary === 'Gluten-Free') {
+          matchesDietary = 
+            searchString.includes('gluten-free') || 
+            searchString.includes('gluten free') || 
+            searchString.includes('coeliac') ||
+            searchString.includes('seafood') ||
+            searchString.includes('fish') ||
+            searchString.includes('salad') ||
+            searchString.includes('grilled') ||
+            searchString.includes('rice');
+        } else if (selectedDietary === 'Halal') {
+          const isHalalCuisine = 
+            rest.cuisine.toLowerCase().includes('lebanese') || 
+            rest.cuisine.toLowerCase().includes('seafood') || 
+            rest.cuisine.toLowerCase().includes('mediterranean') || 
+            rest.cuisine.toLowerCase().includes('armenian') || 
+            rest.cuisine.toLowerCase().includes('middle eastern');
+          matchesDietary = 
+            isHalalCuisine || 
+            searchString.includes('halal') || 
+            searchString.includes('kebab') || 
+            searchString.includes('kabab') || 
+            searchString.includes('grilled');
+        }
+      }
+
+      return cityMatch && matchesSearch && matchesDistinction && matchesCuisine && matchesPrice && matchesDietary;
     }).length;
-  }, [selectedDistinction, selectedCuisine, selectedPrice, searchQuery, selectedCity]);
+  }, [selectedDistinction, selectedCuisine, selectedPrice, selectedDietary, searchQuery, selectedCity]);
 
   const [copiedId, setCopiedId] = useState<string | null>(null);
 

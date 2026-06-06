@@ -18,9 +18,9 @@ import NeighborhoodsView from './components/NeighborhoodsView';
 import AdminDashboardView from './components/AdminDashboardView';
 import SupplierOnboardingView from './components/SupplierOnboardingView';
 import MerchantOfferLoyaltyView from './components/MerchantOfferLoyaltyView';
-import { Restaurant, SavedItinerary, Booking } from './types';
-import { RESTAURANTS } from './data/restaurants';
-import { Award, Compass, Heart, Award as AwardIcon, MapPin, Grid, Plus, Sparkles, BookOpen, Calendar, Star, Gift, ArrowRight, Share2, Check } from 'lucide-react';
+import { Restaurant, SavedItinerary, Booking, Article } from './types';
+import { RESTAURANTS, ARTICLES as staticArticles } from './data/restaurants';
+import { Award, Compass, Heart, Award as AwardIcon, MapPin, Grid, Plus, Sparkles, BookOpen, Calendar, Star, Gift, ArrowRight, Share2, Check, BookOpenCheck, ArrowUp, Instagram, Facebook, Linkedin } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>(() => {
@@ -72,6 +72,25 @@ export default function App() {
     }
   };
 
+  const fetchArticles = async () => {
+    try {
+      const res = await fetch('/api/articles');
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) {
+          setArticles(data);
+        } else {
+          setArticles(staticArticles);
+        }
+      } else {
+        setArticles(staticArticles);
+      }
+    } catch (err) {
+      console.error("Failed to fetch articles:", err);
+      setArticles(staticArticles);
+    }
+  };
+
   const fetchRestaurants = async () => {
     try {
       const res = await fetch('/api/restaurants');
@@ -88,11 +107,13 @@ export default function App() {
 
   useEffect(() => {
     fetchRestaurants();
+    fetchArticles();
     fetchPagesAndSettings();
   }, []);
 
   useEffect(() => {
     fetchPagesAndSettings();
+    fetchArticles();
   }, [activeTab]);
 
   useEffect(() => {
@@ -239,12 +260,38 @@ export default function App() {
   const [selectedDistinction, setSelectedDistinction] = useState<string>('All Distinctions');
   const [selectedCuisine, setSelectedCuisine] = useState<string>('All Cuisines');
   const [selectedPrice, setSelectedPrice] = useState<string>('All Prices');
+  const [selectedDietary, setSelectedDietary] = useState<string>('All Dietary Options');
 
   // Selected Restaurant for Detailed Inspector Modal
   const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null);
 
+  // Magazine Articles State
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [selectedMagazineArticleId, setSelectedMagazineArticleId] = useState<string | null>(null);
+
   // AI Concierge slide drawer state
   const [isConciergeActive, setIsConciergeActive] = useState<boolean>(false);
+
+  // Footer Newsletter State
+  const [footerEmail, setFooterEmail] = useState('');
+  const [footerStatus, setFooterStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [footerErrorMessage, setFooterErrorMessage] = useState('');
+
+  // Floating Back to Top Button State
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Show when scrolled past 400px
+      if (window.scrollY > 400) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // States with Local Persistency
   const [savedRestaurantIds, setSavedRestaurantIds] = useState<string[]>([]);
@@ -342,6 +389,48 @@ export default function App() {
     saveToStorage('zaytounada_bookings', []);
   };
 
+  const handleFooterSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFooterErrorMessage('');
+    
+    // Simple client-side email format validation
+    const emailStr = footerEmail.trim();
+    if (!emailStr) {
+      setFooterErrorMessage('Please enter an email address.');
+      setFooterStatus('error');
+      return;
+    }
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(emailStr)) {
+      setFooterErrorMessage('Please enter a valid email address (e.g., mail@domain.com).');
+      setFooterStatus('error');
+      return;
+    }
+    
+    setFooterStatus('submitting');
+    try {
+      const res = await fetch('/api/subscribers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: emailStr })
+      });
+      
+      if (res.ok) {
+        setFooterStatus('success');
+        setFooterEmail('');
+        setTimeout(() => setFooterStatus('idle'), 6000);
+      } else {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Unable to subscribe. Please try again.');
+      }
+    } catch (err: any) {
+      console.error('Subscription error:', err);
+      setFooterErrorMessage(err.message || 'Server connection issue. Please check your internet or try again later.');
+      setFooterStatus('error');
+    }
+  };
+
   // Extract unique Cuisines dynamically for filtering option values
   const uniqueCuisinesList = useMemo(() => {
     const cuisinesSet = new Set<string>();
@@ -380,9 +469,53 @@ export default function App() {
       // Price Tier Match
       const matchesPrice = selectedPrice === 'All Prices' || rest.priceRange === selectedPrice;
 
-      return cityMatch && matchesSearch && matchesDistinction && matchesCuisine && matchesPrice;
+      // Dietary Option Match
+      let matchesDietary = true;
+      if (selectedDietary !== 'All Dietary Options') {
+        const searchString = `${rest.name} ${rest.cuisine} ${rest.description} ${rest.inspectorNote} ${(rest.features || []).join(' ')} ${(rest.signatureDishes || []).join(' ')}`.toLowerCase();
+        
+        if (selectedDietary === 'Vegan / Vegetarian') {
+          matchesDietary = 
+            searchString.includes('vegan') || 
+            searchString.includes('vegetarian') || 
+            searchString.includes('plant-based') || 
+            searchString.includes('hummus') || 
+            searchString.includes('falafel') ||
+            searchString.includes('mezza') ||
+            searchString.includes('salad') ||
+            searchString.includes('za\'atar') ||
+            searchString.includes('thyme') ||
+            searchString.includes('bakery') ||
+            searchString.includes('knefeh');
+        } else if (selectedDietary === 'Gluten-Free') {
+          matchesDietary = 
+            searchString.includes('gluten-free') || 
+            searchString.includes('gluten free') || 
+            searchString.includes('coeliac') ||
+            searchString.includes('seafood') ||
+            searchString.includes('fish') ||
+            searchString.includes('salad') ||
+            searchString.includes('grilled') ||
+            searchString.includes('rice');
+        } else if (selectedDietary === 'Halal') {
+          const isHalalCuisine = 
+            rest.cuisine.toLowerCase().includes('lebanese') || 
+            rest.cuisine.toLowerCase().includes('seafood') || 
+            rest.cuisine.toLowerCase().includes('mediterranean') || 
+            rest.cuisine.toLowerCase().includes('armenian') || 
+            rest.cuisine.toLowerCase().includes('middle eastern');
+          matchesDietary = 
+            isHalalCuisine || 
+            searchString.includes('halal') || 
+            searchString.includes('kebab') || 
+            searchString.includes('kabab') || 
+            searchString.includes('grilled');
+        }
+      }
+
+      return cityMatch && matchesSearch && matchesDistinction && matchesCuisine && matchesPrice && matchesDietary;
     });
-  }, [restaurants, searchQuery, selectedCity, selectedDistinction, selectedCuisine, selectedPrice]);
+  }, [restaurants, searchQuery, selectedCity, selectedDistinction, selectedCuisine, selectedPrice, selectedDietary]);
 
   return (
     <div className="min-h-screen bg-white text-neutral-900 flex flex-col font-sans" id="zaytounada-app-root">
@@ -434,6 +567,127 @@ export default function App() {
               onSelectDistinction={setSelectedDistinction}
               onOpenConcierge={() => setIsConciergeActive(true)}
             />
+
+            {/* THIRD SECTION: ZAYTOUNA MAGAZINE – HOSPITALITY IN REVIEW */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4" id="zaytounada-magazine-review-homepage">
+              <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-neutral-250 pb-3 mb-6">
+                <div>
+                  <span className="text-[9.5px] font-mono uppercase tracking-[0.25em] font-extrabold text-red-650 block">
+                    🗞️ Hospitality in Review
+                  </span>
+                  <h3 className="font-serif font-light text-2xl text-neutral-900 mt-1 uppercase tracking-wide">
+                    Zaytounada <span className="font-semibold text-red-650">Magazine – Hospitality in review</span>
+                  </h3>
+                </div>
+                <button
+                  onClick={() => {
+                    setSelectedMagazineArticleId(null);
+                    setActiveTab('magazine');
+                  }}
+                  className="mt-3 md:mt-0 text-[10px] font-mono font-bold uppercase tracking-widest text-neutral-750 hover:text-red-650 border border-neutral-300 hover:border-red-650 px-4.5 py-2 rounded-full transition-all cursor-pointer text-left md:text-right w-fit"
+                >
+                  Enter Magazine Feed ➔
+                </button>
+              </div>
+
+              {articles.length === 0 ? (
+                <div className="py-12 bg-neutral-50 border border-dashed border-neutral-250 rounded-2xl text-center text-neutral-500 text-xs">
+                  Loading stories and latest culinary entries...
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                  {/* Left Big Spotlight Story (Large card, occupies 7 columns) */}
+                  {articles[0] && (
+                    <div 
+                      onClick={() => {
+                        setSelectedMagazineArticleId(articles[0].id);
+                        setActiveTab('magazine');
+                      }}
+                      className="lg:col-span-7 group cursor-pointer flex flex-col justify-between border border-neutral-200 hover:border-neutral-300 bg-white rounded-2xl p-5 shadow-2xs hover:shadow-xs transition-with-duration text-left"
+                    >
+                      <div className="space-y-4">
+                        <div className="h-64 sm:h-80 w-full rounded-xl overflow-hidden relative bg-neutral-100 border border-neutral-200">
+                          <img 
+                            src={articles[0].imageUrl} 
+                            alt={articles[0].title}
+                            className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-101 transition-all duration-505"
+                            referrerPolicy="no-referrer"
+                          />
+                          <span className="absolute top-4 left-4 bg-red-655 text-white font-mono text-[8px] tracking-widest font-black uppercase px-2.5 py-1 rounded shadow">
+                            {articles[0].category}
+                          </span>
+                        </div>
+                        <div className="space-y-2">
+                          <span className="text-[10px] font-mono text-neutral-450 uppercase tracking-wider block">
+                            {articles[0].date} • {articles[0].readTime} • By {articles[0].author}
+                          </span>
+                          <h4 className="font-serif font-light text-xl sm:text-2xl text-neutral-900 group-hover:text-red-650 transition-colors uppercase tracking-wide leading-snug">
+                            {articles[0].title}
+                          </h4>
+                          <p className="text-neutral-555 text-xs font-serif italic font-light line-clamp-2 leading-relaxed">
+                            {articles[0].subtitle}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="border-t border-neutral-100 pt-3.5 mt-4 flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-red-650 font-bold">
+                        <span>Lead Editorial Chronicle</span>
+                        <span>Read Full Story ➔</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Right Half: Up to 2 stories in list form (Occupies 5 columns) */}
+                  <div className="lg:col-span-5 flex flex-col gap-4">
+                    {articles.slice(1, 3).map((art) => (
+                      <div 
+                        key={art.id}
+                        onClick={() => {
+                          setSelectedMagazineArticleId(art.id);
+                          setActiveTab('magazine');
+                        }}
+                        className="group cursor-pointer bg-white border border-neutral-200 hover:border-neutral-300 rounded-2xl p-4.5 flex gap-4 transition-all hover:shadow-2xs text-left h-full"
+                      >
+                        <div className="w-24 sm:w-28 h-24 sm:h-28 shrink-0 rounded-lg overflow-hidden border border-neutral-200 relative bg-neutral-100">
+                          <img 
+                            src={art.imageUrl} 
+                            alt={art.title}
+                            className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
+                            referrerPolicy="no-referrer"
+                          />
+                        </div>
+                        <div className="flex flex-col justify-between flex-1 py-0.5 min-w-0">
+                          <div className="space-y-1.5">
+                            <span className="text-[8px] font-mono text-amber-600 bg-amber-50 border border-amber-200/60 uppercase px-1.5 py-0.5 rounded font-black tracking-wider inline-block">
+                              {art.category}
+                            </span>
+                            <h5 className="font-serif font-semibold text-xs text-neutral-900 group-hover:text-red-650 transition-colors line-clamp-2 leading-snug uppercase tracking-wide">
+                              {art.title}
+                            </h5>
+                            <p className="text-[10px] text-neutral-500 italic font-serif font-light line-clamp-2 leading-normal">
+                              {art.subtitle}
+                            </p>
+                          </div>
+                          <span className="text-[8.5px] font-mono text-neutral-450 uppercase tracking-wider block font-bold mt-1.5">
+                            {art.date} • Read Report ➔
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+
+                    {/* Quick subscribe or secondary callout block if only 1 story exists */}
+                    {articles.length <= 1 && (
+                      <div className="bg-neutral-50 border border-neutral-200 rounded-2xl p-6 flex flex-col justify-center items-center text-center h-full space-y-3">
+                        <BookOpenCheck className="w-8 h-8 text-neutral-400" />
+                        <h5 className="font-serif font-medium text-sm text-neutral-900 font-bold">Vetting the culinary landscape</h5>
+                        <p className="text-[11px] text-neutral-500 max-w-xs leading-relaxed font-light">
+                          More stories are currently in the editorial press. Admin can insert new stories anytime via the Lockbox panel.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
 
             {/* HIGH-FIDELITY LOYALTY PROGRAM PROMOTIONAL BANNER */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4" id="home-loyalty-promo-banner-rail">
@@ -533,14 +787,59 @@ export default function App() {
                     const matchesCuisine = selectedCuisine === 'All Cuisines' || rest.cuisine === selectedCuisine;
                     const matchesPrice = selectedPrice === 'All Prices' || rest.priceRange === selectedPrice;
 
-                    return cityMatch && matchesSearch && matchesDistinction && matchesCuisine && matchesPrice;
+                    // Dietary Option Match
+                    let matchesDietary = true;
+                    if (selectedDietary !== 'All Dietary Options') {
+                      const searchString = `${rest.name} ${rest.cuisine} ${rest.description} ${rest.inspectorNote} ${(rest.features || []).join(' ')} ${(rest.signatureDishes || []).join(' ')}`.toLowerCase();
+                      
+                      if (selectedDietary === 'Vegan / Vegetarian') {
+                        matchesDietary = 
+                          searchString.includes('vegan') || 
+                          searchString.includes('vegetarian') || 
+                          searchString.includes('plant-based') || 
+                          searchString.includes('hummus') || 
+                          searchString.includes('falafel') ||
+                          searchString.includes('mezza') ||
+                          searchString.includes('salad') ||
+                          searchString.includes('za\'atar') ||
+                          searchString.includes('thyme') ||
+                          searchString.includes('bakery') ||
+                          searchString.includes('knefeh');
+                      } else if (selectedDietary === 'Gluten-Free') {
+                        matchesDietary = 
+                          searchString.includes('gluten-free') || 
+                          searchString.includes('gluten free') || 
+                          searchString.includes('coeliac') ||
+                          searchString.includes('seafood') ||
+                          searchString.includes('fish') ||
+                          searchString.includes('salad') ||
+                          searchString.includes('grilled') ||
+                          searchString.includes('rice');
+                      } else if (selectedDietary === 'Halal') {
+                        const isHalalCuisine = 
+                          rest.cuisine.toLowerCase().includes('lebanese') || 
+                          rest.cuisine.toLowerCase().includes('seafood') || 
+                          rest.cuisine.toLowerCase().includes('mediterranean') || 
+                          rest.cuisine.toLowerCase().includes('armenian') || 
+                          rest.cuisine.toLowerCase().includes('middle eastern');
+                        matchesDietary = 
+                          isHalalCuisine || 
+                          searchString.includes('halal') || 
+                          searchString.includes('kebab') || 
+                          searchString.includes('kabab') || 
+                          searchString.includes('grilled');
+                      }
+                    }
+
+                    return cityMatch && matchesSearch && matchesDistinction && matchesCuisine && matchesPrice && matchesDietary;
                   }).length;
 
                   const hasActiveFilters = selectedCity !== 'All Cities' ||
                                            searchQuery !== '' ||
                                            selectedDistinction !== 'All Distinctions' ||
                                            selectedCuisine !== 'All Cuisines' ||
-                                           selectedPrice !== 'All Prices';
+                                           selectedPrice !== 'All Prices' ||
+                                           selectedDietary !== 'All Dietary Options';
 
                   return (
                     <div
@@ -717,10 +1016,23 @@ export default function App() {
                     <option value="$$$" className="bg-white text-neutral-900">$$$ (Fine Dining)</option>
                     <option value="$$" className="bg-white text-neutral-900">$$ (Moderate Bistro)</option>
                   </select>
+
+                  {/* Dietary Options Filter dropdown */}
+                  <select
+                    value={selectedDietary}
+                    onChange={(e) => setSelectedDietary(e.target.value)}
+                    className="px-3.5 py-2 text-xs bg-white border border-neutral-200 rounded-full text-neutral-900 cursor-pointer focus:border-emerald-600 outline-none"
+                    id="dietary-dropdown-select"
+                  >
+                    <option value="All Dietary Options" className="bg-white text-neutral-900">All Dietary Options</option>
+                    <option value="Vegan / Vegetarian" className="bg-white text-neutral-900">Vegan / Vegetarian Friendly</option>
+                    <option value="Gluten-Free" className="bg-white text-neutral-900">Gluten-Free Options</option>
+                    <option value="Halal" className="bg-white text-neutral-900">Halal Certified / Compliant</option>
+                  </select>
                 </div>
 
                 {/* Active Reset Trigger */}
-                {(selectedDistinction !== 'All Distinctions' || selectedCuisine !== 'All Cuisines' || selectedPrice !== 'All Prices' || selectedCity !== 'All Cities' || searchQuery) && (
+                {(selectedDistinction !== 'All Distinctions' || selectedCuisine !== 'All Cuisines' || selectedPrice !== 'All Prices' || selectedDietary !== 'All Dietary Options' || selectedCity !== 'All Cities' || searchQuery) && (
                   <button
                     onClick={() => {
                       setSelectedCity('All Cities');
@@ -728,8 +1040,9 @@ export default function App() {
                       setSelectedCuisine('All Cuisines');
                       setSelectedDistinction('All Distinctions');
                       setSelectedPrice('All Prices');
+                      setSelectedDietary('All Dietary Options');
                     }}
-                    className="text-[10px] text-emerald-700 hover:text-emerald-600 font-bold uppercase tracking-widest cursor-pointer ml-auto"
+                    className="text-[10px] text-emerald-700 hover:text-emerald-600 font-bold uppercase tracking-widest cursor-pointer ml-auto text-right md:text-left shrink-0"
                   >
                     Clear Filter Selections
                   </button>
@@ -1001,6 +1314,7 @@ export default function App() {
             selectedDistinction={selectedDistinction}
             selectedCuisine={selectedCuisine}
             selectedPrice={selectedPrice}
+            selectedDietary={selectedDietary}
             searchQuery={searchQuery}
             selectedCity={selectedCity}
           />
@@ -1126,7 +1440,10 @@ export default function App() {
 
         {/* VIEW 3: MAGAZINE EDITORIALS */}
         {activeTab === 'magazine' && (
-          <MagazineView />
+          <MagazineView 
+            selectedArticleId={selectedMagazineArticleId}
+            setSelectedArticleId={setSelectedMagazineArticleId}
+          />
         )}
 
         {/* VIEW 4: MY GUIDE & JOURNEY PLANNING */}
@@ -1280,12 +1597,128 @@ export default function App() {
       </main>
 
       {/* FOOTER */}
-      <footer className="h-16 bg-neutral-50 border-t border-neutral-200 flex items-center justify-between px-10 text-[9px] uppercase tracking-[0.2em] text-neutral-500 shrink-0 select-none mt-auto">
-        <div>© 2026 ZAYTOUNADA GUIDE DIGITAL</div>
-        <div className="flex gap-8">
-          <span onClick={() => setActiveTab('get-started')} className="hover:text-neutral-900 transition-colors cursor-pointer">Privacy Policy</span>
-          <span onClick={() => setActiveTab('get-started')} className="hover:text-neutral-900 transition-colors cursor-pointer">Cookies Manager</span>
-          <span onClick={() => setActiveTab('suppliers')} className="hover:text-neutral-900 transition-colors cursor-pointer text-emerald-800 font-bold">FAQ & Partners (Join Us)</span>
+      <footer className="bg-neutral-50 border-t border-neutral-200 py-10 px-6 md:px-10 text-[10px] uppercase tracking-[0.1em] text-neutral-500 shrink-0 mt-auto">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+          {/* Brand Col */}
+          <div className="md:col-span-4 space-y-3.5 text-left">
+            <div className="font-serif text-sm tracking-widest font-extrabold text-neutral-900">
+              ZAYTOUNADA <span className="text-red-650">GUIDE</span>
+            </div>
+            <p className="normal-case tracking-normal text-xs text-neutral-500 font-light font-serif italic max-w-sm leading-relaxed">
+              The discrete, curated record of exceptional culinary craft, historic milestones, and elite dining outposts across Lebanon.
+            </p>
+            <div className="text-[9px] text-neutral-400 tracking-[0.2em] pt-1">
+              © 2026 ZAYTOUNADA GUIDE DIGITAL • ALL RIGHTS RESERVED
+            </div>
+          </div>
+
+          {/* Directory Links Col */}
+          <div className="md:col-span-2 space-y-2 text-left">
+            <span className="text-[9px] font-mono tracking-[0.2em] font-extrabold text-neutral-400 block mb-3">
+              DIRECTORY LINKS
+            </span>
+            <div className="flex flex-col gap-2 font-mono text-[9px] font-bold tracking-widest">
+              <span onClick={() => setActiveTab('get-started')} className="hover:text-red-650 transition-colors cursor-pointer w-fit">Privacy & terms</span>
+              <span onClick={() => setActiveTab('get-started')} className="hover:text-red-650 transition-colors cursor-pointer w-fit">Cookies Manager</span>
+              <span onClick={() => setActiveTab('suppliers')} className="hover:text-red-650 transition-colors cursor-pointer text-emerald-800 font-bold w-fit">FAQ & Partners (Join Us)</span>
+            </div>
+          </div>
+
+          {/* Social Channels Col */}
+          <div className="md:col-span-2 space-y-2 text-left">
+            <span className="text-[9px] font-mono tracking-[0.2em] font-extrabold text-neutral-400 block mb-3">
+              FOLLOW US
+            </span>
+            <div className="flex gap-4 items-center">
+              <a 
+                href="https://instagram.com" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                id="social-instagram-link"
+                className="p-2 border border-neutral-200 rounded-full hover:border-red-650 hover:text-red-650 hover:scale-105 active:scale-95 transition-all text-neutral-500 bg-white hover:-translate-y-0.5 cursor-pointer flex items-center justify-center shadow-3xs"
+                title="Instagram"
+              >
+                <Instagram className="w-3.5 h-3.5" />
+              </a>
+              <a 
+                href="https://facebook.com" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                id="social-facebook-link"
+                className="p-2 border border-neutral-200 rounded-full hover:border-red-650 hover:text-red-650 hover:scale-105 active:scale-95 transition-all text-neutral-500 bg-white hover:-translate-y-0.5 cursor-pointer flex items-center justify-center shadow-3xs"
+                title="Facebook"
+              >
+                <Facebook className="w-3.5 h-3.5" />
+              </a>
+              <a 
+                href="https://linkedin.com" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                id="social-linkedin-link"
+                className="p-2 border border-neutral-200 rounded-full hover:border-red-650 hover:text-red-650 hover:scale-105 active:scale-95 transition-all text-neutral-500 bg-white hover:-translate-y-0.5 cursor-pointer flex items-center justify-center shadow-3xs"
+                title="LinkedIn"
+              >
+                <Linkedin className="w-3.5 h-3.5" />
+              </a>
+            </div>
+            <p className="normal-case tracking-normal text-[9px] text-neutral-400 font-light pt-1 select-none">
+              Stay in touch with our curations.
+            </p>
+          </div>
+
+          {/* Newsletter Signup Col */}
+          <div className="md:col-span-4 text-left space-y-2.5">
+            <span className="text-[9px] font-mono tracking-[0.2em] font-extrabold text-red-650 block mb-2">
+              💌 WEEKLY GASTRONOMIC ROUNDUP
+            </span>
+            <p className="normal-case tracking-normal text-[11px] text-neutral-500 max-w-xs leading-normal font-light">
+              Submit your email for weekly briefings, newly rated establishments, recipes, and exclusive culinary reports.
+            </p>
+            <form 
+              onSubmit={handleFooterSubscribe}
+              className="space-y-2 max-w-xs pt-1"
+              id="footer-newsletter-form"
+            >
+              <div className="relative">
+                <input
+                  type="email"
+                  name="footer_email"
+                  value={footerEmail}
+                  onChange={(e) => {
+                    setFooterEmail(e.target.value);
+                    if (footerStatus === 'error') setFooterStatus('idle');
+                  }}
+                  placeholder="Enter your email address..."
+                  className="w-full px-3 py-2 text-xs border border-neutral-255 bg-white text-neutral-900 rounded focus:outline-none focus:border-red-650 placeholder-neutral-450 font-mono normal-case tracking-normal"
+                />
+                {footerStatus === 'success' && (
+                  <span className="absolute right-2.5 top-2.5 text-emerald-600 font-mono text-[9px] font-bold tracking-wider">
+                    ✓ SAVED
+                  </span>
+                )}
+              </div>
+              
+              {footerErrorMessage && (
+                <p className="normal-case tracking-normal text-[10px] text-red-600 font-medium font-sans">
+                  ⚠️ {footerErrorMessage}
+                </p>
+              )}
+
+              {footerStatus === 'success' && (
+                <p className="normal-case tracking-normal text-[10px] text-emerald-700 font-bold font-sans">
+                  Thank you! You have subscribed to our weekly roundups.
+                </p>
+              )}
+
+              <button
+                type="submit"
+                disabled={footerStatus === 'submitting'}
+                className="w-full py-2 bg-neutral-950 hover:bg-neutral-900 disabled:bg-neutral-400 text-white font-mono font-bold text-[9px] uppercase tracking-widest rounded transition-all cursor-pointer shadow-3xs"
+              >
+                {footerStatus === 'submitting' ? 'Vetting Email...' : 'Subscribe To Roundup'}
+              </button>
+            </form>
+          </div>
         </div>
       </footer>
 
@@ -1312,6 +1745,18 @@ export default function App() {
           stars: r.stars
         }))}
       />
+
+      {/* FLOATING ACTION: BACK TO TOP */}
+      <button
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        aria-label="Back to top"
+        className={`fixed bottom-6 right-6 md:bottom-8 md:right-8 z-50 w-11 h-11 bg-neutral-950 hover:bg-neutral-900 text-white border border-neutral-850 rounded-full flex items-center justify-center cursor-pointer shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95 group ${
+          showScrollTop ? 'opacity-100 scale-100' : 'opacity-0 scale-75 pointer-events-none'
+        }`}
+        id="floating-back-to-top"
+      >
+        <ArrowUp className="w-5 h-5 group-hover:-translate-y-0.5 transition-transform duration-300" />
+      </button>
 
     </div>
   );
