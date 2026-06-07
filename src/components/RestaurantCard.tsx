@@ -1,6 +1,7 @@
 import { MouseEvent, useState } from 'react';
 import { Restaurant } from '../types';
 import { Award, MapPin, DollarSign, Heart, ArrowRight, Share2, Check } from 'lucide-react';
+import { showToast } from '../utils/toast';
 
 interface RestaurantCardProps {
   key?: string | number;
@@ -25,6 +26,7 @@ export default function RestaurantCard({
       .then(() => {
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
+        showToast('Link Copied to Clipboard!');
       })
       .catch((err) => {
         console.error('Failed to copy link:', err);

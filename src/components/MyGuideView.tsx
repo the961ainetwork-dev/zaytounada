@@ -1,7 +1,8 @@
 import { useState, FormEvent } from 'react';
-import { Restaurant, SavedItinerary } from '../types';
+import { Restaurant, SavedItinerary, Booking } from '../types';
 import { RESTAURANTS } from '../data/restaurants';
 import { Sparkles, Calendar, Plus, Trash2, Heart, Award, ArrowRight, Share2, Clipboard, Printer, ExternalLink, MessageCircle, Star } from 'lucide-react';
+import { showToast } from '../utils/toast';
 
 interface MyGuideViewProps {
   savedRestaurantIds: string[];
@@ -11,6 +12,10 @@ interface MyGuideViewProps {
   onAddItinerary: (itinerary: SavedItinerary) => void;
   onDeleteItinerary: (id: string) => void;
   setActiveTab: (tab: string) => void;
+  bookings: Booking[];
+  onClearBookings: () => void;
+  reviews: Record<string, { rating: number; comment: string; date: string }>;
+  onOpenReview: (booking: Booking) => void;
 }
 
 export default function MyGuideView({
@@ -20,7 +25,11 @@ export default function MyGuideView({
   savedItineraries,
   onAddItinerary,
   onDeleteItinerary,
-  setActiveTab
+  setActiveTab,
+  bookings = [],
+  onClearBookings,
+  reviews = {},
+  onOpenReview
 }: MyGuideViewProps) {
   const [newTitle, setNewTitle] = useState('');
   const [newCity, setNewCity] = useState('Beirut');
@@ -82,7 +91,7 @@ export default function MyGuideView({
     text += `\nShared via Gourmet Zaytounada Guide App`;
 
     navigator.clipboard.writeText(text);
-    alert('Itinerary copied to clipboard! Share with your culinary companions.');
+    showToast('Link Copied to Clipboard!');
   };
 
   return (
@@ -161,6 +170,88 @@ export default function MyGuideView({
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* My Active Bookings Dashboard Widget */}
+          <div className="bg-white border border-neutral-200 rounded-xl p-5 shadow-sm mt-6 text-left" id="my-guide-bookings-widget">
+            <div className="flex justify-between items-center border-b border-neutral-200 pb-3 mb-4">
+              <div>
+                <h3 className="font-serif font-semibold text-base text-neutral-950 flex items-center gap-2 uppercase tracking-wider">
+                  <Calendar className="w-4 h-4 text-emerald-600" />
+                  <span>My Bookings ({bookings.length})</span>
+                </h3>
+              </div>
+              {bookings.length > 0 && (
+                <button
+                  onClick={onClearBookings}
+                  className="text-[9px] text-neutral-400 hover:text-emerald-700 font-mono uppercase tracking-widest cursor-pointer select-none"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+
+            {bookings.length === 0 ? (
+              <div className="py-6 font-serif italic text-neutral-400 text-center text-xs">
+                No active bookings.
+              </div>
+            ) : (
+              <div className="space-y-4 max-h-[350px] overflow-y-auto pr-1">
+                {bookings.map((book) => {
+                  const review = reviews[book.id];
+                  return (
+                    <div 
+                      key={book.id} 
+                      className="p-3 bg-neutral-50 border border-neutral-150 rounded flex flex-col justify-between gap-2.5 text-left shadow-2xs"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <span className="text-[7.5px] font-mono uppercase bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold px-1.5 py-0.5 rounded tracking-wider leading-none">
+                            TICKET
+                          </span>
+                          <h4 className="font-serif font-bold text-xs text-neutral-900 mt-1">
+                            {book.restaurantName}
+                          </h4>
+                          <p className="text-[9px] text-neutral-500">
+                            {book.date} • {book.time}
+                          </p>
+                          <p className="text-[9px] text-neutral-400 font-light mt-0.5">
+                            {book.guestsCount} Guest{book.guestsCount > 1 ? 's' : ''}
+                          </p>
+                        </div>
+                        <span className="text-[8px] uppercase font-bold text-white bg-emerald-700 px-1.5 py-0.5 rounded font-mono tracking-widest leading-none shrink-0 select-none">
+                          {book.status}
+                        </span>
+                      </div>
+
+                      {review && (
+                        <div className="pt-2 border-t border-dotted border-neutral-200">
+                          <div className="flex items-center gap-1">
+                            <span className="text-amber-500 font-serif font-bold text-[10px] leading-none">
+                              {'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}
+                            </span>
+                            <span className="text-[7.5px] font-mono text-neutral-400 ml-1">My Review</span>
+                          </div>
+                          <p className="text-[9.5px] italic text-neutral-500 font-serif leading-relaxed mt-1 max-w-full">
+                            "{review.comment}"
+                          </p>
+                        </div>
+                      )}
+
+                      <div className="border-t border-neutral-150/60 pt-2 flex justify-end">
+                        <button
+                          onClick={() => onOpenReview(book)}
+                          className="flex items-center gap-1 px-2.5 py-1 border border-red-500 hover:bg-red-600 hover:text-white text-red-650 transition-all text-[8.5px] font-bold uppercase tracking-widest cursor-pointer rounded bg-white shadow-3xs"
+                        >
+                          <Star className="w-3 h-3 text-red-500 fill-current block shrink-0" />
+                          <span>{review ? 'Edit Review' : 'Review Visit'}</span>
+                        </button>
+                      </div>
                     </div>
                   );
                 })}

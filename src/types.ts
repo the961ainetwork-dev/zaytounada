@@ -39,6 +39,7 @@ export interface Article {
   date: string;
   author: string;
   content: string[];
+  website?: string;
 }
 
 export interface SavedItinerary {

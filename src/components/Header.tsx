@@ -1,4 +1,4 @@
-import { Search, Compass, MapPin, BookOpen, Heart, Sparkles, Navigation, Info, Gift, Music, Calendar, Coffee, Flame, Store, X, Grid, Lock, Award } from 'lucide-react';
+import { Search, Compass, MapPin, BookOpen, Heart, Sparkles, Navigation, Info, Gift, Music, Calendar, Coffee, Flame, Store, X, Grid, Lock, Award, Instagram, Facebook } from 'lucide-react';
 
 interface HeaderProps {
   activeTab: string;
@@ -26,7 +26,9 @@ const iconsMap: Record<string, any> = {
   BookOpen,
   Sparkles,
   Lock,
-  Info
+  Info,
+  Instagram,
+  Facebook
 };
 
 export default function Header({
@@ -329,6 +331,19 @@ export default function Header({
                 >
                   <Sparkles className="w-3.5 h-3.5 text-amber-550" />
                   <span>Itineraries</span>
+                </button>
+
+                <button
+                  id="tab-social-feed"
+                  onClick={() => setActiveTab('social-feed')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
+                    activeTab === 'social-feed'
+                      ? 'bg-emerald-700 text-white shadow-sm font-semibold'
+                      : 'text-emerald-955 hover:text-emerald-955 hover:bg-emerald-100/60 font-medium'
+                  }`}
+                >
+                  <Instagram className="w-3.5 h-3.5 text-pink-600" />
+                  <span>Social Feed</span>
                 </button>
 
                 <button

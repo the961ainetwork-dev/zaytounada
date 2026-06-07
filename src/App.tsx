@@ -18,9 +18,11 @@ import NeighborhoodsView from './components/NeighborhoodsView';
 import AdminDashboardView from './components/AdminDashboardView';
 import SupplierOnboardingView from './components/SupplierOnboardingView';
 import MerchantOfferLoyaltyView from './components/MerchantOfferLoyaltyView';
+import SocialFeedView from './components/SocialFeedView';
 import { Restaurant, SavedItinerary, Booking, Article } from './types';
 import { RESTAURANTS, ARTICLES as staticArticles } from './data/restaurants';
-import { Award, Compass, Heart, Award as AwardIcon, MapPin, Grid, Plus, Sparkles, BookOpen, Calendar, Star, Gift, ArrowRight, Share2, Check, BookOpenCheck, ArrowUp, Instagram, Facebook, Linkedin } from 'lucide-react';
+import { Award, Compass, Heart, Award as AwardIcon, MapPin, Grid, Plus, Sparkles, BookOpen, Calendar, Star, Gift, ArrowRight, Share2, Check, BookOpenCheck, ArrowUp, Instagram, Facebook, Linkedin, X, ExternalLink } from 'lucide-react';
+import { showToast } from './utils/toast';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>(() => {
@@ -230,6 +232,7 @@ export default function App() {
         navigator.clipboard.writeText(shareUrl).then(() => {
           setCopiedNeighborhoodId(id);
           setTimeout(() => setCopiedNeighborhoodId(null), 2000);
+          showToast('Neighborhood share link copied to clipboard!');
         });
       } else {
         const textArea = document.createElement("textarea");
@@ -242,6 +245,7 @@ export default function App() {
         document.body.removeChild(textArea);
         setCopiedNeighborhoodId(id);
         setTimeout(() => setCopiedNeighborhoodId(null), 2000);
+        showToast('Neighborhood share link copied to clipboard!');
       }
     } catch (err) {
       console.error("Share copy failed:", err);
@@ -297,6 +301,48 @@ export default function App() {
   const [savedRestaurantIds, setSavedRestaurantIds] = useState<string[]>([]);
   const [savedItineraries, setSavedItineraries] = useState<SavedItinerary[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
+  const [reviews, setReviews] = useState<Record<string, { rating: number; comment: string; date: string }>>({});
+
+  // Global Toast state
+  const [toast, setToast] = useState<{ message: string; visible: boolean; type: 'success' | 'info' | 'error' }>({
+    message: '',
+    visible: false,
+    type: 'success'
+  });
+
+  // Show toast listener
+  useEffect(() => {
+    const handleShowToast = (e: Event) => {
+      const customEvent = e as CustomEvent<{ message: string; type?: 'success' | 'info' | 'error' }>;
+      if (customEvent.detail && customEvent.detail.message) {
+        setToast({
+          message: customEvent.detail.message,
+          visible: true,
+          type: customEvent.detail.type || 'success'
+        });
+      }
+    };
+
+    window.addEventListener('show-toast', handleShowToast);
+    return () => {
+      window.removeEventListener('show-toast', handleShowToast);
+    };
+  }, []);
+
+  // Auto-close toast
+  useEffect(() => {
+    if (toast.visible) {
+      const timer = setTimeout(() => {
+        setToast(prev => ({ ...prev, visible: false }));
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast.visible]);
+
+  // Review Modal States
+  const [reviewModalBooking, setReviewModalBooking] = useState<Booking | null>(null);
+  const [reviewRating, setReviewRating] = useState<number>(5);
+  const [reviewComment, setReviewComment] = useState<string>('');
 
   // Load Saved parameters and query-string deep link on Mount
   useEffect(() => {
@@ -309,6 +355,9 @@ export default function App() {
 
       const storedBookings = localStorage.getItem('zaytounada_bookings') || localStorage.getItem('michelin_bookings');
       if (storedBookings) setBookings(JSON.parse(storedBookings));
+
+      const storedReviews = localStorage.getItem('zaytounada_reviews');
+      if (storedReviews) setReviews(JSON.parse(storedReviews));
 
       // Parse and apply deep-link query parameter
       const params = new URLSearchParams(window.location.search);
@@ -387,6 +436,30 @@ export default function App() {
   const handleClearAllBookings = () => {
     setBookings([]);
     saveToStorage('zaytounada_bookings', []);
+  };
+
+  const handleOpenReview = (booking: Booking) => {
+    const existing = reviews[booking.id];
+    setReviewModalBooking(booking);
+    setReviewRating(existing ? existing.rating : 5);
+    setReviewComment(existing ? existing.comment : '');
+  };
+
+  const handleSubmitReview = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!reviewModalBooking) return;
+
+    const nextReviews = {
+      ...reviews,
+      [reviewModalBooking.id]: {
+        rating: reviewRating,
+        comment: reviewComment.trim(),
+        date: new Date().toISOString().split('T')[0]
+      }
+    };
+    setReviews(nextReviews);
+    saveToStorage('zaytounada_reviews', nextReviews);
+    setReviewModalBooking(null);
   };
 
   const handleFooterSubscribe = async (e: React.FormEvent) => {
@@ -635,7 +708,24 @@ export default function App() {
                       </div>
                       <div className="border-t border-neutral-100 pt-3.5 mt-4 flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-red-650 font-bold">
                         <span>Lead Editorial Chronicle</span>
-                        <span>Read Full Story ➔</span>
+                        <div className="flex items-center gap-3">
+                          {articles[0].website && (
+                            <a
+                              href={articles[0].website}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                              }}
+                              className="hover:text-red-750 transition-colors flex items-center gap-1 border-r border-neutral-200 pr-3 cursor-pointer"
+                              title="Visit official venue website"
+                            >
+                              <span>Visit Website</span>
+                              <ExternalLink className="w-3 h-3" />
+                            </a>
+                          )}
+                          <span className="group-hover:translate-x-0.5 transition-transform duration-200">Read Full Story ➔</span>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -671,9 +761,27 @@ export default function App() {
                               {art.subtitle}
                             </p>
                           </div>
-                          <span className="text-[8.5px] font-mono text-neutral-450 uppercase tracking-wider block font-bold mt-1.5">
-                            {art.date} • Read Report ➔
-                          </span>
+                          <div className="flex items-center justify-between text-[8.5px] font-mono text-neutral-450 uppercase tracking-wider font-bold mt-1.5">
+                            <span>{art.date}</span>
+                            <div className="flex items-center gap-2.5">
+                              {art.website && (
+                                <a
+                                  href={art.website}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                  }}
+                                  className="text-red-650 hover:text-red-750 transition-colors flex items-center gap-0.5 border-r border-neutral-200 pr-2.5 cursor-pointer"
+                                  title={`Visit website of ${art.title}`}
+                                >
+                                  <span>Visit Website</span>
+                                  <ExternalLink className="w-2.5 h-2.5" />
+                                </a>
+                              )}
+                              <span className="text-red-650 font-bold group-hover:text-red-750 transition-colors">Read Report ➔</span>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -1460,6 +1568,17 @@ export default function App() {
             onAddItinerary={handleAddItinerary}
             onDeleteItinerary={handleDeleteItinerary}
             setActiveTab={setActiveTab}
+            bookings={bookings}
+            onClearBookings={handleClearAllBookings}
+            reviews={reviews}
+            onOpenReview={handleOpenReview}
+          />
+        )}
+
+        {/* VIEW: INTEGRATED SOCIAL FIELD & PHOTOS FEED */}
+        {activeTab === 'social-feed' && (
+          <SocialFeedView 
+            onSelectRestaurant={(rest) => setSelectedRestaurant(rest)}
           />
         )}
 
@@ -1541,34 +1660,63 @@ export default function App() {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {bookings.map((book) => (
-                    <div 
-                      key={book.id} 
-                      className="p-4.5 bg-white border border-neutral-200 shadow-sm rounded-lg flex items-center justify-between gap-4"
-                    >
-                      <div>
-                        <span className="text-[8px] font-mono uppercase bg-emerald-50 text-emerald-800 border border-emerald-250 font-bold px-1.5 py-0.5 rounded tracking-wider">
-                          ALLOCATED TICKET
-                        </span>
-                        <h4 className="font-serif font-bold text-sm text-emerald-950 mt-1.5">
-                          {book.restaurantName}
-                        </h4>
-                        <p className="text-[10px] text-neutral-600 mt-0.5">
-                          Date: {book.date} • {book.time}
-                        </p>
-                        <p className="text-[10px] text-neutral-400 truncate mt-0.5">
-                          Party: {book.guestsCount} Guest{book.guestsCount > 1 ? 's' : ''} • {book.userName}
-                        </p>
-                      </div>
+                  {bookings.map((book) => {
+                    const review = reviews[book.id];
+                    return (
+                      <div 
+                        key={book.id} 
+                        className="p-4.5 bg-white border border-neutral-200 shadow-sm rounded-lg flex flex-col justify-between gap-4 text-left"
+                      >
+                        <div className="flex items-start justify-between gap-4">
+                          <div>
+                            <span className="text-[8px] font-mono uppercase bg-emerald-50 text-emerald-800 border border-emerald-250 font-bold px-1.5 py-0.5 rounded tracking-wider">
+                              ALLOCATED TICKET
+                            </span>
+                            <h4 className="font-serif font-bold text-sm text-emerald-950 mt-1.5">
+                              {book.restaurantName}
+                            </h4>
+                            <p className="text-[10px] text-neutral-600 mt-0.5">
+                              Date: {book.date} • {book.time}
+                            </p>
+                            <p className="text-[10px] text-neutral-400 truncate mt-0.5">
+                              Party: {book.guestsCount} Guest{book.guestsCount > 1 ? 's' : ''} • {book.userName}
+                            </p>
+                          </div>
 
-                      <div className="text-right shrink-0">
-                        <span className="text-[9px] font-mono text-neutral-400 uppercase font-bold block mb-1 tracking-wider">Status</span>
-                        <span className="text-[9px] uppercase font-bold text-white bg-emerald-705 bg-emerald-700 px-2.5 py-1 rounded inline-block font-mono tracking-widest">
-                          {book.status}
-                        </span>
+                          <div className="text-right shrink-0">
+                            <span className="text-[9px] font-mono text-neutral-400 uppercase font-bold block mb-1 tracking-wider">Status</span>
+                            <span className="text-[9px] uppercase font-bold text-white bg-emerald-700 px-2.5 py-1 rounded inline-block font-mono tracking-widest leading-none select-none">
+                              {book.status}
+                            </span>
+                          </div>
+                        </div>
+
+                        {review && (
+                          <div className="pt-2.5 border-t border-dotted border-neutral-200">
+                            <div className="flex items-center gap-1">
+                              <span className="text-amber-500 font-serif font-bold tracking-tight text-xs leading-none">
+                                {'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}
+                              </span>
+                              <span className="text-[8px] font-mono uppercase text-neutral-400 font-bold tracking-wider ml-1">My Review</span>
+                            </div>
+                            <p className="text-[10px] italic text-neutral-600 font-serif leading-relaxed mt-1">
+                              "{review.comment}"
+                            </p>
+                          </div>
+                        )}
+
+                        <div className="border-t border-neutral-100 pt-3 flex justify-end gap-2.5">
+                          <button
+                            onClick={() => handleOpenReview(book)}
+                            className="flex items-center gap-1.5 px-3 py-1.5 border border-red-500 hover:bg-red-600 hover:text-white text-red-650 transition-all text-[9.5px] font-bold uppercase tracking-widest cursor-pointer rounded bg-white shadow-3xs"
+                          >
+                            <Star className="w-3.5 h-3.5 text-red-500 fill-current block shrink-0" />
+                            <span>{review ? 'Edit Review' : 'Review Visit'}</span>
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -1752,6 +1900,128 @@ export default function App() {
           stars: r.stars
         }))}
       />
+
+      {/* DINER REVIEW SUBMISSION MODAL */}
+      {reviewModalBooking && (
+        <div 
+          className="fixed inset-0 bg-neutral-950/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fade-in"
+          id="booking-review-modal"
+        >
+          <div className="bg-white border border-neutral-200 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl animate-scale-up text-left">
+            {/* Modal Header */}
+            <div className="bg-neutral-50 px-6 py-4.5 border-b border-neutral-100 flex items-center justify-between">
+              <div>
+                <span className="text-[8px] font-mono uppercase bg-red-50 text-red-650 border border-red-200 px-2 py-0.5 rounded font-bold tracking-widest leading-none">
+                  Gourmet Feedback
+                </span>
+                <h3 className="font-serif font-bold text-base text-neutral-900 mt-1">
+                  Review Your Experience
+                </h3>
+              </div>
+              <button
+                onClick={() => setReviewModalBooking(null)}
+                className="text-neutral-400 hover:text-neutral-700 p-1.5 hover:bg-neutral-100 rounded-full cursor-pointer transition-colors"
+                title="Close modal"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmitReview} className="p-6 space-y-4">
+              <div>
+                <p className="text-xs text-neutral-500 font-light mb-3">
+                  Share your culinary feedback on your reservation at <strong className="text-neutral-800 font-semibold">{reviewModalBooking.restaurantName}</strong> (Party of {reviewModalBooking.guestsCount} on {reviewModalBooking.date}).
+                </p>
+              </div>
+
+              {/* Star Rating Selector */}
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wider">
+                  Star Rating
+                </label>
+                <div className="flex items-center gap-1.5">
+                  {[1, 2, 3, 4, 5].map((stars) => (
+                    <button
+                      key={stars}
+                      type="button"
+                      onClick={() => setReviewRating(stars)}
+                      className="p-1 cursor-pointer hover:scale-110 active:scale-90 transition-all text-amber-400"
+                      title={`${stars} Star${stars > 1 ? 's' : ''}`}
+                    >
+                      <Star 
+                        className={`w-7 h-7 ${
+                          stars <= reviewRating 
+                            ? 'fill-amber-400 text-amber-450' 
+                            : 'text-neutral-250 fill-transparent'
+                        }`} 
+                      />
+                    </button>
+                  ))}
+                  <span className="text-[11px] font-mono text-neutral-400 font-bold ml-2 font-semibold">
+                    ({reviewRating}/5 Stars)
+                  </span>
+                </div>
+              </div>
+
+              {/* Written Comment/Review feedback */}
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wider">
+                  Commentary & Notes
+                </label>
+                <textarea
+                  required
+                  rows={4}
+                  value={reviewComment}
+                  onChange={(e) => setReviewComment(e.target.value)}
+                  placeholder="Elaborate on the service, flavor profile, signature dishes, ambiance, or overall impression..."
+                  className="w-full text-xs px-3 py-2.5 border border-neutral-250 bg-white text-neutral-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/10 focus:border-red-650 placeholder-neutral-450 resize-none leading-relaxed"
+                />
+              </div>
+
+              {/* Actions buttons */}
+              <div className="pt-2 flex flex-col sm:flex-row gap-2.5 sm:justify-end">
+                <button
+                  type="button"
+                  onClick={() => setReviewModalBooking(null)}
+                  className="w-full sm:w-auto px-4 py-2.5 border border-neutral-250 text-neutral-600 font-bold hover:bg-neutral-50 transition-all text-[10px] uppercase tracking-widest cursor-pointer rounded"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="w-full sm:w-auto px-5 py-2.5 bg-neutral-950 text-white font-mono font-bold hover:bg-neutral-900 transition-all text-[10px] uppercase tracking-widest cursor-pointer rounded shadow-sm hover:shadow-md"
+                >
+                  Submit Review
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Notification Container with elegant entry/exit animation details */}
+      {toast.visible && (
+        <div 
+          className="fixed bottom-6 left-1/2 -translate-x-1/2 md:bottom-auto md:top-6 md:left-auto md:translate-x-0 md:right-6 z-[9999] px-4 py-3 bg-neutral-900 border border-neutral-850 text-neutral-100 rounded-xl shadow-2xl flex items-center justify-between gap-3 animate-fade-in animate-slide-up select-none min-w-[280px] max-w-sm"
+          id="toast-notification"
+        >
+          <div className="flex items-center gap-2.5">
+            <span className="w-5 h-5 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
+              <Check className="w-3.5 h-3.5 text-emerald-400" />
+            </span>
+            <div className="text-[11.5px] font-mono uppercase tracking-wider font-semibold text-neutral-100">
+              {toast.message}
+            </div>
+          </div>
+          <button
+            onClick={() => setToast(prev => ({ ...prev, visible: false }))}
+            className="text-neutral-455 hover:text-white p-1 hover:bg-neutral-800 rounded transition-colors cursor-pointer"
+            title="Dismiss notification"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
 
       {/* FLOATING ACTION: BACK TO TOP */}
       <button

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Gift, Sparkles, CheckCircle, Smartphone, MapPin, Printer, Clipboard } from 'lucide-react';
+import { showToast } from '../utils/toast';
 
 interface GiftCardVoucher {
   id: string;
@@ -424,8 +425,8 @@ export default function GiftCardView() {
             <div className="flex justify-end gap-3.5 pt-2">
               <button
                 onClick={() => {
-                  alert("Voucher serial key copied to clipboard! Forward it companionably.");
                   navigator.clipboard.writeText(purchasedVoucher.serialNumber);
+                  showToast('Voucher Copied to Clipboard!');
                 }}
                 className="px-4 py-2.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-[10px] font-bold uppercase tracking-wider rounded-lg flex items-center gap-2 cursor-pointer border border-neutral-200"
               >

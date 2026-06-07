@@ -1,6 +1,7 @@
 import { useState, FormEvent } from 'react';
 import { Restaurant, Booking } from '../types';
 import { X, MapPin, Phone, Globe, Award, Calendar, Users, Clock, AlertCircle, CheckCircle, Heart, Star, Share2, Check, Sparkles, Percent, BookOpen, CalendarPlus } from 'lucide-react';
+import { showToast } from '../utils/toast';
 
 interface MenuItem {
   name: string;
@@ -538,6 +539,7 @@ export default function RestaurantDetailModal({
       .then(() => {
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
+        showToast('Link Copied to Clipboard!');
       })
       .catch((err) => {
         console.error('Failed to copy link:', err);

@@ -4,6 +4,7 @@ import {
   Percent, Users, Play, Send, Star, QrCode, CreditCard, ChevronRight, 
   Layers, Volume2, HelpCircle, Flame, Gift, Camera, RefreshCw, Scan
 } from 'lucide-react';
+import { showToast } from '../utils/toast';
 
 interface LoyaltyCard {
   cardholderName: string;
@@ -198,6 +199,7 @@ export default function MerchantOfferLoyaltyView({ setActiveTab }: { setActiveTa
     navigator.clipboard.writeText(num);
     setCopiedKey(true);
     setTimeout(() => setCopiedKey(false), 2000);
+    showToast('Token Copied to Clipboard!');
   };
 
   // Simulate redeem
@@ -449,7 +451,7 @@ export default function MerchantOfferLoyaltyView({ setActiveTab }: { setActiveTa
                       id="btn-copy-token"
                       onClick={() => {
                         navigator.clipboard.writeText(loyaltyCard.cardNumber);
-                        alert("Token Copied to Clipboard!");
+                        showToast('Token Copied to Clipboard!');
                       }}
                       className="flex-1 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white rounded-lg flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                     >

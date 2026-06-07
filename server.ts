@@ -26,9 +26,10 @@ let pagesConfigList: any[] = [
   { id: 'live-shows', label: 'Live Shows', icon: 'Music', active: true, order: 10 },
   { id: 'magazine', label: 'Editorial Magazine', icon: 'BookOpen', active: true, order: 11 },
   { id: 'my-guide', label: 'Itineraries', icon: 'Sparkles', active: true, order: 12 },
-  { id: 'suppliers', label: 'Insider Partners', icon: 'Store', active: true, order: 13 },
-  { id: 'admin', label: 'Admin Lockbox', icon: 'Lock', active: true, order: 14, cannotDisable: true },
-  { id: 'get-started', label: 'Get Started', icon: 'Info', active: true, order: 15 }
+  { id: 'social-feed', label: 'Social Feed', icon: 'Instagram', active: true, order: 13 },
+  { id: 'suppliers', label: 'Insider Partners', icon: 'Store', active: true, order: 14 },
+  { id: 'admin', label: 'Admin Lockbox', icon: 'Lock', active: true, order: 15, cannotDisable: true },
+  { id: 'get-started', label: 'Get Started', icon: 'Info', active: true, order: 16 }
 ];
 
 let siteSettings = {
@@ -529,6 +530,57 @@ async function startServer() {
     }
     const removed = articlesList.splice(index, 1);
     res.json({ message: "Article deleted successfully.", deleted: removed[0] });
+  });
+
+  // --- SOCIAL MEDIA MOMENTS API ENDPOINTS ---
+  app.get("/api/social-moments", (req, res) => {
+    const socialMomentsList = [
+      {
+        id: "post-1",
+        platform: "instagram",
+        handle: "@zaytounadaguide",
+        imageUrl: "https://images.unsplash.com/photo-1541532713592-79a0317b6b77?auto=format&fit=crop&q=80&w=600",
+        caption: "The performance on a plate is purely theatrical 🎭 The legendary mezza feast in local gardens remains an absolute peak of Lebanese heritage and hospitality. ✻✻✻ (3 Zaytounada Stars) #BeirutDining #LebaneseMezza #TraditionalGourmet #ZaytounadaStars",
+        likes: 1240,
+        commentsCount: 42,
+        date: "June 5, 2026",
+        location: "Em Sherif, Ashrafieh"
+      },
+      {
+        id: "post-2",
+        platform: "facebook",
+        handle: "Zaytounada Guide",
+        imageUrl: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&q=80&w=600",
+        caption: "Sunset overlooking the wild Batroun waves. Grilled sea bass seasoned with mountain sumac and olive oil. Pure coastal perfection curated for true epicureans. ✻ (1 Zaytounada Star) #Summervibes #BatrounCoast #LocalWildCatch",
+        likes: 852,
+        commentsCount: 19,
+        date: "June 3, 2026",
+        location: "Pierre & Friends, Batroun"
+      },
+      {
+        id: "post-3",
+        platform: "instagram",
+        handle: "@zaytounadaguide",
+        imageUrl: "https://images.unsplash.com/photo-1587314168485-3236d6710814?auto=format&fit=crop&q=80&w=600",
+        caption: "Legendary Arabic Kashta baking. Watch the master chefs syruping Tripoli's crown jewels at Al Hallab 1881. Absolute confectionery royalty. ✻ (1 Zaytounada Star) #LevantSweets #TripoliLegacy #Kashta #ZaytounadaVetted",
+        likes: 2189,
+        commentsCount: 95,
+        date: "June 1, 2026",
+        location: "Al Hallab 1881, Tripoli"
+      },
+      {
+        id: "post-4",
+        platform: "linkedin",
+        handle: "Zaytounada Hospitality Group",
+        imageUrl: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&q=80&w=600",
+        caption: "Empowering regional cooperatives. In partnering with the West Bekaa mothers cooperative, our index fosters micro-economies and traditional recipes passed down through generations. ✻✻ (2 Zaytounada Stars) #EcoGastronomy #SustainableHarvest #LebaneseCooperative #HospitalityEnterprise",
+        likes: 412,
+        commentsCount: 12,
+        date: "May 28, 2026",
+        location: "Tawlet Ammiq, West Bekaa"
+      }
+    ];
+    res.json(socialMomentsList);
   });
 
   // --- PAGES CONFIGURATION API ENDPOINTS ---

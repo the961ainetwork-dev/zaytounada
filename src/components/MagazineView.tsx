@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Article } from '../types';
 import { ARTICLES as staticArticles } from '../data/restaurants';
-import { BookOpen, Calendar, User, ArrowLeft, Clock, Share2, Award, Heart, Scroll, Compass, MessageSquare, Quote, Sparkles } from 'lucide-react';
+import { BookOpen, Calendar, User, ArrowLeft, Clock, Share2, Award, Heart, Scroll, Compass, MessageSquare, Quote, Sparkles, Instagram, Facebook, Linkedin, MapPin, ThumbsUp, ExternalLink } from 'lucide-react';
+import { showToast } from '../utils/toast';
 
 interface MagazineViewProps {
   selectedArticleId?: string | null;
@@ -15,9 +16,14 @@ export default function MagazineView({
   const [articles, setArticles] = useState<Article[]>([]);
   const [localSelectedArticleId, setLocalSelectedArticleId] = useState<string | null>(null);
 
+  const [socialMoments, setSocialMoments] = useState<any[]>([]);
+  const [likedMoments, setLikedMoments] = useState<Record<string, boolean>>({});
+  const [isLoadingSocial, setIsLoadingSocial] = useState(false);
+
   const selectedArticleId = propSelectedArticleId !== undefined ? propSelectedArticleId : localSelectedArticleId;
   const setSelectedArticleId = propSetSelectedArticleId !== undefined ? propSetSelectedArticleId : setLocalSelectedArticleId;
 
+  // Fetch articles
   useEffect(() => {
     fetch('/api/articles')
       .then(r => {
@@ -35,6 +41,79 @@ export default function MagazineView({
         setArticles(staticArticles);
       });
   }, []);
+
+  // Fetch dynamic social moments
+  useEffect(() => {
+    setIsLoadingSocial(true);
+    fetch('/api/social-moments')
+      .then(r => {
+        if (!r.ok) throw new Error("Fetch failed");
+        return r.json();
+      })
+      .then(data => {
+        if (Array.isArray(data)) {
+          setSocialMoments(data);
+        }
+      })
+      .catch(err => {
+        console.error("Error fetching social moments, utilizing fallback seed lists:", err);
+        // Fallback seed list if connection/server experiences transient latency or offline mode
+        setSocialMoments([
+          {
+            id: "post-1",
+            platform: "instagram",
+            handle: "@zaytounadaguide",
+            imageUrl: "https://images.unsplash.com/photo-1541532713592-79a0317b6b77?auto=format&fit=crop&q=80&w=600",
+            caption: "The performance on a plate is purely theatrical 🎭 The legendary mezza feast in local gardens remains an absolute peak of Lebanese heritage and hospitality. ✻✻✻ (3 Zaytounada Stars) #BeirutDining #LebaneseMezza #TraditionalGourmet #ZaytounadaStars",
+            likes: 1240,
+            commentsCount: 42,
+            date: "June 5, 2026",
+            location: "Em Sherif, Ashrafieh"
+          },
+          {
+            id: "post-2",
+            platform: "facebook",
+            handle: "Zaytounada Guide",
+            imageUrl: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&q=80&w=600",
+            caption: "Sunset overlooking the wild Batroun waves. Grilled sea bass seasoned with mountain sumac and olive oil. Pure coastal perfection curated for true epicureans. ✻ (1 Zaytounada Star) #Summervibes #BatrounCoast #LocalWildCatch",
+            likes: 852,
+            commentsCount: 19,
+            date: "June 3, 2026",
+            location: "Pierre & Friends, Batroun"
+          },
+          {
+            id: "post-3",
+            platform: "instagram",
+            handle: "@zaytounadaguide",
+            imageUrl: "https://images.unsplash.com/photo-1587314168485-3236d6710814?auto=format&fit=crop&q=80&w=600",
+            caption: "Legendary Arabic Kashta baking. Watch the master chefs syruping Tripoli's crown jewels at Al Hallab 1881. Absolute confectionery royalty. ✻ (1 Zaytounada Star) #LevantSweets #TripoliLegacy #Kashta #ZaytounadaVetted",
+            likes: 2189,
+            commentsCount: 95,
+            date: "June 1, 2026",
+            location: "Al Hallab 1881, Tripoli"
+          },
+          {
+            id: "post-4",
+            platform: "linkedin",
+            handle: "Zaytounada Hospitality Group",
+            imageUrl: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&q=80&w=600",
+            caption: "Empowering regional cooperatives. In partnering with the West Bekaa mothers cooperative, our index fosters micro-economies and traditional recipes passed down through generations. ✻✻ (2 Zaytounada Stars) #EcoGastronomy #SustainableHarvest #LebaneseCooperative #HospitalityEnterprise",
+            likes: 412,
+            commentsCount: 12,
+            date: "May 28, 2026",
+            location: "Tawlet Ammiq, West Bekaa"
+          }
+        ]);
+      })
+      .finally(() => setIsLoadingSocial(false));
+  }, []);
+
+  const handleToggleLike = (id: string) => {
+    setLikedMoments(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
 
   const currentArticles = articles.length > 0 ? articles : staticArticles;
   const selectedArticle = currentArticles.find(a => a.id === selectedArticleId);
@@ -92,7 +171,7 @@ export default function MagazineView({
               <button 
                 onClick={() => {
                   navigator.clipboard.writeText(window.location.href);
-                  alert('Editorial link successfully copied!');
+                  showToast('Link Copied to Clipboard!');
                 }}
                 className="flex items-center gap-1.5 hover:text-red-650 text-neutral-500 transition-colors cursor-pointer font-bold border border-neutral-200 px-3 py-1 rounded bg-neutral-50 hover:bg-neutral-100"
               >
@@ -220,9 +299,22 @@ export default function MagazineView({
                           </p>
                         </div>
                       </div>
-                      <div className="border-t border-neutral-100 pt-3 mt-4 text-[8.5px] font-mono text-neutral-450 group-hover:text-red-650 transition-colors font-bold uppercase tracking-wider flex justify-between items-center">
+                      <div className="border-t border-neutral-100 pt-3 mt-4 text-[8.5px] font-mono text-neutral-450 font-bold uppercase tracking-wider flex justify-between items-center">
                         <span className="truncate max-w-[80px]">By {art.author.split(' ')[0]}</span>
-                        <span className="text-red-650">Read report ➔</span>
+                        <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                          {art.website && (
+                            <a
+                              href={art.website}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-red-655 hover:text-red-750 transition-colors flex items-center gap-0.5 border-r border-neutral-200 pr-2 cursor-pointer"
+                              title="Visit website"
+                            >
+                              <span>Website</span>
+                            </a>
+                          )}
+                          <span className="text-red-650 group-hover:text-red-750 transition-colors cursor-pointer">Read report ➔</span>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -301,7 +393,21 @@ export default function MagazineView({
 
                 <div className="border-t border-neutral-150 pt-4 flex items-center justify-between text-[11px] font-mono uppercase tracking-wider text-red-650 font-bold">
                   <span>Category: {featuredArticle.category}</span>
-                  <span>Read Full Chronicle Report ➔</span>
+                  <div className="flex items-center gap-3.5" onClick={(e) => e.stopPropagation()}>
+                    {featuredArticle.website && (
+                      <a
+                        href={featuredArticle.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:text-red-750 transition-colors flex items-center gap-1 border-r border-neutral-200 pr-3.5 cursor-pointer animate-fade-in"
+                        title="Visit official venue website"
+                      >
+                        <span>Visit Website</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    )}
+                    <span className="group-hover:translate-x-0.5 transition-transform duration-200 cursor-pointer">Read Full Chronicle Report ➔</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -349,7 +455,21 @@ export default function MagazineView({
 
                   <div className="border-t border-neutral-100 pt-3.5 mt-4 flex items-center justify-between text-[10px] font-mono uppercase text-red-650 font-bold">
                     <span>By {art.author}</span>
-                    <span>Read Report ➔</span>
+                    <div className="flex items-center gap-2.5" onClick={(e) => e.stopPropagation()}>
+                      {art.website && (
+                        <a
+                          href={art.website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="hover:text-red-750 transition-colors flex items-center gap-0.5 border-r border-neutral-200 pr-2.5 cursor-pointer"
+                          title={`Visit website of ${art.title}`}
+                        >
+                          <span>Visit Website</span>
+                          <ExternalLink className="w-2.5 h-2.5" />
+                        </a>
+                      )}
+                      <span className="group-hover:translate-x-0.5 transition-transform duration-200 cursor-pointer">Read Report ➔</span>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -476,6 +596,129 @@ export default function MagazineView({
 
         </div>
       </div>
+
+      {/* SOCIAL MOMENTS: STYLISH USER-ENGAGING INTERACTIVE GRID */}
+      <div className="border-t-2 border-dashed border-neutral-300 pt-14 mt-16 text-left" id="social-moments-section">
+        <div className="flex flex-col md:flex-row justify-between items-baseline gap-4 mb-8">
+          <div>
+            <span className="text-[10px] font-mono font-black uppercase tracking-[0.3em] text-red-650 block mb-1">
+              📱 Zaytouna Hub / Digital Terroir
+            </span>
+            <h3 className="font-serif font-extralight text-3xl sm:text-4xl text-neutral-950 uppercase tracking-tight">
+              Social <span className="font-bold text-red-650">Moments & Curation Feed</span>
+            </h3>
+            <p className="text-xs text-neutral-500 font-light mt-1">
+              Live updates, unannounced snapshots, and chef moments posted across Instagram, Facebook, and LinkedIn.
+            </p>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-ping" />
+            <span className="font-mono text-[9px] font-bold text-neutral-550 uppercase tracking-widest">
+              Synchronized Live 
+            </span>
+          </div>
+        </div>
+
+        {socialMoments.length === 0 ? (
+          <div className="p-8 text-center text-xs text-neutral-450 font-mono py-12 bg-neutral-50 rounded-xl border border-dotted border-neutral-200">
+            LOADING SOCIAL CHANNELS FEED...
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {socialMoments.map((moment) => {
+              const isLiked = likedMoments[moment.id];
+              const displayLikes = isLiked ? moment.likes + 1 : moment.likes;
+              
+              return (
+                <div 
+                  key={moment.id}
+                  className="group bg-white border border-neutral-200 rounded-2xl overflow-hidden shadow-2xs hover:shadow-xs hover:border-neutral-350 transition-all flex flex-col justify-between text-left"
+                  id={`social-moment-${moment.id}`}
+                >
+                  <div>
+                    {/* Header */}
+                    <div className="p-4 flex items-center justify-between border-b border-neutral-100">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-7 h-7 bg-dashed bg-neutral-900 border border-neutral-800 rounded-full flex items-center justify-center text-[10px] text-white font-serif font-bold uppercase shadow">
+                          {moment.handle.replace(/[@]/g, '').charAt(0)}
+                        </div>
+                        <div>
+                          <div className="font-serif font-bold text-neutral-905 text-xs">
+                            {moment.handle}
+                          </div>
+                          {moment.location && (
+                            <div className="text-[8px] font-mono text-neutral-450 uppercase tracking-wide flex items-center gap-0.5 mt-0.5">
+                              <MapPin className="w-2.5 h-2.5 text-red-650" />
+                              <span className="truncate max-w-[120px]">{moment.location}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="text-neutral-500 hover:text-red-650 transition-colors">
+                        {moment.platform === 'instagram' && <Instagram className="w-4 h-4" />}
+                        {moment.platform === 'facebook' && <Facebook className="w-4 h-4" />}
+                        {moment.platform === 'linkedin' && <Linkedin className="w-4 h-4" />}
+                      </div>
+                    </div>
+
+                    {/* Image */}
+                    <div className="relative aspect-square w-full bg-neutral-100 overflow-hidden">
+                      <img 
+                        src={moment.imageUrl} 
+                        alt={moment.handle}
+                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+                        referrerPolicy="no-referrer"
+                      />
+                      <div className="absolute top-3 right-3 bg-neutral-950/80 backdrop-blur-3xs text-white text-[7px] font-mono tracking-widest px-2.5 py-1 rounded-full uppercase leading-none font-bold">
+                        {moment.date}
+                      </div>
+                    </div>
+
+                    {/* Caption content */}
+                    <div className="p-4 space-y-2.5">
+                      <p className="text-[11px] font-serif text-neutral-700 leading-relaxed font-light line-clamp-4">
+                        {moment.caption}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Interactivity details footer */}
+                  <div className="px-4 pb-4 pt-3.5 border-t border-neutral-100 flex items-center justify-between">
+                    <div className="flex items-center gap-4 text-[10px] font-mono text-neutral-450 font-bold">
+                      <button 
+                        onClick={() => handleToggleLike(moment.id)}
+                        className={`flex items-center gap-1.5 cursor-pointer transition-colors uppercase tracking-wider ${
+                          isLiked ? 'text-red-650' : 'hover:text-neutral-750'
+                        }`}
+                        title={isLiked ? "Unlike" : "Like"}
+                      >
+                        <Heart className={`w-4 h-4 transition-transform hover:scale-110 active:scale-90 ${isLiked ? 'fill-red-650 text-red-650' : 'text-neutral-400'}`} />
+                        <span>{displayLikes}</span>
+                      </button>
+                      <span className="select-none">•</span>
+                      <span className="lowercase font-light">
+                        <strong>{moment.commentsCount}</strong> comments
+                      </span>
+                    </div>
+
+                    <a 
+                      href={`https://${moment.platform}.com`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[9.5px] font-mono uppercase bg-neutral-900 hover:bg-neutral-800 text-white hover:text-white px-2.5 py-1 rounded font-bold tracking-wider cursor-pointer duration-200"
+                    >
+                      View
+                    </a>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
     </div>
   );
 }

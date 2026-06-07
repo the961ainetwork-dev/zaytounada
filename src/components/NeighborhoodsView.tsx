@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Restaurant } from '../types';
 import { RESTAURANTS } from '../data/restaurants';
 import { MapPin, ArrowLeft, Star, Compass, Table, Eye, DollarSign, Calendar, Heart, Share2, Award, Sparkles, Building, Footprints, Check } from 'lucide-react';
+import { showToast } from '../utils/toast';
 
 interface NeighborhoodsViewProps {
   onSelectRestaurant: (restaurant: Restaurant) => void;
@@ -302,6 +303,7 @@ export default function NeighborhoodsView({
         navigator.clipboard.writeText(shareUrl).then(() => {
           setCopiedId(id);
           setTimeout(() => setCopiedId(null), 2000);
+          showToast('Link Copied to Clipboard!');
         });
       } else {
         const textArea = document.createElement("textarea");
@@ -314,6 +316,7 @@ export default function NeighborhoodsView({
         document.body.removeChild(textArea);
         setCopiedId(id);
         setTimeout(() => setCopiedId(null), 2000);
+        showToast('Link Copied to Clipboard!');
       }
     } catch (err) {
       console.error("Clipboard copy failed:", err);

@@ -1433,6 +1433,7 @@ export const ARTICLES: Article[] = [
     imageUrl: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&q=80&w=800',
     date: 'May 15, 2026',
     author: 'Jean-Luc Zaytounada',
+    website: 'https://emsherif.com',
     content: [
       'At its inception, Zaytounada (named after the ancient, sacred wild olive trees of the Levant) began as a secret journal shared among master olive oil pressers, chefs, and culinary families. Our mission was simple: cataloging pure, magnificent olive oil presses and exceptional family kitchens across historical ports.',
       'Our directory was widely circulated among true culinary purists. Recognizing that "true craftsmanship is defined by integrity and passion," Zaytounada launched its official guide, introducing anonymous inspections and strict tasting protocols.',
@@ -1449,6 +1450,7 @@ export const ARTICLES: Article[] = [
     imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=800',
     date: 'April 28, 2026',
     author: 'Anonymous Inspector #12',
+    website: 'https://instagram.com/baronbeirut',
     content: [
       'Anonymity is our oxygen. We do not write reviews under our own names, we pay for every single meal we eat, and we never carry notebooks into the dining room. To the restaurateurs, we are merely lone, quiet travelers enjoying a dinner in Mar Mikhael.',
       'But what are we looking for? Our evaluations are based on five strict, globally consistent criteria: the quality of the ingredients, the mastery of culinary combinations and flavors, the chef\'s unique culinary personality on the plate, value for money, and consistency across both the whole menu and multiple visits.',
@@ -1465,6 +1467,7 @@ export const ARTICLES: Article[] = [
     imageUrl: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&q=80&w=800',
     date: 'March 12, 2026',
     author: 'Yuki Sato',
+    website: 'https://soukelttayeb.com/tawlet/ammiq',
     content: [
       'In traditional Levantine cooking, connection to the land is sacred. Today, a powerful gastro-movement is sweeping through Lebanon, bringing organic farm-to-table practices from the fertile Bekaa valley straight to city tables.',
       'Modern chefs are partnering with small-scale farmers in Ammiq and Zahle. Dinners are structured to highlight biodynamic vegetables, hand-harvested wild thymes, and heirloom grains like smoked green freekeeh.',
@@ -1480,6 +1483,7 @@ export const ARTICLES: Article[] = [
     imageUrl: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&q=80&w=800',
     date: 'January 20, 2026',
     author: 'Gourmet Travel Team',
+    website: 'https://babelrestaurant.com',
     content: [
       'The Zaytounada Guide uses three distinct star classifications, defined precisely to guide culinary travelers planning unique dining escapes:',
       '★ One Star: "High quality cooking, worth a stop!" The food is prepared to a consistently high standard and shows clear, distinct flavors. Excellent in its category.',
