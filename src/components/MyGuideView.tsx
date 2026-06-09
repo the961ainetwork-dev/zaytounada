@@ -1,12 +1,14 @@
 import { useState, FormEvent } from 'react';
 import { Restaurant, SavedItinerary, Booking } from '../types';
 import { RESTAURANTS } from '../data/restaurants';
-import { Sparkles, Calendar, Plus, Trash2, Heart, Award, ArrowRight, Share2, Clipboard, Printer, ExternalLink, MessageCircle, Star } from 'lucide-react';
+import { Sparkles, Calendar, Plus, Trash2, Heart, Award, ArrowRight, Share2, Clipboard, Printer, ExternalLink, MessageCircle, Star, Bookmark } from 'lucide-react';
 import { showToast } from '../utils/toast';
 
 interface MyGuideViewProps {
   savedRestaurantIds: string[];
   onToggleSave: (id: string) => void;
+  revisitRestaurantIds: string[];
+  onToggleRevisit: (id: string) => void;
   onSelectRestaurant: (restaurant: Restaurant) => void;
   savedItineraries: SavedItinerary[];
   onAddItinerary: (itinerary: SavedItinerary) => void;
@@ -14,13 +16,17 @@ interface MyGuideViewProps {
   setActiveTab: (tab: string) => void;
   bookings: Booking[];
   onClearBookings: () => void;
-  reviews: Record<string, { rating: number; comment: string; date: string }>;
+  reviews: Record<string, { rating: number; comment: string; date: string; photo?: string; signatureDish?: string }>;
   onOpenReview: (booking: Booking) => void;
+  bookingSortOrder: 'chrono' | 'reverse-chrono';
+  setBookingSortOrder: (order: 'chrono' | 'reverse-chrono') => void;
 }
 
 export default function MyGuideView({
   savedRestaurantIds,
   onToggleSave,
+  revisitRestaurantIds = [],
+  onToggleRevisit,
   onSelectRestaurant,
   savedItineraries,
   onAddItinerary,
@@ -29,7 +35,9 @@ export default function MyGuideView({
   bookings = [],
   onClearBookings,
   reviews = {},
-  onOpenReview
+  onOpenReview,
+  bookingSortOrder,
+  setBookingSortOrder
 }: MyGuideViewProps) {
   const [newTitle, setNewTitle] = useState('');
   const [newCity, setNewCity] = useState('Beirut');
@@ -41,6 +49,9 @@ export default function MyGuideView({
 
   // Get active saved restaurant instances
   const savedRestaurants = RESTAURANTS.filter(r => savedRestaurantIds.includes(r.id));
+
+  // Get active revisit restaurant instances
+  const revisitRestaurants = RESTAURANTS.filter(r => revisitRestaurantIds.includes(r.id));
 
   // Get saved restaurants filtered by the city chosen for the itinerary
   const candidateRestaurants = RESTAURANTS.filter(
@@ -177,23 +188,99 @@ export default function MyGuideView({
             )}
           </div>
 
+          {/* Plan to Revisit Section */}
+          <div className="bg-white border border-neutral-200 rounded-xl p-5 shadow-sm mt-6 text-left" id="my-guide-revisit-widget">
+            <h3 className="font-serif font-semibold text-base text-neutral-950 flex items-center gap-2 mb-4 uppercase tracking-wider">
+              <Bookmark className="w-4 h-4 text-emerald-800 fill-current" />
+              <span>Plan to Revisit ({revisitRestaurants.length})</span>
+            </h3>
+
+            {revisitRestaurants.length === 0 ? (
+              <div className="text-center py-8 px-4 flex flex-col items-center justify-center border border-dashed border-neutral-250 rounded bg-neutral-50/50">
+                <Bookmark className="w-8 h-8 text-neutral-300 mb-2" />
+                <p className="font-serif italic text-xs text-neutral-800">No revisit plans set yet.</p>
+                <p className="text-[10px] text-neutral-500 mt-1 max-w-xs leading-relaxed font-light">
+                  Use the 'Plan to Revisit' button in your booking feedback modal to save destinations here.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-3.5 max-h-[300px] overflow-y-auto pr-1">
+                {revisitRestaurants.map((restaurant) => {
+                  const starsStars = restaurant.stars > 0 ? '✻'.repeat(restaurant.stars) : '';
+                  return (
+                    <div
+                      key={restaurant.id}
+                      className="group p-3 bg-neutral-50 border border-neutral-150 rounded flex items-center gap-3 hover:bg-neutral-100 transition-colors shadow-xs"
+                    >
+                      {/* Photo mini thumbnail */}
+                      <img
+                        src={restaurant.imageUrl}
+                        alt={restaurant.name}
+                        onClick={() => onSelectRestaurant(restaurant)}
+                        className="w-14 h-14 object-cover rounded shrink-0 cursor-pointer border border-neutral-200 grayscale hover:grayscale-0 transition-all duration-300"
+                        referrerPolicy="no-referrer"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-1">
+                          <span className="text-[8px] font-mono uppercase text-neutral-400 font-bold tracking-wider">{restaurant.cuisine}</span>
+                          {starsStars && <span className="text-red-500 text-xs font-serif font-bold tracking-tighter">{starsStars}</span>}
+                        </div>
+                        <h4 
+                          onClick={() => onSelectRestaurant(restaurant)}
+                          className="font-serif font-light text-xs text-neutral-900 truncate shrink-0 hover:text-red-650 transition-colors cursor-pointer"
+                        >
+                          {restaurant.name}
+                        </h4>
+                        <p className="text-[9px] text-neutral-500 truncate">{restaurant.city}, {restaurant.country}</p>
+                      </div>
+
+                      {/* Delete option */}
+                      <button
+                        onClick={() => onToggleRevisit(restaurant.id)}
+                        className="text-neutral-400 hover:text-red-600 transition-colors p-1.5 cursor-pointer"
+                        title="Remove from revisit list"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
           {/* My Active Bookings Dashboard Widget */}
           <div className="bg-white border border-neutral-200 rounded-xl p-5 shadow-sm mt-6 text-left" id="my-guide-bookings-widget">
-            <div className="flex justify-between items-center border-b border-neutral-200 pb-3 mb-4">
+            <div className="flex flex-wrap justify-between items-center gap-2 border-b border-neutral-200 pb-3 mb-4">
               <div>
                 <h3 className="font-serif font-semibold text-base text-neutral-950 flex items-center gap-2 uppercase tracking-wider">
                   <Calendar className="w-4 h-4 text-emerald-600" />
                   <span>My Bookings ({bookings.length})</span>
                 </h3>
               </div>
-              {bookings.length > 0 && (
-                <button
-                  onClick={onClearBookings}
-                  className="text-[9px] text-neutral-400 hover:text-emerald-700 font-mono uppercase tracking-widest cursor-pointer select-none"
-                >
-                  Clear
-                </button>
-              )}
+              <div className="flex items-center gap-3 shrink-0">
+                {bookings.length > 0 && (
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[8px] font-mono text-neutral-400 uppercase tracking-wider select-none">Sort:</span>
+                    <select
+                      value={bookingSortOrder}
+                      onChange={(e) => setBookingSortOrder(e.target.value as 'chrono' | 'reverse-chrono')}
+                      className="text-[9px] font-mono uppercase bg-transparent text-neutral-600 border border-neutral-200 rounded px-1.5 py-0.5 outline-none cursor-pointer hover:border-neutral-350 focus:border-red-500 transition-colors"
+                    >
+                      <option value="chrono" className="text-neutral-900 bg-white">Earliest</option>
+                      <option value="reverse-chrono" className="text-neutral-900 bg-white">Latest</option>
+                    </select>
+                  </div>
+                )}
+                {bookings.length > 0 && (
+                  <button
+                    onClick={onClearBookings}
+                    className="text-[9px] text-neutral-400 hover:text-emerald-700 font-mono uppercase tracking-widest cursor-pointer select-none"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
             </div>
 
             {bookings.length === 0 ? (
@@ -202,8 +289,18 @@ export default function MyGuideView({
               </div>
             ) : (
               <div className="space-y-4 max-h-[350px] overflow-y-auto pr-1">
-                {bookings.map((book) => {
-                  const review = reviews[book.id];
+                {[...bookings]
+                  .sort((a, b) => {
+                    const dateCompare = a.date.localeCompare(b.date);
+                    if (dateCompare !== 0) {
+                      return bookingSortOrder === 'chrono' ? dateCompare : -dateCompare;
+                    }
+                    return bookingSortOrder === 'chrono' 
+                      ? a.time.localeCompare(b.time) 
+                      : b.time.localeCompare(a.time);
+                  })
+                  .map((book) => {
+                    const review = reviews[book.id];
                   return (
                     <div 
                       key={book.id} 
@@ -240,6 +337,22 @@ export default function MyGuideView({
                           <p className="text-[9.5px] italic text-neutral-500 font-serif leading-relaxed mt-1 max-w-full">
                             "{review.comment}"
                           </p>
+                          {review.signatureDish && (
+                            <div className="mt-2 flex items-center gap-1 bg-emerald-50 border border-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[8.5px] font-mono w-fit shadow-3xs animate-fade-in">
+                              <span className="w-1 h-1 rounded-full bg-emerald-500 shrink-0"></span>
+                              <span>Signature Dish: <strong className="font-extrabold">{review.signatureDish}</strong></span>
+                            </div>
+                          )}
+                          {review.photo && (
+                            <div className="mt-2 relative">
+                              <img 
+                                src={review.photo} 
+                                alt="User review attachment" 
+                                className="max-h-32 w-auto rounded-lg border border-neutral-200 object-cover shadow-3xs"
+                                referrerPolicy="no-referrer"
+                              />
+                            </div>
+                          )}
                         </div>
                       )}
 

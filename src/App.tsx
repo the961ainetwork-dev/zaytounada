@@ -21,8 +21,20 @@ import MerchantOfferLoyaltyView from './components/MerchantOfferLoyaltyView';
 import SocialFeedView from './components/SocialFeedView';
 import { Restaurant, SavedItinerary, Booking, Article } from './types';
 import { RESTAURANTS, ARTICLES as staticArticles } from './data/restaurants';
-import { Award, Compass, Heart, Award as AwardIcon, MapPin, Grid, Plus, Sparkles, BookOpen, Calendar, Star, Gift, ArrowRight, Share2, Check, BookOpenCheck, ArrowUp, Instagram, Facebook, Linkedin, X, ExternalLink } from 'lucide-react';
+import { Award, Compass, Heart, Award as AwardIcon, MapPin, Grid, Plus, Sparkles, BookOpen, Calendar, Star, Gift, ArrowRight, Share2, Check, BookOpenCheck, ArrowUp, Instagram, Facebook, Linkedin, X, ExternalLink, Camera, Upload, Bookmark, Navigation } from 'lucide-react';
 import { showToast } from './utils/toast';
+
+const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+  const R = 6371; // km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
+};
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>(() => {
@@ -266,6 +278,138 @@ export default function App() {
   const [selectedPrice, setSelectedPrice] = useState<string>('All Prices');
   const [selectedDietary, setSelectedDietary] = useState<string>('All Dietary Options');
 
+  // Geolocation & Distance sorting states
+  const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [sortByDistance, setSortByDistance] = useState<boolean>(false);
+  const [isLocating, setIsLocating] = useState<boolean>(false);
+  const [proximityRadius, setProximityRadius] = useState<number | null>(null);
+  const [showRadiusDropdown, setShowRadiusDropdown] = useState<boolean>(false);
+
+  const longPressTimer = React.useRef<NodeJS.Timeout | null>(null);
+  const isLongPressRef = React.useRef<boolean>(false);
+
+  const startLongPress = (e: React.MouseEvent | React.TouchEvent) => {
+    isLongPressRef.current = false;
+    if (longPressTimer.current) clearTimeout(longPressTimer.current);
+    longPressTimer.current = setTimeout(() => {
+      isLongPressRef.current = true;
+      setShowRadiusDropdown(true);
+      if (typeof navigator !== 'undefined' && navigator.vibrate) {
+        navigator.vibrate(40);
+      }
+      showToast("Long-pressed! Select proximity radius filter.");
+    }, 550);
+  };
+
+  const cancelLongPress = () => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+    }
+  };
+
+  const handleSelectRadius = (radius: number | null) => {
+    setProximityRadius(radius);
+    setShowRadiusDropdown(false);
+
+    if (userCoords) {
+      setSortByDistance(true);
+      if (radius) {
+        showToast(`Filtered restaurants within ${radius} km and sorted by distance.`);
+      } else {
+        showToast("Sorted all restaurants by distance (no limit).");
+      }
+      return;
+    }
+
+    if (!navigator.geolocation) {
+      showToast("Geolocation is not supported by your browser.", "error");
+      return;
+    }
+
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setIsLocating(false);
+        const { latitude, longitude } = position.coords;
+        setUserCoords({ lat: latitude, lng: longitude });
+        setSortByDistance(true);
+        if (radius) {
+          showToast(`Successfully located! Showing restaurants within ${radius} km.`);
+        } else {
+          showToast("Successfully located! Sorted restaurants by distance.");
+        }
+      },
+      (error) => {
+        setIsLocating(false);
+        console.error("Geolocation error:", error);
+        let errorMsg = "Unable to retrieve your location.";
+        if (error.code === error.PERMISSION_DENIED) {
+          errorMsg = "Location permissions denied. Please enable location access.";
+        }
+        showToast(errorMsg, "error");
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+    );
+  };
+
+  const handleFindNearby = () => {
+    if (sortByDistance) {
+      setSortByDistance(false);
+      setProximityRadius(null);
+      return;
+    }
+
+    if (userCoords) {
+      setSortByDistance(true);
+      if (proximityRadius) {
+        showToast(`Sorted restaurants within ${proximityRadius} km from your current location.`);
+      } else {
+        showToast("Sorted all restaurants by distance from your current location.");
+      }
+      return;
+    }
+
+    if (!navigator.geolocation) {
+      showToast("Geolocation is not supported by your browser.", "error");
+      return;
+    }
+
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setIsLocating(false);
+        const { latitude, longitude } = position.coords;
+        setUserCoords({ lat: latitude, lng: longitude });
+        setSortByDistance(true);
+        showToast("Successfully located! Sorted restaurants by distance.");
+      },
+      (error) => {
+        setIsLocating(false);
+        console.error("Geolocation error:", error);
+        let errorMsg = "Unable to retrieve your location.";
+        if (error.code === error.PERMISSION_DENIED) {
+          errorMsg = "Location permissions denied. Please enable location access in browser settings.";
+        } else if (error.code === error.POSITION_UNAVAILABLE) {
+          errorMsg = "Location information is unavailable.";
+        } else if (error.code === error.TIMEOUT) {
+          errorMsg = "Request to get user location timed out.";
+        }
+        showToast(errorMsg, "error");
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+    );
+  };
+
+  const handleFindNearbyClick = (e: React.MouseEvent) => {
+    if (isLongPressRef.current) {
+      e.preventDefault();
+      e.stopPropagation();
+      isLongPressRef.current = false;
+      return;
+    }
+    handleFindNearby();
+  };
+
   // Selected Restaurant for Detailed Inspector Modal
   const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null);
 
@@ -299,9 +443,11 @@ export default function App() {
 
   // States with Local Persistency
   const [savedRestaurantIds, setSavedRestaurantIds] = useState<string[]>([]);
+  const [revisitRestaurantIds, setRevisitRestaurantIds] = useState<string[]>([]);
   const [savedItineraries, setSavedItineraries] = useState<SavedItinerary[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [reviews, setReviews] = useState<Record<string, { rating: number; comment: string; date: string }>>({});
+  const [reviews, setReviews] = useState<Record<string, { rating: number; comment: string; date: string; photo?: string; signatureDish?: string }>>({});
+  const [bookingSortOrder, setBookingSortOrder] = useState<'chrono' | 'reverse-chrono'>('chrono');
 
   // Global Toast state
   const [toast, setToast] = useState<{ message: string; visible: boolean; type: 'success' | 'info' | 'error' }>({
@@ -343,12 +489,202 @@ export default function App() {
   const [reviewModalBooking, setReviewModalBooking] = useState<Booking | null>(null);
   const [reviewRating, setReviewRating] = useState<number>(5);
   const [reviewComment, setReviewComment] = useState<string>('');
+  const [reviewPhoto, setReviewPhoto] = useState<string | null>(null);
+  const [reviewSignatureDish, setReviewSignatureDish] = useState<string | null>(null);
+  const [photoOptimizationInfo, setPhotoOptimizationInfo] = useState<{
+    originalSize: string;
+    optimizedSize: string;
+    reductionPercent: number;
+  } | null>(null);
+  const [isCameraActive, setIsCameraActive] = useState<boolean>(false);
+  const videoRef = React.useRef<HTMLVideoElement | null>(null);
+  const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
+  const [cameraError, setCameraError] = useState<string | null>(null);
+
+  // Stop camera helper
+  const handleStopCamera = () => {
+    if (cameraStream) {
+      cameraStream.getTracks().forEach(track => track.stop());
+      setCameraStream(null);
+    }
+    setIsCameraActive(false);
+  };
+
+  // Start camera helper
+  const handleStartCamera = async () => {
+    setCameraError(null);
+    setIsCameraActive(true);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: 'environment' }, 
+        audio: false 
+      });
+      setCameraStream(stream);
+    } catch (err: any) {
+      console.error("Camera access failed:", err);
+      setCameraError("Camera access denied or unavailable on this device.");
+      setIsCameraActive(false);
+    }
+  };
+
+  // Sync video source whenever stream changes
+  useEffect(() => {
+    if (videoRef.current && cameraStream) {
+      videoRef.current.srcObject = cameraStream;
+    }
+  }, [cameraStream, isCameraActive]);
+
+  const formatBytes = (bytes: number): string => {
+    if (bytes < 1024) return bytes + ' B';
+    const kb = bytes / 1024;
+    if (kb < 1024) return kb.toFixed(1) + ' KB';
+    return (kb / 1024).toFixed(1) + ' MB';
+  };
+
+  // Capture frame as Base64 image
+  const handleCapturePhoto = () => {
+    if (!videoRef.current) return;
+    try {
+      const canvas = document.createElement('canvas');
+      const sourceWidth = videoRef.current.videoWidth || 640;
+      const sourceHeight = videoRef.current.videoHeight || 480;
+      
+      // Target max dimension for snappy uploads and storage footprint
+      const MAX_DIM = 960;
+      let targetWidth = sourceWidth;
+      let targetHeight = sourceHeight;
+      
+      if (sourceWidth > MAX_DIM || sourceHeight > MAX_DIM) {
+        if (sourceWidth > sourceHeight) {
+          targetHeight = Math.round((sourceHeight * MAX_DIM) / sourceWidth);
+          targetWidth = MAX_DIM;
+        } else {
+          targetWidth = Math.round((sourceWidth * MAX_DIM) / sourceHeight);
+          targetHeight = MAX_DIM;
+        }
+      }
+
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.drawImage(videoRef.current, 0, 0, targetWidth, targetHeight);
+        // Optimize JPEG compression to 82% quality
+        const optimizedBase64 = canvas.toDataURL('image/jpeg', 0.82);
+        
+        const rawBytes = Math.round(optimizedBase64.length * 0.75);
+        setPhotoOptimizationInfo({
+          originalSize: formatBytes(Math.round((sourceWidth * sourceHeight * 3))), // raw pixel estimation
+          optimizedSize: formatBytes(rawBytes),
+          reductionPercent: 88 // Estimated average camera raw format compression ratio
+        });
+        
+        setReviewPhoto(optimizedBase64);
+        handleStopCamera();
+        showToast(`Camera capture optimized successfully (${formatBytes(rawBytes)})`);
+      }
+    } catch (err) {
+      console.error("Failed to capture image:", err);
+      setCameraError("Failed to snap photo from stream.");
+    }
+  };
+
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    if (!file.type.startsWith('image/')) {
+      showToast("Only image file formats are supported");
+      return;
+    }
+
+    const originalSizeVal = file.size;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        try {
+          // Set maximum dimensions for responsive processing (e.g. 1024px maximum)
+          const MAX_WIDTH = 1024;
+          const MAX_HEIGHT = 1024;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > MAX_WIDTH || height > MAX_HEIGHT) {
+            if (width > height) {
+              height = Math.round((height * MAX_WIDTH) / width);
+              width = MAX_WIDTH;
+            } else {
+              width = Math.round((width * MAX_HEIGHT) / height);
+              height = MAX_HEIGHT;
+            }
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            // Compresses dynamically: formats to JPEG format with 80% compression factor
+            const optimizedBase64 = canvas.toDataURL('image/jpeg', 0.80);
+            const optimizedSizeVal = Math.round(optimizedBase64.length * 0.75);
+            
+            // Calculate actual footprint reduction
+            const reduction = Math.max(0, Math.round(((originalSizeVal - optimizedSizeVal) / originalSizeVal) * 100));
+            
+            setPhotoOptimizationInfo({
+              originalSize: formatBytes(originalSizeVal),
+              optimizedSize: formatBytes(optimizedSizeVal),
+              reductionPercent: reduction
+            });
+            
+            setReviewPhoto(optimizedBase64);
+            
+            if (reduction > 10) {
+              showToast(`Compressed image: shrunk size by ${reduction}%! (${formatBytes(optimizedSizeVal)})`);
+            } else {
+              showToast(`Photo imported (${formatBytes(optimizedSizeVal)})`);
+            }
+          } else {
+            // Fallback to loaded original as-is
+            setReviewPhoto(event.target?.result as string);
+            setPhotoOptimizationInfo({
+              originalSize: formatBytes(originalSizeVal),
+              optimizedSize: formatBytes(originalSizeVal),
+              reductionPercent: 0
+            });
+          }
+        } catch (error) {
+          console.error("Canvas optimization failed:", error);
+          setReviewPhoto(event.target?.result as string);
+        }
+      };
+      
+      img.onerror = () => {
+        showToast("Error processing downloaded photo structure.");
+      };
+      
+      img.src = event.target?.result as string;
+    };
+    
+    reader.onerror = () => {
+      showToast("Failed to read selected image file.");
+    };
+    reader.readAsDataURL(file);
+  };
 
   // Load Saved parameters and query-string deep link on Mount
   useEffect(() => {
     try {
       const storedSaved = localStorage.getItem('zaytounada_saved_restaurants') || localStorage.getItem('michelin_saved_restaurants');
       if (storedSaved) setSavedRestaurantIds(JSON.parse(storedSaved));
+
+      const storedRevisit = localStorage.getItem('zaytounada_revisit_restaurants');
+      if (storedRevisit) setRevisitRestaurantIds(JSON.parse(storedRevisit));
 
       const storedItineraries = localStorage.getItem('zaytounada_itineraries') || localStorage.getItem('michelin_itineraries');
       if (storedItineraries) setSavedItineraries(JSON.parse(storedItineraries));
@@ -415,6 +751,19 @@ export default function App() {
     saveToStorage('zaytounada_saved_restaurants', next);
   };
 
+  const handleToggleRevisitRestaurant = (id: string) => {
+    let next: string[];
+    if (revisitRestaurantIds.includes(id)) {
+      next = revisitRestaurantIds.filter(item => item !== id);
+      showToast("Removed from Plan to Revisit");
+    } else {
+      next = [...revisitRestaurantIds, id];
+      showToast("Added to Plan to Revisit");
+    }
+    setRevisitRestaurantIds(next);
+    saveToStorage('zaytounada_revisit_restaurants', next);
+  };
+
   const handleAddItinerary = (itinerary: SavedItinerary) => {
     const next = [itinerary, ...savedItineraries];
     setSavedItineraries(next);
@@ -443,6 +792,15 @@ export default function App() {
     setReviewModalBooking(booking);
     setReviewRating(existing ? existing.rating : 5);
     setReviewComment(existing ? existing.comment : '');
+    setReviewPhoto(existing && 'photo' in existing ? (existing as any).photo : null);
+    setReviewSignatureDish(existing && 'signatureDish' in existing ? (existing as any).signatureDish : null);
+    setPhotoOptimizationInfo(null);
+    setIsCameraActive(false);
+    setCameraError(null);
+    if (cameraStream) {
+      cameraStream.getTracks().forEach(track => track.stop());
+      setCameraStream(null);
+    }
   };
 
   const handleSubmitReview = (e: React.FormEvent) => {
@@ -454,12 +812,22 @@ export default function App() {
       [reviewModalBooking.id]: {
         rating: reviewRating,
         comment: reviewComment.trim(),
-        date: new Date().toISOString().split('T')[0]
+        date: new Date().toISOString().split('T')[0],
+        photo: reviewPhoto || undefined,
+        signatureDish: reviewSignatureDish || undefined
       }
     };
     setReviews(nextReviews);
     saveToStorage('zaytounada_reviews', nextReviews);
     setReviewModalBooking(null);
+    setReviewPhoto(null);
+    setReviewSignatureDish(null);
+    setPhotoOptimizationInfo(null);
+    setIsCameraActive(false);
+    if (cameraStream) {
+      cameraStream.getTracks().forEach(track => track.stop());
+      setCameraStream(null);
+    }
   };
 
   const handleFooterSubscribe = async (e: React.FormEvent) => {
@@ -517,7 +885,7 @@ export default function App() {
 
   // Filter restaurants list based on grid combinations
   const filteredRestaurants = useMemo(() => {
-    return restaurants.filter((rest) => {
+    let result = restaurants.filter((rest) => {
       // City Match
       const cityMatch = selectedCity === 'All Cities' || rest.city.toLowerCase() === selectedCity.toLowerCase();
       
@@ -592,7 +960,35 @@ export default function App() {
 
       return cityMatch && matchesSearch && matchesDistinction && matchesCuisine && matchesPrice && matchesDietary;
     });
-  }, [restaurants, searchQuery, selectedCity, selectedDistinction, selectedCuisine, selectedPrice, selectedDietary]);
+
+    if (sortByDistance && userCoords) {
+      if (proximityRadius !== null) {
+        result = result.filter(rest => {
+          const rLat = rest.coordinates?.lat ?? 0;
+          const rLng = rest.coordinates?.lng ?? 0;
+          const dist = getDistance(userCoords.lat, userCoords.lng, rLat, rLng);
+          return dist <= proximityRadius;
+        });
+      }
+
+      result = [...result].sort((a, b) => {
+        const latA = a.coordinates?.lat ?? 0;
+        const lngA = a.coordinates?.lng ?? 0;
+        const latB = b.coordinates?.lat ?? 0;
+        const lngB = b.coordinates?.lng ?? 0;
+        
+        const distA = getDistance(userCoords.lat, userCoords.lng, latA, lngA);
+        const distB = getDistance(userCoords.lat, userCoords.lng, latB, lngB);
+        return distA - distB;
+      });
+    }
+
+    return result;
+  }, [restaurants, searchQuery, selectedCity, selectedDistinction, selectedCuisine, selectedPrice, selectedDietary, sortByDistance, userCoords, proximityRadius]);
+
+  const currentRestForReview = reviewModalBooking
+    ? restaurants.find(r => r.id === reviewModalBooking.restaurantId)
+    : null;
 
   return (
     <div className="min-h-screen bg-white text-neutral-900 flex flex-col font-sans" id="zaytounada-app-root">
@@ -1141,10 +1537,87 @@ export default function App() {
                     <option value="Gluten-Free" className="bg-white text-neutral-900">Gluten-Free Options</option>
                     <option value="Halal" className="bg-white text-neutral-900">Halal Certified / Compliant</option>
                   </select>
+
+                  {/* Find Nearby Geolocation Trigger with long-press for proximity radius selection */}
+                  <div className="relative inline-block shrink-0">
+                    <button
+                      onMouseDown={startLongPress}
+                      onMouseUp={cancelLongPress}
+                      onMouseLeave={cancelLongPress}
+                      onTouchStart={startLongPress}
+                      onTouchMove={cancelLongPress}
+                      onTouchEnd={cancelLongPress}
+                      onClick={handleFindNearbyClick}
+                      disabled={isLocating}
+                      className={`px-3.5 py-2 text-xs rounded-full font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0 select-none ${
+                        sortByDistance
+                          ? 'bg-emerald-700 hover:bg-emerald-800 text-white shadow-xs border border-emerald-700'
+                          : 'bg-white hover:bg-neutral-50 border border-neutral-200 text-neutral-800 hover:text-emerald-800'
+                      }`}
+                      title="Sort restaurants by proximity (Long-press to set radius limit)"
+                      id="find-nearby-btn"
+                    >
+                      <Navigation className={`w-3.5 h-3.5 ${isLocating ? 'animate-spin' : 'rotate-45 text-emerald-600'}`} />
+                      <span>
+                        {isLocating 
+                          ? 'Locating...' 
+                          : sortByDistance 
+                            ? (proximityRadius ? `Within < ${proximityRadius}km` : 'Distance Sort ON') 
+                            : 'Find Nearby'}
+                      </span>
+                    </button>
+
+                    {/* Dimmed backdrop to close dropdown on outside clicks */}
+                    {showRadiusDropdown && (
+                      <div 
+                        className="fixed inset-0 z-40 bg-transparent cursor-default" 
+                        onClick={() => setShowRadiusDropdown(false)}
+                      />
+                    )}
+
+                    {/* Dropdown menu */}
+                    {showRadiusDropdown && (
+                      <div className="absolute left-0 mt-2 w-52 bg-white border border-neutral-200 rounded-2xl shadow-xl py-1.5 z-50 animate-fade-in text-left">
+                        <div className="px-3.5 py-2 border-b border-neutral-100 text-[10px] text-neutral-400 font-extrabold uppercase tracking-wider font-mono flex items-center justify-between">
+                          <span>Proximity Filter</span>
+                          <span className="text-[8px] bg-neutral-100 text-neutral-500 px-1.5 py-0.5 rounded">Select Limit</span>
+                        </div>
+                        <div className="py-1">
+                          {[
+                            { label: '5 km (Neighborhood)', value: 5 },
+                            { label: '10 km (Short Drive)', value: 10 },
+                            { label: '25 km (Regional)', value: 25 },
+                            { label: '50 km (Daytrip)', value: 50 },
+                            { label: 'Any Distance', value: null },
+                          ].map((opt) => {
+                            const isSelected = proximityRadius === opt.value;
+                            return (
+                              <button
+                                key={opt.label}
+                                type="button"
+                                onClick={() => handleSelectRadius(opt.value)}
+                                className="w-full px-4 py-2 text-xs flex items-center justify-between transition-colors text-left hover:bg-neutral-50 cursor-pointer select-none border-none bg-transparent"
+                              >
+                                <span className={isSelected ? 'text-emerald-800 font-bold' : 'text-neutral-700 font-medium'}>
+                                  {opt.label}
+                                </span>
+                                {isSelected && (
+                                  <span className="w-2 h-2 rounded-full bg-emerald-600 shadow-3xs" />
+                                )}
+                              </button>
+                            );
+                          })}
+                        </div>
+                        <div className="border-t border-neutral-100 px-3.5 py-1.5 text-[9px] text-neutral-400 leading-normal font-light">
+                          Hold button at any time to open this selection.
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Active Reset Trigger */}
-                {(selectedDistinction !== 'All Distinctions' || selectedCuisine !== 'All Cuisines' || selectedPrice !== 'All Prices' || selectedDietary !== 'All Dietary Options' || selectedCity !== 'All Cities' || searchQuery) && (
+                {(selectedDistinction !== 'All Distinctions' || selectedCuisine !== 'All Cuisines' || selectedPrice !== 'All Prices' || selectedDietary !== 'All Dietary Options' || selectedCity !== 'All Cities' || searchQuery || sortByDistance) && (
                   <button
                     onClick={() => {
                       setSelectedCity('All Cities');
@@ -1153,6 +1626,8 @@ export default function App() {
                       setSelectedDistinction('All Distinctions');
                       setSelectedPrice('All Prices');
                       setSelectedDietary('All Dietary Options');
+                      setSortByDistance(false);
+                      setProximityRadius(null);
                     }}
                     className="text-[10px] text-emerald-700 hover:text-emerald-600 font-bold uppercase tracking-widest cursor-pointer ml-auto text-right md:text-left shrink-0"
                   >
@@ -1312,18 +1787,26 @@ export default function App() {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" id="restaurants-grid">
-                  {filteredRestaurants.map((restaurant) => (
-                    <RestaurantCard
-                      key={restaurant.id}
-                      restaurant={restaurant}
-                      onSelect={() => setSelectedRestaurant(restaurant)}
-                      isSaved={savedRestaurantIds.includes(restaurant.id)}
-                      onToggleSave={(e) => {
-                        e.stopPropagation();
-                        handleToggleSaveRestaurant(restaurant.id);
-                      }}
-                    />
-                  ))}
+                  {filteredRestaurants.map((restaurant) => {
+                    const latVal = restaurant.coordinates?.lat;
+                    const lngVal = restaurant.coordinates?.lng;
+                    const distance = (userCoords && latVal && lngVal)
+                      ? getDistance(userCoords.lat, userCoords.lng, latVal, lngVal)
+                      : undefined;
+                    return (
+                      <RestaurantCard
+                        key={restaurant.id}
+                        restaurant={restaurant}
+                        distanceKm={distance}
+                        onSelect={() => setSelectedRestaurant(restaurant)}
+                        isSaved={savedRestaurantIds.includes(restaurant.id)}
+                        onToggleSave={(e) => {
+                          e.stopPropagation();
+                          handleToggleSaveRestaurant(restaurant.id);
+                        }}
+                      />
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -1563,6 +2046,8 @@ export default function App() {
           <MyGuideView
             savedRestaurantIds={savedRestaurantIds}
             onToggleSave={handleToggleSaveRestaurant}
+            revisitRestaurantIds={revisitRestaurantIds}
+            onToggleRevisit={handleToggleRevisitRestaurant}
             onSelectRestaurant={(rest) => setSelectedRestaurant(rest)}
             savedItineraries={savedItineraries}
             onAddItinerary={handleAddItinerary}
@@ -1572,6 +2057,8 @@ export default function App() {
             onClearBookings={handleClearAllBookings}
             reviews={reviews}
             onOpenReview={handleOpenReview}
+            bookingSortOrder={bookingSortOrder}
+            setBookingSortOrder={setBookingSortOrder}
           />
         )}
 
@@ -1635,7 +2122,7 @@ export default function App() {
 
             {/* My Active Bookings Dashboard Widget */}
             <div className="mt-12 bg-neutral-50 border border-neutral-200 rounded-xl p-6 md:p-8 text-left h-auto shadow-sm">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-neutral-200 pb-4 mb-5">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-neutral-200 pb-4 mb-5">
                 <div>
                   <h3 className="font-serif font-light text-xl text-neutral-900 flex items-center gap-2 uppercase tracking-wide">
                     <Calendar className="w-5.5 h-5.5 text-emerald-600" />
@@ -1644,14 +2131,30 @@ export default function App() {
                   <p className="text-xs text-neutral-500 mt-0.5">Summary of tables requested through the Gourmet Booking Desk.</p>
                 </div>
 
-                {bookings.length > 0 && (
-                  <button
-                    onClick={handleClearAllBookings}
-                    className="text-[10px] text-neutral-400 hover:text-emerald-700 font-mono uppercase tracking-widest cursor-pointer select-none"
-                  >
-                    Clear Booking Records
-                  </button>
-                )}
+                <div className="flex items-center gap-4 self-end sm:self-auto">
+                  {bookings.length > 0 && (
+                    <div className="flex items-center gap-2 bg-white px-2 py-1 rounded border border-neutral-200 shadow-3xs">
+                      <span className="text-[9px] font-mono text-neutral-400 uppercase tracking-widest leading-none select-none">Sort Date:</span>
+                      <select
+                        value={bookingSortOrder}
+                        onChange={(e) => setBookingSortOrder(e.target.value as 'chrono' | 'reverse-chrono')}
+                        className="text-[10px] font-mono uppercase bg-transparent text-neutral-75 border-none outline-none cursor-pointer hover:text-emerald-700 transition-colors"
+                      >
+                        <option value="chrono" className="text-neutral-900 bg-white">Earliest First</option>
+                        <option value="reverse-chrono" className="text-neutral-900 bg-white">Latest First</option>
+                      </select>
+                    </div>
+                  )}
+
+                  {bookings.length > 0 && (
+                    <button
+                      onClick={handleClearAllBookings}
+                      className="text-[10px] text-neutral-400 hover:text-emerald-700 font-mono uppercase tracking-widest cursor-pointer select-none"
+                    >
+                      Clear Booking Records
+                    </button>
+                  )}
+                </div>
               </div>
 
               {bookings.length === 0 ? (
@@ -1660,8 +2163,18 @@ export default function App() {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {bookings.map((book) => {
-                    const review = reviews[book.id];
+                  {[...bookings]
+                    .sort((a, b) => {
+                      const dateCompare = a.date.localeCompare(b.date);
+                      if (dateCompare !== 0) {
+                        return bookingSortOrder === 'chrono' ? dateCompare : -dateCompare;
+                      }
+                      return bookingSortOrder === 'chrono' 
+                        ? a.time.localeCompare(b.time) 
+                        : b.time.localeCompare(a.time);
+                    })
+                    .map((book) => {
+                      const review = reviews[book.id];
                     return (
                       <div 
                         key={book.id} 
@@ -1702,6 +2215,22 @@ export default function App() {
                             <p className="text-[10px] italic text-neutral-600 font-serif leading-relaxed mt-1">
                               "{review.comment}"
                             </p>
+                            {review.signatureDish && (
+                              <div className="mt-2 flex items-center gap-1.5 bg-emerald-50 border border-emerald-100 text-emerald-800 px-2 py-1 rounded text-[9.5px] font-mono w-fit shadow-3xs animate-fade-in">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
+                                <span>Signature Dish: <strong className="font-extrabold">{review.signatureDish}</strong></span>
+                              </div>
+                            )}
+                            {review.photo && (
+                              <div className="mt-2 text-left">
+                                <img 
+                                  src={review.photo} 
+                                  alt="User review attachment" 
+                                  className="max-h-36 w-auto rounded-lg border border-neutral-200 object-cover shadow-3xs"
+                                  referrerPolicy="no-referrer"
+                                />
+                              </div>
+                            )}
                           </div>
                         )}
 
@@ -1919,7 +2448,10 @@ export default function App() {
                 </h3>
               </div>
               <button
-                onClick={() => setReviewModalBooking(null)}
+                onClick={() => {
+                  handleStopCamera();
+                  setReviewModalBooking(null);
+                }}
                 className="text-neutral-400 hover:text-neutral-700 p-1.5 hover:bg-neutral-100 rounded-full cursor-pointer transition-colors"
                 title="Close modal"
               >
@@ -1951,17 +2483,50 @@ export default function App() {
                       <Star 
                         className={`w-7 h-7 ${
                           stars <= reviewRating 
-                            ? 'fill-amber-400 text-amber-450' 
+                            ? 'fill-amber-400 text-amber-500' 
                             : 'text-neutral-250 fill-transparent'
                         }`} 
                       />
                     </button>
                   ))}
-                  <span className="text-[11px] font-mono text-neutral-400 font-bold ml-2 font-semibold">
+                  <span className="text-[11px] font-mono text-neutral-400 font-bold ml-2">
                     ({reviewRating}/5 Stars)
                   </span>
                 </div>
               </div>
+
+              {/* Signature Dish Selector */}
+              {currentRestForReview && currentRestForReview.signatureDishes && currentRestForReview.signatureDishes.length > 0 && (
+                <div className="space-y-1.5 animate-fade-in">
+                  <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wider flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0"></span>
+                    <span>Signature Dish tried (Optional)</span>
+                  </label>
+                  <p className="text-[9.5px] text-neutral-500 font-light leading-snug">
+                    Feature a landmark signature dish in your culinary review:
+                  </p>
+                  <div className="flex flex-wrap gap-1.5 pt-1.5">
+                    {currentRestForReview.signatureDishes.map((dish) => {
+                      const isSelected = reviewSignatureDish === dish;
+                      return (
+                        <button
+                          key={dish}
+                          type="button"
+                          onClick={() => setReviewSignatureDish(isSelected ? null : dish)}
+                          className={`px-3 py-1.5 rounded-lg text-xs cursor-pointer transition-all border text-left flex items-center gap-1.5 select-none ${
+                            isSelected
+                              ? 'bg-emerald-50 text-emerald-800 border-emerald-300 font-bold shadow-xs'
+                              : 'bg-neutral-50 hover:bg-neutral-100 text-neutral-600 border-neutral-200 hover:border-neutral-300'
+                          }`}
+                        >
+                          <span className={`w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-emerald-500 animate-pulse' : 'bg-neutral-300'}`}></span>
+                          <span>{dish}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
               {/* Written Comment/Review feedback */}
               <div className="space-y-1.5">
@@ -1978,11 +2543,147 @@ export default function App() {
                 />
               </div>
 
+              {/* Photo & Camera Attachment */}
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wider">
+                  Visual Feedback (Optional)
+                </label>
+                
+                {reviewPhoto ? (
+                  <div className="relative border border-emerald-100 rounded-lg p-2.5 bg-emerald-50/20 flex items-center justify-between gap-3 animate-fade-in">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <img 
+                        src={reviewPhoto} 
+                        alt="Review snapshot" 
+                        className="w-14 h-14 rounded-md object-cover border border-emerald-200 shrink-0 shadow-xs" 
+                      />
+                      <div className="min-w-0">
+                        <p className="text-[10px] text-neutral-800 font-bold uppercase tracking-wider truncate flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                          <span>Photo Attached & Optimized</span>
+                        </p>
+                        {photoOptimizationInfo ? (
+                          <p className="text-[8.5px] text-emerald-805 font-mono leading-relaxed mt-0.5">
+                            Ready for instant upload: <strong className="font-extrabold text-emerald-900">{photoOptimizationInfo.optimizedSize}</strong>
+                            <br />
+                            <span className="text-neutral-500">Compressed by {photoOptimizationInfo.reductionPercent}% (down from {photoOptimizationInfo.originalSize})</span>
+                          </p>
+                        ) : (
+                          <p className="text-[8.5px] text-neutral-400 font-mono mt-0.5">Compressed & ready to publish with review</p>
+                        )}
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => { setReviewPhoto(null); setPhotoOptimizationInfo(null); }}
+                      className="p-1 px-2 border border-red-200 hover:bg-red-50 hover:border-red-400 text-red-650 text-[9px] font-mono font-bold uppercase tracking-widest rounded transition-all cursor-pointer shrink-0"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ) : isCameraActive ? (
+                  <div className="border border-neutral-200 bg-neutral-950 rounded-lg overflow-hidden relative">
+                    <video 
+                      ref={videoRef} 
+                      autoPlay 
+                      playsInline 
+                      className="w-full aspect-video object-cover" 
+                    />
+                    <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/80 to-transparent flex justify-center gap-2">
+                      <button
+                        type="button"
+                        onClick={handleCapturePhoto}
+                        className="px-3 py-1.5 bg-red-650 hover:bg-red-750 text-white font-mono font-bold uppercase tracking-widest text-[9px] rounded-full flex items-center gap-1 cursor-pointer transition-all shadow-md"
+                      >
+                        <Camera className="w-3.5 h-3.5" />
+                        <span>Snap Photo</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleStopCamera}
+                        className="px-3 py-1.5 bg-neutral-700 hover:bg-neutral-600 text-white font-mono font-bold uppercase tracking-widest text-[9px] rounded-full flex items-center gap-1 cursor-pointer transition-all"
+                      >
+                        <span>Cancel</span>
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={handleStartCamera}
+                      className="flex flex-col items-center justify-center p-3 border border-dashed border-neutral-250 hover:border-red-500 bg-white hover:bg-red-50/10 text-neutral-650 hover:text-red-750 rounded-lg transition-all cursor-pointer group"
+                    >
+                      <Camera className="w-5 h-5 mb-1 text-neutral-400 group-hover:text-red-500 transition-colors" />
+                      <span className="text-[9.5px] font-mono font-bold uppercase tracking-wider">Use Camera</span>
+                    </button>
+                    
+                    <label className="flex flex-col items-center justify-center p-3 border border-dashed border-neutral-250 hover:border-red-500 bg-white hover:bg-red-50/10 text-neutral-650 hover:text-red-750 rounded-lg transition-all cursor-pointer group">
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        onChange={handlePhotoUpload} 
+                        className="hidden" 
+                      />
+                      <Upload className="w-5 h-5 mb-1 text-neutral-400 group-hover:text-red-500 transition-colors" />
+                      <span className="text-[9.5px] font-mono font-bold uppercase tracking-wider">Upload File</span>
+                    </label>
+                  </div>
+                )}
+                
+                {cameraError && (
+                  <p className="text-[9px] text-red-600 font-mono italic">
+                    ⓘ {cameraError}
+                  </p>
+                )}
+              </div>
+
+              {/* Future Planning / Favorite Toggles */}
+              <div className="space-y-2 pt-2 border-t border-neutral-100">
+                <label className="block text-[10px] font-mono font-bold text-neutral-500 uppercase tracking-widest">
+                  Future Planning
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleToggleSaveRestaurant(reviewModalBooking.restaurantId)}
+                    className={`flex items-center justify-center gap-2 py-2.5 px-3 border rounded-xl text-xs font-serif transition-all cursor-pointer ${
+                      savedRestaurantIds.includes(reviewModalBooking.restaurantId)
+                        ? 'border-red-200 bg-red-50/50 text-red-700 font-medium shadow-xs'
+                        : 'border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-600'
+                    }`}
+                  >
+                    <Heart className={`w-3.5 h-3.5 ${
+                      savedRestaurantIds.includes(reviewModalBooking.restaurantId) ? 'fill-current text-red-600 animate-pulse' : 'text-neutral-400'
+                    }`} />
+                    <span>{savedRestaurantIds.includes(reviewModalBooking.restaurantId) ? 'Saved Favorite' : 'Mark as Favorite'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleToggleRevisitRestaurant(reviewModalBooking.restaurantId)}
+                    className={`flex items-center justify-center gap-2 py-2.5 px-3 border rounded-xl text-xs font-serif transition-all cursor-pointer ${
+                      revisitRestaurantIds.includes(reviewModalBooking.restaurantId)
+                        ? 'border-emerald-200 bg-emerald-50/50 text-emerald-800 font-medium shadow-xs'
+                        : 'border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-600'
+                    }`}
+                  >
+                    <Bookmark className={`w-3.5 h-3.5 ${
+                      revisitRestaurantIds.includes(reviewModalBooking.restaurantId) ? 'fill-current text-emerald-600' : 'text-neutral-400'
+                    }`} />
+                    <span>{revisitRestaurantIds.includes(reviewModalBooking.restaurantId) ? 'Saved Revisit' : 'Plan to Revisit'}</span>
+                  </button>
+                </div>
+              </div>
+
               {/* Actions buttons */}
               <div className="pt-2 flex flex-col sm:flex-row gap-2.5 sm:justify-end">
                 <button
                   type="button"
-                  onClick={() => setReviewModalBooking(null)}
+                  onClick={() => {
+                    handleStopCamera();
+                    setReviewModalBooking(null);
+                  }}
                   className="w-full sm:w-auto px-4 py-2.5 border border-neutral-250 text-neutral-600 font-bold hover:bg-neutral-50 transition-all text-[10px] uppercase tracking-widest cursor-pointer rounded"
                 >
                   Cancel

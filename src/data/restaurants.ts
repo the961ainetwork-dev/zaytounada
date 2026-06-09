@@ -1230,17 +1230,135 @@ const EXTRA_RESTAURANT_NAMES: string[] = [
 
 const existingNames = new Set(RESTAURANTS.map(r => r.name.toLowerCase()));
 
-const IMAGES = [
-  'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80&w=800', // mezze
-  'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=800', // pizza
-  'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&q=80&w=800', // meat
-  'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=800', // bistro
-  'https://images.unsplash.com/photo-1541532713592-79a0317b6b77?auto=format&fit=crop&q=80&w=800', // elegant
-  'https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&q=80&w=800', // skewers
-  'https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&q=80&w=800', // seafood
-  'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&q=80&w=800', // drinks
-  'https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&q=80&w=800'  // coffee
-];
+const THEMED_IMAGES: Record<string, string[]> = {
+  mezze: [
+    'https://images.unsplash.com/photo-1541518763669-27fef04b14ea?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1506084868230-bb9d95c24759?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1628294895612-4a4b52e5c3ec?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1590593162201-f678cb303626?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1608897013039-887f21d8c804?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1553192251-248d0859560f?auto=format&fit=crop&q=80&w=800'
+  ],
+  pizza_pasta: [
+    'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1546549032-9571cd6b27df?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1595295333158-4742f28fbd85?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1579684389782-64d84b5e901a?auto=format&fit=crop&q=80&w=800'
+  ],
+  steak_grill: [
+    'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1543007630-9710e4a00a20?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1546964124-0cce60099827?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1558030006-450675393462?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&q=80&w=800'
+  ],
+  sushi: [
+    'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1611143669185-af224c5e3252?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1617196034796-73dfa7b1fd56?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1563612116625-3012372fccbc?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1583623025817-d180a2221d0a?auto=format&fit=crop&q=80&w=800'
+  ],
+  seafood: [
+    'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1534080564583-6be75777b70a?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1560684352-8497838a2229?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1559715541-5daf8a029312?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?auto=format&fit=crop&q=80&w=800'
+  ],
+  bakery_pastry: [
+    'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1517433456452-f9633a875f6f?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1550617931-e17a7b70dce2?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1574169208507-84376144848b?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1587314168485-3236d6710814?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1560180292-117cf607593c?auto=format&fit=crop&q=80&w=800'
+  ],
+  coffee_cafe: [
+    'https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1498804103079-a6351b050096?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&q=80&w=800'
+  ],
+  burger: [
+    'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1568219656418-15c329c72fd3?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1534790566855-4cb788d389ec?auto=format&fit=crop&q=80&w=800'
+  ],
+  nightlife_bar: [
+    'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1574096079513-d8259312b785?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1570872626485-d8ffea69f463?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1536935338788-846bb9981813?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&q=80&w=800'
+  ],
+  bistro_fine: [
+    'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1541532713592-79a0317b6b77?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1543007630-9710e4a00a20?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1522336572468-97b06e8ef143?auto=format&fit=crop&q=80&w=800'
+  ]
+};
+
+function getThemedImageUrl(name: string, category: string, index: number): string {
+  const norm = name.toLowerCase();
+  let pool: string[] = [];
+
+  if (norm.includes('sushi') || norm.includes('mitsu') || norm.includes('maki') || norm.includes('kitchi') || norm.includes('shogun') || norm.includes('yakiniku') || norm.includes('noodle') || norm.includes('kyoto') || norm.includes('tokyo') || norm.includes('bento') || norm.includes('japanese') || norm.includes('asian')) {
+    pool = THEMED_IMAGES.sushi;
+  } else if (norm.includes('seafood') || norm.includes('fish') || norm.includes('sea') || norm.includes('jammal') || norm.includes('shatt') || norm.includes('grecco') || norm.includes('canoe')) {
+    pool = THEMED_IMAGES.seafood;
+  } else if (norm.includes('pizza') || norm.includes('pasta') || norm.includes('italian') || norm.includes('trattoria') || norm.includes('italiano') || norm.includes('pizzeria') || norm.includes('bontà') || norm.includes('pomodoro') || norm.includes('cento')) {
+    pool = THEMED_IMAGES.pizza_pasta;
+  } else if (norm.includes('burger') || norm.includes('brgr') || norm.includes('husk') || norm.includes('bros') || norm.includes('king') || norm.includes('mcdonald')) {
+    pool = THEMED_IMAGES.burger;
+  } else if (norm.includes('steak') || norm.includes('meat') || norm.includes('butcher') || norm.includes('grill') || norm.includes('skewer') || norm.includes('churrasco') || norm.includes('bbq') || norm.includes('kebab') || norm.includes('grills')) {
+    pool = THEMED_IMAGES.steak_grill;
+  } else if (norm.includes('coffee') || norm.includes('cafe') || norm.includes('cup') || norm.includes('brew') || norm.includes('mug') || norm.includes('press') || norm.includes('espresso') || norm.includes('roastery') || norm.includes('bean') || norm.includes('tea') || norm.includes('blend')) {
+    pool = THEMED_IMAGES.coffee_cafe;
+  } else if (norm.includes('bakery') || norm.includes('wood') || norm.includes('zaatar') || norm.includes('furn') || norm.includes('pate') || norm.includes('bread') || norm.includes('dunkin') || norm.includes('paul') || norm.includes('sweets') || norm.includes('tartine') || norm.includes('pastry') || norm.includes('croissant') || norm.includes('knafeh')) {
+    pool = THEMED_IMAGES.bakery_pastry;
+  } else if (norm.includes('bar') || norm.includes('club') || norm.includes('cocktail') || norm.includes('sky') || norm.includes('bistro') || norm.includes('pub') || norm.includes('spine') || norm.includes('vesper') || norm.includes('bodo') || norm.includes('whiskey') || norm.includes('lounge') || norm.includes('disco') || norm.includes('night') || norm.includes('roof') || norm.includes('wine')) {
+    pool = THEMED_IMAGES.nightlife_bar;
+  }
+  
+  if (pool.length === 0) {
+    if (category === 'fine_dining') {
+      pool = THEMED_IMAGES.mezze.concat(THEMED_IMAGES.bistro_fine);
+    } else if (category === 'pub_cafe') {
+      pool = THEMED_IMAGES.coffee_cafe;
+    } else if (category === 'vibe') {
+      pool = THEMED_IMAGES.nightlife_bar;
+    } else if (category === 'takeaway_bakery_produce') {
+      pool = THEMED_IMAGES.bakery_pastry;
+    } else {
+      pool = THEMED_IMAGES.bistro_fine;
+    }
+  }
+
+  return pool[index % pool.length];
+}
 
 EXTRA_RESTAURANT_NAMES.forEach((name, index) => {
   const normName = name.toLowerCase();
@@ -1366,7 +1484,7 @@ EXTRA_RESTAURANT_NAMES.forEach((name, index) => {
     }
   }
 
-  const imgUrl = IMAGES[index % IMAGES.length];
+  const imgUrl = getThemedImageUrl(name, category, index);
   const formattedAddress = `${name}, ${neighborhood ? neighborhood.charAt(0).toUpperCase() + neighborhood.slice(1) + ', ' : ''}${city}, Lebanon`;
 
   RESTAURANTS.push({

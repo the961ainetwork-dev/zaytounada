@@ -608,6 +608,9 @@ export default function RestaurantDetailModal({
                 src={activeImage}
                 alt={restaurant.name}
                 referrerPolicy="no-referrer"
+                onError={(e) => {
+                  e.currentTarget.src = 'https://images.unsplash.com/photo-1541532713592-79a0317b6b77?auto=format&fit=crop&q=80&w=800';
+                }}
                 className="w-full h-full object-cover transition-all duration-700"
               />
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-white via-transparent to-transparent h-40" />
@@ -638,7 +641,15 @@ export default function RestaurantDetailModal({
                       activeImage === img ? 'border-emerald-600 scale-105 opacity-100 shadow-md' : 'border-neutral-250 opacity-60 hover:opacity-100'
                     }`}
                   >
-                    <img src={img} alt={`Thumbnail ${i}`} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                    <img 
+                      src={img} 
+                      alt={`Thumbnail ${i}`} 
+                      className="w-full h-full object-cover" 
+                      referrerPolicy="no-referrer" 
+                      onError={(e) => {
+                        e.currentTarget.src = 'https://images.unsplash.com/photo-1541532713592-79a0317b6b77?auto=format&fit=crop&q=80&w=800';
+                      }}
+                    />
                   </button>
                 ))}
               </div>

@@ -1,6 +1,6 @@
 import { MouseEvent, useState } from 'react';
 import { Restaurant } from '../types';
-import { Award, MapPin, DollarSign, Heart, ArrowRight, Share2, Check } from 'lucide-react';
+import { Award, MapPin, DollarSign, Heart, ArrowRight, Share2, Check, Navigation } from 'lucide-react';
 import { showToast } from '../utils/toast';
 
 interface RestaurantCardProps {
@@ -9,13 +9,15 @@ interface RestaurantCardProps {
   onSelect: () => void;
   isSaved: boolean;
   onToggleSave: (e: MouseEvent) => void;
+  distanceKm?: number;
 }
 
 export default function RestaurantCard({
   restaurant,
   onSelect,
   isSaved,
-  onToggleSave
+  onToggleSave,
+  distanceKm
 }: RestaurantCardProps) {
   const [copied, setCopied] = useState(false);
 
@@ -86,6 +88,9 @@ export default function RestaurantCard({
           src={restaurant.imageUrl}
           alt={restaurant.name}
           referrerPolicy="no-referrer"
+          onError={(e) => {
+            e.currentTarget.src = 'https://images.unsplash.com/photo-1541532713592-79a0317b6b77?auto=format&fit=crop&q=80&w=800';
+          }}
           className="h-full w-full object-cover saturate-105 group-hover:scale-105 transition-all duration-700"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/20 to-neutral-950/40 opacity-80" />
@@ -118,10 +123,18 @@ export default function RestaurantCard({
         </button>
 
         {/* Location overlay label */}
-        <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-white text-xs font-medium">
-          <div className="flex items-center gap-1.5 bg-black/50 backdrop-blur-xs px-2.5 py-1 rounded-full border border-white/5">
-            <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-            <span className="font-mono tracking-wide text-[11px]">{restaurant.city}, {restaurant.country}</span>
+        <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between text-white text-xs font-medium">
+          <div className="flex flex-col gap-1.5 items-start">
+            <div className="flex items-center gap-1.5 bg-black/50 backdrop-blur-xs px-2.5 py-1 rounded-full border border-white/5">
+              <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+              <span className="font-mono tracking-wide text-[11px]">{restaurant.city}, {restaurant.country}</span>
+            </div>
+            {distanceKm !== undefined && (
+              <div className="flex items-center gap-1 bg-emerald-700/90 text-white font-mono px-2 py-0.5 rounded-full text-[9px] font-bold border border-emerald-400/30 shadow-xs animate-fade-in">
+                <Navigation className="w-2.5 h-2.5 rotate-45 text-amber-300 fill-current shrink-0" />
+                <span>{distanceKm.toFixed(1)} km away</span>
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-0.5 bg-black/50 backdrop-blur-xs px-2.5 py-1 rounded-full border border-white/5" title={`Budget: ${restaurant.priceRange}`}>
             {Array.from({ length: 4 }).map((_, i) => (
