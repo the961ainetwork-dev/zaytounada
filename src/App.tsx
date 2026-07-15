@@ -20,6 +20,7 @@ import SupplierOnboardingView from './components/SupplierOnboardingView';
 import MerchantOfferLoyaltyView from './components/MerchantOfferLoyaltyView';
 import SocialFeedView from './components/SocialFeedView';
 import CulinaryEventsView from './components/CulinaryEventsView';
+import RecipesView from './components/RecipesView';
 import { Restaurant, SavedItinerary, Booking, Article } from './types';
 import { RESTAURANTS, ARTICLES as staticArticles } from './data/restaurants';
 import { Award, Compass, Heart, Award as AwardIcon, MapPin, Grid, Plus, Sparkles, BookOpen, Calendar, Star, Gift, ArrowRight, Share2, Check, BookOpenCheck, ArrowUp, Instagram, Facebook, Linkedin, X, ExternalLink, Camera, Upload, Bookmark, Navigation } from 'lucide-react';
@@ -1101,6 +1102,123 @@ export default function App() {
               </div>
             </div>
 
+            {/* SPONSORED RECIPES SECTION BY HAMOD W HARR */}
+            <div className="w-full bg-gradient-to-br from-emerald-950 via-emerald-900 to-neutral-900 text-white py-14 px-4 sm:px-6 lg:px-8 border-y border-amber-400/25 text-left" id="homepage-sponsored-recipe-section">
+              <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                {/* Visual Card Column: Recreating the Attached Screenshot */}
+                <div className="lg:col-span-5 flex justify-center">
+                  <div className="border-[3px] border-amber-400/80 rounded-2xl p-6 bg-white text-neutral-900 shadow-2xl max-w-sm w-full relative">
+                    
+                    {/* Pinterest Save Button */}
+                    <span className="absolute top-4 left-4 bg-red-650 text-white text-[9px] font-black uppercase tracking-wider py-1 px-3 rounded-full flex items-center gap-1">
+                      P Save
+                    </span>
+
+                    {/* Header */}
+                    <div className="text-center pb-4 border-b border-dashed border-neutral-200">
+                      <p className="font-serif text-[10px] uppercase tracking-widest text-neutral-400 font-bold">Organic Lacto-Ferment</p>
+                      <h4 className="font-serif text-base font-bold text-neutral-900 uppercase mt-1">Vibrant Red Kimchi Jar</h4>
+                    </div>
+
+                    {/* Jar Graphics */}
+                    <div className="py-5 flex flex-col items-center justify-center relative bg-neutral-50/70 rounded-xl my-4 border border-neutral-100">
+                      <div className="w-36 h-48 relative">
+                        {/* Jar Body */}
+                        <div className="absolute inset-x-3 bottom-0 top-8 border-4 border-neutral-900 bg-red-50/20 rounded-2xl overflow-hidden flex flex-col justify-end p-1.5 gap-1 shadow-inner">
+                          <div className="absolute inset-0 bg-gradient-to-t from-red-700/90 via-orange-600/70 to-transparent flex flex-col justify-end p-2 gap-1">
+                            <div className="w-full h-6 bg-red-800/90 border border-red-950/30 rounded"></div>
+                            <div className="w-11/12 h-6 bg-amber-700/90 border border-amber-950/30 rounded mx-auto"></div>
+                          </div>
+                          {/* Label */}
+                          <div className="bg-amber-50 border-2 border-neutral-900 px-1.5 py-0.5 shadow text-[6.5px] font-mono text-neutral-900 font-black tracking-widest uppercase z-10 rounded mx-auto">
+                            HAMAD W HARR • LAB SAMPLE
+                          </div>
+                        </div>
+                        {/* Neck */}
+                        <div className="absolute inset-x-8 top-5 h-3 border-x-4 border-t-4 border-neutral-900 bg-white/60 z-20"></div>
+                        {/* Lid */}
+                        <div className="absolute inset-x-6 top-1 h-4 border-4 border-neutral-900 bg-neutral-900 rounded-t-md z-30"></div>
+
+                        {/* New! Sticker */}
+                        <span className="absolute -left-3 top-10 -rotate-12 font-serif text-2xl font-black text-red-650 select-none">
+                          New!
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Brand Footer */}
+                    <div className="text-center">
+                      <p className="font-serif text-xs font-bold text-neutral-800">HAMOD W HARR LABS</p>
+                      <p className="text-[8.5px] font-mono text-neutral-500 uppercase tracking-wider mt-0.5">
+                        KRAUTS, KIMCHIS AND CONDIMENTS
+                      </p>
+                    </div>
+
+                  </div>
+                </div>
+
+                {/* Content Details Column */}
+                <div className="lg:col-span-7 space-y-6">
+                  <div className="space-y-3">
+                    <span className="bg-amber-400 text-neutral-950 font-mono text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded">
+                      SPONSORED BY HAMODWHARR.COM
+                    </span>
+                    <h2 className="font-serif text-3xl sm:text-5xl font-light text-white tracking-tight uppercase leading-tight">
+                      Turn Up The Heat <br />
+                      <span className="font-semibold text-amber-300">with this antioxidant packed Red Kimchi.</span>
+                    </h2>
+                  </div>
+
+                  <p className="text-lg text-emerald-100 font-light leading-relaxed">
+                    Made with <strong className="text-white font-medium">kimchi cabbage</strong> and <strong className="text-white font-medium">root vegetables</strong>, it is packed with <span className="bg-emerald-800 border border-emerald-600 px-2 py-0.5 rounded font-mono font-bold text-sm text-amber-300">anthocyanins</span>. It's earthy, spicy and robust.
+                  </p>
+
+                  {/* Badges strip matching screenshot */}
+                  <div className="flex flex-wrap gap-4 pt-2">
+                    <div className="flex items-center gap-1.5 text-xs font-mono text-emerald-350">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                      <span>PH VERIFIED</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-xs font-mono text-amber-300">
+                      <span className="w-2 h-2 rounded-full bg-amber-400"></span>
+                      <span>LIVE MICROBIOME</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-xs font-mono text-white">
+                      <Sparkles className="w-4 h-4 text-orange-400 animate-spin" style={{ animationDuration: '6s' }} />
+                      <span>ASK ALCHEMIST (AI ADVISOR)</span>
+                    </div>
+                  </div>
+
+                  <div className="pt-4 flex flex-col sm:flex-row gap-4">
+                    <button
+                      onClick={() => {
+                        setActiveTab('recipes');
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      className="inline-flex items-center justify-center gap-2 px-7 py-4 bg-amber-400 hover:bg-amber-500 text-neutral-950 font-mono font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg hover:scale-101 active:scale-98 cursor-pointer"
+                    >
+                      <span>Read More & View 10 Recipes</span>
+                      <ArrowRight className="w-4 h-4 text-neutral-950 shrink-0" />
+                    </button>
+                    <button
+                      onClick={() => {
+                        setActiveTab('recipes');
+                        setTimeout(() => {
+                          const el = document.getElementById('alchemist-chatbot-widget');
+                          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }, 200);
+                      }}
+                      className="inline-flex items-center justify-center gap-2 px-6 py-4 bg-transparent hover:bg-white/10 border border-white/20 text-white font-mono font-bold text-xs uppercase tracking-widest rounded-xl transition-all cursor-pointer"
+                    >
+                      <span>Ask AI Alchemist</span>
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
             {/* THIRD SECTION: ZAYTOUNA MAGAZINE – HOSPITALITY IN REVIEW */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4" id="zaytounada-magazine-review-homepage">
               <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-neutral-250 pb-3 mb-6">
@@ -2104,6 +2222,11 @@ export default function App() {
         {/* VIEW: CULINARY EVENTS */}
         {activeTab === 'culinary-events' && (
           <CulinaryEventsView />
+        )}
+
+        {/* VIEW: HAMOD W HARR PROBIOTIC RECIPES */}
+        {activeTab === 'recipes' && (
+          <RecipesView />
         )}
 
         {/* VIEW 4: MY GUIDE & JOURNEY PLANNING */}

@@ -321,6 +321,20 @@ export default function Header({
                 </button>
 
                 <button
+                  id="tab-recipes"
+                  onClick={() => setActiveTab('recipes')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
+                    activeTab === 'recipes'
+                      ? 'bg-emerald-700 text-white shadow-sm font-semibold'
+                      : 'text-emerald-955 hover:text-emerald-950 hover:bg-emerald-100/60'
+                  }`}
+                  title="Hamod W Harr Probiotic Recipes"
+                >
+                  <Flame className="w-3.5 h-3.5 text-orange-500 fill-orange-500 animate-pulse" />
+                  <span className="text-amber-600 font-bold">Ferments & Recipes</span>
+                </button>
+
+                <button
                   id="tab-magazine"
                   onClick={() => setActiveTab('magazine')}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
