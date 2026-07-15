@@ -3,6 +3,7 @@ import { Restaurant } from '../types';
 import { RESTAURANTS } from '../data/restaurants';
 import RestaurantCard from './RestaurantCard';
 import { Coffee, Flame, Store, Award, MapPin, Sparkles, SlidersHorizontal, Info, Music, Disc, Speaker, Wheat, Leaf } from 'lucide-react';
+import ShareActions from './ShareActions';
 
 interface SpecialtySectionViewProps {
   category: 'pub_cafe' | 'vibe' | 'takeaway_bakery_produce';
@@ -122,6 +123,14 @@ export default function SpecialtySectionView({
               <span className="text-[10px] font-mono uppercase tracking-widest text-neutral-450 block font-bold">Average Pricing</span>
               <span className="font-serif text-2xl font-light text-neutral-800">{stats.avgPrice}</span>
             </div>
+          </div>
+
+          <div className="pt-4 border-t border-neutral-200/60 max-w-lg">
+            <ShareActions 
+              headline={config.title} 
+              excerpt={`${config.tagline}. ${config.narrative}`} 
+              linkUrl={typeof window !== 'undefined' ? `${window.location.origin}/?tab=${category === 'pub_cafe' ? 'pubs-cafes' : category === 'vibe' ? 'vibes' : 'takeaways-bakeries'}` : 'https://zaytounada.xyz/'}
+            />
           </div>
         </div>
       </div>

@@ -3,6 +3,7 @@ import { Article } from '../types';
 import { ARTICLES as staticArticles } from '../data/restaurants';
 import { BookOpen, Calendar, User, ArrowLeft, Clock, Share2, Award, Heart, Scroll, Compass, MessageSquare, Quote, Sparkles, Instagram, Facebook, Linkedin, MapPin, ThumbsUp, ExternalLink } from 'lucide-react';
 import { showToast } from '../utils/toast';
+import ShareActions from './ShareActions';
 
 interface MagazineViewProps {
   selectedArticleId?: string | null;
@@ -168,16 +169,11 @@ export default function MagazineView({
               <span>{selectedArticle.readTime}</span>
             </div>
             <div className="ml-auto">
-              <button 
-                onClick={() => {
-                  navigator.clipboard.writeText(window.location.href);
-                  showToast('Link Copied to Clipboard!');
-                }}
-                className="flex items-center gap-1.5 hover:text-red-650 text-neutral-500 transition-colors cursor-pointer font-bold border border-neutral-200 px-3 py-1 rounded bg-neutral-50 hover:bg-neutral-100"
-              >
-                <Share2 className="w-3.5 h-3.5" />
-                <span>Share Story</span>
-              </button>
+              <ShareActions 
+                headline={selectedArticle.title}
+                excerpt={selectedArticle.subtitle || selectedArticle.excerpt || selectedArticle.content[0]}
+                linkUrl={window.location.origin + '/?tab=magazine&article=' + selectedArticle.id}
+              />
             </div>
           </div>
 

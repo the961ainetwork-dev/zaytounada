@@ -70,3 +70,24 @@ export interface Booking {
   specialRequests?: string;
   status: 'pending' | 'confirmed';
 }
+
+export interface CulinaryEvent {
+  id: string;
+  title: string;
+  description: string;
+  excerpt: string; // Excerpt for WhatsApp sharing
+  date: string;
+  timeString: string;
+  venueName: string;
+  city: string;
+  neighborhood?: 'hamra' | 'mar_mikhael' | 'sassine' | 'sodeco' | 'badaro' | 'antelias';
+  coordinates: {
+    lat: number;
+    lng: number;
+  };
+  imageUrl: string;
+  ticketPrice: string;
+  organizer: string;
+  tags?: string[];
+}
+

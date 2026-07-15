@@ -308,6 +308,19 @@ export default function Header({
                 </button>
 
                 <button
+                  id="tab-culinary-events"
+                  onClick={() => setActiveTab('culinary-events')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
+                    activeTab === 'culinary-events'
+                      ? 'bg-emerald-700 text-white shadow-sm font-semibold'
+                      : 'text-emerald-955 hover:text-emerald-950 hover:bg-emerald-100/60'
+                  }`}
+                >
+                  <Calendar className="w-3.5 h-3.5 text-amber-600" />
+                  <span>Culinary Events</span>
+                </button>
+
+                <button
                   id="tab-magazine"
                   onClick={() => setActiveTab('magazine')}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
