@@ -4,6 +4,7 @@ import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
 import { RESTAURANTS as initialRestaurants, ARTICLES as initialArticles } from "./src/data/restaurants";
+import { get100Menus } from "./src/data/curatedMenus";
 
 // Load environment variables
 dotenv.config();
@@ -11,6 +12,7 @@ dotenv.config();
 // In-Memory Database stores
 let restaurantsList = [...initialRestaurants];
 let articlesList = [...initialArticles];
+let menusList = [...get100Menus()];
 
 let pagesConfigList: any[] = [
   { id: 'discovery', label: 'Explore Restaurants', icon: 'Compass', active: true, order: 0 },
@@ -25,6 +27,7 @@ let pagesConfigList: any[] = [
   { id: 'gift-cards', label: 'Gift Vouchers', icon: 'Gift', active: true, order: 9 },
   { id: 'live-shows', label: 'Live Shows', icon: 'Music', active: true, order: 10 },
   { id: 'magazine', label: 'Editorial Magazine', icon: 'BookOpen', active: true, order: 11 },
+  { id: 'menus', label: 'Menus', icon: 'BookOpen', active: true, order: 11.5 },
   { id: 'my-guide', label: 'Itineraries', icon: 'Sparkles', active: true, order: 12 },
   { id: 'social-feed', label: 'Social Feed', icon: 'Instagram', active: true, order: 13 },
   { id: 'suppliers', label: 'Insider Partners', icon: 'Store', active: true, order: 14 },
@@ -581,6 +584,62 @@ async function startServer() {
       }
     ];
     res.json(socialMomentsList);
+  });
+
+  // --- MENUS API ENDPOINTS ---
+  app.get("/api/menus", (req, res) => {
+    res.json(menusList);
+  });
+
+  app.post("/api/menus", (req, res) => {
+    const { restaurantName, cuisine, priceRange, city, sections, submittedBy } = req.body;
+    if (!restaurantName || !cuisine || !priceRange || !city) {
+      res.status(400).json({ error: "Restaurant Name, Cuisine, Price Range, and City are required." });
+      return;
+    }
+
+    const newMenu: any = {
+      id: `menu-${Math.random().toString(36).substr(2, 9)}`,
+      restaurantName,
+      cuisine,
+      priceRange,
+      city,
+      sections: Array.isArray(sections) ? sections : [],
+      submittedBy: submittedBy || undefined,
+      status: (submittedBy ? "pending" : "approved") as "pending" | "approved",
+      createdAt: new Date().toISOString()
+    };
+
+    menusList.unshift(newMenu);
+    res.status(201).json(newMenu);
+  });
+
+  app.put("/api/menus/:id", (req, res) => {
+    const { id } = req.params;
+    const index = menusList.findIndex(m => m.id === id);
+    if (index === -1) {
+      res.status(404).json({ error: "Menu not found." });
+      return;
+    }
+
+    menusList[index] = {
+      ...menusList[index],
+      ...req.body
+    };
+
+    res.json(menusList[index]);
+  });
+
+  app.delete("/api/menus/:id", (req, res) => {
+    const { id } = req.params;
+    const index = menusList.findIndex(m => m.id === id);
+    if (index === -1) {
+      res.status(404).json({ error: "Menu not found." });
+      return;
+    }
+
+    const removed = menusList.splice(index, 1);
+    res.json({ message: "Menu removed successfully.", deleted: removed[0] });
   });
 
   // --- PAGES CONFIGURATION API ENDPOINTS ---

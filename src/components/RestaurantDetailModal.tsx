@@ -1,6 +1,6 @@
 import { useState, FormEvent } from 'react';
 import { Restaurant, Booking } from '../types';
-import { X, MapPin, Phone, Globe, Award, Calendar, Users, Clock, AlertCircle, CheckCircle, Heart, Star, Share2, Check, Sparkles, Percent, BookOpen, CalendarPlus } from 'lucide-react';
+import { X, MapPin, Phone, Globe, Award, Calendar, Users, Clock, AlertCircle, CheckCircle, Heart, Star, Share2, Check, Sparkles, Percent, BookOpen, CalendarPlus, QrCode, Download } from 'lucide-react';
 import { showToast } from '../utils/toast';
 
 interface MenuItem {
@@ -453,6 +453,8 @@ export default function RestaurantDetailModal({
   const [confirmedBooking, setConfirmedBooking] = useState<Booking | null>(null);
   const [copied, setCopied] = useState(false);
   const [activeModalTab, setActiveModalTab] = useState<'overview' | 'menu' | 'booking'>('overview');
+  const [showQrModal, setShowQrModal] = useState(false);
+  const deepLink = `${window.location.origin}${window.location.pathname}?restaurant=${restaurant.id}`;
 
   const getGoogleCalendarUrl = (booking: Booking | null, address: string) => {
     if (!booking) return '#';
@@ -534,7 +536,6 @@ export default function RestaurantDetailModal({
   };
 
   const handleShare = () => {
-    const deepLink = `${window.location.origin}${window.location.pathname}?restaurant=${restaurant.id}`;
     navigator.clipboard.writeText(deepLink)
       .then(() => {
         setCopied(true);
@@ -601,7 +602,60 @@ export default function RestaurantDetailModal({
           </button>
 
           {/* Left half: High-end visual showcase & galleries */}
-          <div className="w-full md:w-1/2 bg-neutral-50 flex flex-col text-neutral-900 border-b md:border-b-0 md:border-r border-neutral-200">
+          <div className="w-full md:w-1/2 bg-neutral-50 flex flex-col text-neutral-900 border-b md:border-b-0 md:border-r border-neutral-200 relative">
+            {/* Dynamic QR Code Overlay */}
+            {showQrModal && (
+              <div className="absolute inset-0 z-45 bg-neutral-950/95 backdrop-blur-md p-8 flex flex-col items-center justify-center text-center animate-fade-in text-white">
+                <button
+                  onClick={() => setShowQrModal(false)}
+                  className="absolute top-4 right-4 flex items-center justify-center w-10 h-10 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors cursor-pointer"
+                  title="Close QR Overlay"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+                <div className="bg-white p-4.5 rounded-2xl shadow-2xl border border-neutral-800 mb-5 transform scale-100 transition-transform duration-300">
+                  <img
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&color=0f172a&data=${encodeURIComponent(deepLink)}`}
+                    alt={`${restaurant.name} QR Code`}
+                    className="w-40 h-40 object-contain animate-none"
+                    referrerPolicy="no-referrer"
+                  />
+                </div>
+                <div className="space-y-2 max-w-sm px-4">
+                  <span className="inline-flex items-center gap-1.5 text-[9px] font-mono font-bold text-amber-400 bg-amber-400/10 border border-amber-400/30 px-2.5 py-1 rounded uppercase tracking-widest">
+                    <QrCode className="w-3.5 h-3.5" /> Live Venue Sync
+                  </span>
+                  <h4 className="font-serif font-black text-xl text-neutral-50 mt-1">
+                    Scan with Your Phone
+                  </h4>
+                  <p className="text-xs text-neutral-300 leading-relaxed font-light">
+                    Hosting friends or sitting at the table? Scan this code with your smartphone camera to load this spot on your mobile device instantly. No login or installation required.
+                  </p>
+                </div>
+                <div className="flex gap-2.5 mt-6">
+                  <button
+                    onClick={() => {
+                      const link = document.createElement('a');
+                      link.href = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&color=0f172a&data=${encodeURIComponent(deepLink)}`;
+                      link.target = '_blank';
+                      link.download = `${restaurant.id}-qr-code.png`;
+                      link.click();
+                      showToast('QR Code link opened in high resolution!');
+                    }}
+                    className="flex items-center gap-1.5 px-4 py-2.5 bg-emerald-700 hover:bg-emerald-600 active:scale-95 text-white rounded-xl text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer shadow-md"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Download QR</span>
+                  </button>
+                  <button
+                    onClick={() => setShowQrModal(false)}
+                    className="px-4 py-2.5 bg-neutral-800 hover:bg-neutral-700 active:scale-95 text-neutral-200 rounded-xl text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer border border-neutral-700"
+                  >
+                    Back to Spot
+                  </button>
+                </div>
+              </div>
+            )}
             {/* Spotlight Banner Image */}
             <div className="relative h-72 sm:h-96 w-full overflow-hidden bg-neutral-100">
               <img
@@ -675,6 +729,19 @@ export default function RestaurantDetailModal({
                 </div>
 
                 <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setShowQrModal(!showQrModal)}
+                    className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-xs font-semibold cursor-pointer border transition-all ${
+                      showQrModal 
+                        ? 'bg-amber-50 text-amber-800 border-amber-300 font-bold' 
+                        : 'bg-white text-neutral-700 border-neutral-250 hover:bg-neutral-50 shadow-xs'
+                    }`}
+                    title="Scan QR Code to save/share on mobile"
+                  >
+                    <QrCode className="w-3.5 h-3.5 text-neutral-500" />
+                    <span>Scan QR</span>
+                  </button>
+
                   <button
                     onClick={handleShare}
                     className={`flex items-center gap-2 px-3.5 py-2.5 rounded-lg text-xs font-semibold cursor-pointer border transition-all ${
@@ -858,6 +925,46 @@ export default function RestaurantDetailModal({
                         </svg>
                         <span>Join WhatsApp Community</span>
                       </a>
+                    </div>
+
+                    {/* Dynamic QR Code Spot Share Card */}
+                    <div className="bg-neutral-50 border border-neutral-200 rounded-2xl p-4.5 mt-4 text-left">
+                      <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+                        <div className="bg-white p-2.5 rounded-xl border border-neutral-200 shadow-xs shrink-0 flex items-center justify-center">
+                          <img 
+                            src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&color=0f172a&data=${encodeURIComponent(deepLink)}`}
+                            alt={`${restaurant.name} QR Code`}
+                            className="w-24 h-24 object-contain"
+                            referrerPolicy="no-referrer"
+                          />
+                        </div>
+                        <div className="space-y-1.5 flex-1 text-left">
+                          <span className="inline-flex items-center gap-1.5 text-[9px] font-mono font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded uppercase tracking-widest">
+                            <QrCode className="w-3 h-3" /> Live Venue Companion
+                          </span>
+                          <h5 className="font-serif font-black text-sm text-neutral-900">
+                            Scan & Share with Your Table
+                          </h5>
+                          <p className="text-[11px] text-neutral-500 font-light leading-relaxed">
+                            Hosting friends or dining at {restaurant.name}? Scan this code with your smartphone camera to load this spot on your mobile device instantly. No downloads required.
+                          </p>
+                          <div className="flex gap-3 pt-1">
+                            <button
+                              onClick={() => {
+                                const link = document.createElement('a');
+                                link.href = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&color=0f172a&data=${encodeURIComponent(deepLink)}`;
+                                link.target = '_blank';
+                                link.download = `${restaurant.id}-qr-code.png`;
+                                link.click();
+                                showToast('QR Code link opened in high resolution!');
+                              }}
+                              className="text-[10px] font-mono font-bold text-neutral-700 hover:text-emerald-700 flex items-center gap-1.5 transition-colors cursor-pointer"
+                            >
+                              <Download className="w-3 h-3" /> Get High-Res QR
+                            </button>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </section>
                 </div>

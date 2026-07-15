@@ -348,6 +348,19 @@ export default function Header({
                 </button>
 
                 <button
+                  id="tab-menus"
+                  onClick={() => setActiveTab('menus')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
+                    activeTab === 'menus'
+                      ? 'bg-emerald-700 text-white shadow-sm font-semibold'
+                      : 'text-emerald-955 hover:text-emerald-950 hover:bg-emerald-100/60'
+                  }`}
+                >
+                  <BookOpen className="w-3.5 h-3.5 text-amber-500" />
+                  <span>Menus</span>
+                </button>
+
+                <button
                   id="tab-my-guide"
                   onClick={() => setActiveTab('my-guide')}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${

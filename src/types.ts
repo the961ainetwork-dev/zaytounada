@@ -91,3 +91,31 @@ export interface CulinaryEvent {
   tags?: string[];
 }
 
+export interface MenuItem {
+  name: string;
+  price: string;
+  description: string;
+  category: 'Appetizer' | 'Main Course' | 'Dessert' | 'Beverage' | 'Other';
+}
+
+export interface RestaurantMenu {
+  id: string;
+  restaurantId?: string;
+  restaurantName: string;
+  cuisine: string;
+  priceRange: string;
+  city: string;
+  sections: {
+    category: string;
+    items: MenuItem[];
+  }[];
+  submittedBy?: {
+    ownerName: string;
+    email: string;
+    phone: string;
+  };
+  status: 'approved' | 'pending';
+  createdAt: string;
+}
+
+

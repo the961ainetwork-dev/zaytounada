@@ -21,6 +21,7 @@ import MerchantOfferLoyaltyView from './components/MerchantOfferLoyaltyView';
 import SocialFeedView from './components/SocialFeedView';
 import CulinaryEventsView from './components/CulinaryEventsView';
 import RecipesView from './components/RecipesView';
+import MenusView from './components/MenusView';
 import { Restaurant, SavedItinerary, Booking, Article } from './types';
 import { RESTAURANTS, ARTICLES as staticArticles } from './data/restaurants';
 import { Award, Compass, Heart, Award as AwardIcon, MapPin, Grid, Plus, Sparkles, BookOpen, Calendar, Star, Gift, ArrowRight, Share2, Check, BookOpenCheck, ArrowUp, Instagram, Facebook, Linkedin, X, ExternalLink, Camera, Upload, Bookmark, Navigation } from 'lucide-react';
@@ -2227,6 +2228,11 @@ export default function App() {
         {/* VIEW: HAMOD W HARR PROBIOTIC RECIPES */}
         {activeTab === 'recipes' && (
           <RecipesView />
+        )}
+
+        {/* VIEW: RESTAURANT MENUS */}
+        {activeTab === 'menus' && (
+          <MenusView />
         )}
 
         {/* VIEW 4: MY GUIDE & JOURNEY PLANNING */}
