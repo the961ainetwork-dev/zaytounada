@@ -820,7 +820,7 @@ export default function RestaurantDetailModal({
                   {/* Contact Information & Practical Details */}
                   <section id="contacts" className="pt-6 border-t border-neutral-200 text-left">
                     <h4 className="font-mono text-[9px] font-bold tracking-widest text-neutral-450 uppercase mb-3.5 text-left">Practical Information</h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-neutral-600 text-left">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-neutral-600 text-left mb-4">
                       <div className="flex items-center gap-2.5">
                         <Phone className="w-4 h-4 text-neutral-450 shrink-0" />
                         <span>{restaurant.phone}</span>
@@ -833,6 +833,30 @@ export default function RestaurantDetailModal({
                       >
                         <Globe className="w-4 h-4 text-neutral-450 shrink-0" />
                         <span>Visit Official Website ↗</span>
+                      </a>
+                    </div>
+
+                    {/* Highly Prominent WhatsApp Community CTA inside Modal */}
+                    <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4.5 flex flex-col sm:flex-row items-center justify-between gap-4 mt-4 text-left">
+                      <div className="space-y-1">
+                        <p className="text-[10px] font-mono font-bold text-emerald-800 uppercase tracking-widest">
+                          ★ Join Our VIP Network
+                        </p>
+                        <p className="text-xs text-neutral-700 font-light leading-normal">
+                          Get real-time hospitality updates, premium discount alerts, and priority tables via our active group.
+                        </p>
+                      </div>
+                      <a
+                        href="https://chat.whatsapp.com/KpV2Ecmc7IM8CVBjICddDC"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full sm:w-auto text-center shrink-0 inline-flex items-center justify-center gap-2 px-4.5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-mono font-bold text-[10.5px] uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-95 hover:scale-101 cursor-pointer"
+                        id="modal-whatsapp-community-btn"
+                      >
+                        <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.182 1.449 4.825 1.451 5.436 0 9.86-4.42 9.864-9.864.002-2.637-1.03-5.118-2.905-6.993C16.557 1.873 14.087 1.815 12.013 1.815c-5.44 0-9.863 4.418-9.867 9.863-.002 1.93.504 3.804 1.466 5.424l-.963 3.516 3.6-.944z"/>
+                        </svg>
+                        <span>Join WhatsApp Community</span>
                       </a>
                     </div>
                   </section>

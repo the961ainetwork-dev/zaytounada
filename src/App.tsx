@@ -1042,6 +1042,65 @@ export default function App() {
               onOpenConcierge={() => setIsConciergeActive(true)}
             />
 
+            {/* FULL-WIDTH FEATURES SECTION */}
+            <div className="w-full bg-neutral-50 border-y border-neutral-200 py-12 px-4 sm:px-6 lg:px-8 text-left" id="features-editorial-fullwidth">
+              <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                
+                {/* Visual Image Column */}
+                <div className="lg:col-span-5 h-64 sm:h-80 lg:h-96 rounded-2xl overflow-hidden border border-neutral-200 shadow-md relative bg-neutral-100">
+                  <img
+                    src="https://images.unsplash.com/photo-1543007630-9710e4a00a20?auto=format&fit=crop&q=80&w=800"
+                    alt="The Changing Face of Hamra"
+                    className="w-full h-full object-cover filter saturate-110 hover:scale-102 transition-transform duration-700"
+                    referrerPolicy="no-referrer"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  <span className="absolute top-4 left-4 bg-amber-400 text-neutral-900 font-mono text-[9px] tracking-widest font-black uppercase px-2.5 py-1 rounded shadow">
+                    Featured Chronicle
+                  </span>
+                </div>
+
+                {/* Content Column */}
+                <div className="lg:col-span-7 space-y-5">
+                  <div className="space-y-2">
+                    <span className="text-[10px] font-mono uppercase tracking-[0.25em] font-extrabold text-red-650 block">
+                      FEATURES • NOSTALGIA
+                    </span>
+                    <h2 className="font-serif text-3xl sm:text-4xl font-light text-neutral-900 tracking-tight uppercase leading-tight">
+                      The Changing Face of Hamra: <br className="hidden sm:block"/>
+                      <span className="font-semibold text-neutral-900">A Eulogy for the Zaroubi and Hamra Express</span>
+                    </h2>
+                    <p className="text-xs font-mono text-neutral-500 font-medium">
+                      Published July 15, 2026 • 7 min read • Written by Gourmet Travel Team
+                    </p>
+                  </div>
+
+                  <p className="text-sm text-neutral-600 font-serif leading-relaxed italic border-l-4 border-amber-400 pl-4">
+                    "There is a long-standing debate about where the true heart of Beirut beats, but for those who know the city’s concrete veins, there is only one answer: Hamra Street is the real downtown..."
+                  </p>
+
+                  <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed font-light">
+                    Unlike the manicured, sterile reconstructions of the geographical downtown, Hamra has always been a messy, breathing, living organism. It is a microcosm of a country constantly rebuilding itself on the fly. Today, it is a bustling, chaotic mosaic—populated by survivalists, refugee flights, and a daily mushrooming of new makeshift cafes and thatched structures. But if Hamra is the heart, its alleyways are the secret chambers where its soul used to hide. One such spot is the Zaroubi—popularly known as the Hamra Alleyway...
+                  </p>
+
+                  <div className="pt-2">
+                    <button
+                      onClick={() => {
+                        setSelectedMagazineArticleId('art-hamra-eulogy');
+                        setActiveTab('magazine');
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      className="inline-flex items-center gap-2 px-6 py-3.5 bg-neutral-900 hover:bg-neutral-800 text-white font-mono font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md active:scale-95 cursor-pointer"
+                    >
+                      <span>Read More in Magazine</span>
+                      <ArrowRight className="w-4 h-4 text-amber-300" />
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
             {/* THIRD SECTION: ZAYTOUNA MAGAZINE – HOSPITALITY IN REVIEW */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4" id="zaytounada-magazine-review-homepage">
               <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-neutral-250 pb-3 mb-6">
@@ -2354,6 +2413,24 @@ export default function App() {
             <p className="normal-case tracking-normal text-[9px] text-neutral-400 font-light pt-1 select-none">
               Stay in touch with our curations.
             </p>
+            
+            {/* Highly Prominent Footer WhatsApp CTA Button */}
+            <div className="pt-2">
+              <a 
+                href="https://chat.whatsapp.com/KpV2Ecmc7IM8CVBjICddDC"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => handleSocialClick('WhatsApp Group')}
+                className="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-mono font-bold text-[8.5px] uppercase tracking-wider rounded-lg transition-all shadow-xs cursor-pointer hover:scale-102 active:scale-98"
+                id="footer-whatsapp-btn"
+                title="Join our WhatsApp community"
+              >
+                <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.182 1.449 4.825 1.451 5.436 0 9.86-4.42 9.864-9.864.002-2.637-1.03-5.118-2.905-6.993C16.557 1.873 14.087 1.815 12.013 1.815c-5.44 0-9.863 4.418-9.867 9.863-.002 1.93.504 3.804 1.466 5.424l-.963 3.516 3.6-.944z"/>
+                </svg>
+                <span>Join Community</span>
+              </a>
+            </div>
           </div>
 
           {/* Newsletter Signup Col */}

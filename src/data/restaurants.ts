@@ -1945,6 +1945,36 @@ export const ARTICLES: Article[] = [
       '★★★ Three Stars: "Exceptional cuisine, worth a special journey!" Our highest award. The cooking is elevated to an art form. Some signature dishes become absolute historic benchmarks. Superlative execution.',
       'Alongside stars sits the Bib Gourmand, indicating "good quality, good value cooking" under a moderate price limit, and the Selected distinction, indicating an inspector-recommended spot of high standard.'
     ]
+  },
+  {
+    id: 'art-hamra-eulogy',
+    title: 'The Changing Face of Hamra: A Eulogy for the Zaroubi and Hamra Express',
+    subtitle: 'There is a long-standing debate about where the true heart of Beirut beats, but for those who know the city’s concrete veins, there is only one answer: Hamra Street is the real downtown.',
+    category: 'Nostalgia',
+    readTime: '7 min read',
+    imageUrl: 'https://images.unsplash.com/photo-1543007630-9710e4a00a20?auto=format&fit=crop&q=80&w=800',
+    date: 'July 15, 2026',
+    author: 'Gourmet Travel Team',
+    website: 'https://instagram.com/tmarbouta',
+    content: [
+      'There is a long-standing debate about where the true heart of Beirut beats, but for those who know the city’s concrete veins, there is only one answer: Hamra Street is the real downtown.',
+      'Unlike the manicured, sterile reconstructions of the geographical downtown, Hamra has always been a messy, breathing, living organism. It is a microcosm of a country constantly rebuilding itself on the fly. Today, it is a bustling, chaotic mosaic—populated by survivalists, refugee flights, and a daily mushrooming of new makeshift cafes and thatched structures. But if Hamra is the heart, its alleyways are the secret chambers where its soul used to hide.',
+      'One such spot is the Zaroubi—popularly known as the Hamra Alleyway. At the peak of Hamra’s recent renaissance, this narrow passage was a vibrant, packed corridor housing some five distinct pubs. It was a micro-community carved out of concrete, a sanctuary of loud music, clinking glasses, and nocturnal warmth.',
+      'It was here, during the quiet, surreal isolation of the COVID-19 lockdowns, that a dream was quietly built.',
+      'The Birth of Hamra Express: Paint Cans and Pure Grit. As the rest of the world was locked inside, staring at screens in isolation, a man named Abdallah Sarrout locked himself inside a newly acquired pub space on the alleyway. With the world at a standstill, he set to work building a dream.',
+      'In those early, makeshift days, the venue—which would soon be named Hamra Express—was bare-bones in the most poetic way possible. There were no plush barstools or high-end finishes. Customers, hungry for human connection, sat on upturned paint containers. Sometimes, in the chaotic spirit of a city under lockdown, they even brought their own drinks. Abdallah invested everything he had into this pocket of hope, eventually merging it with an adjacent space.',
+      'Almost overnight, a community was born. Abdallah, a fierce and wildly creative barman, began crafting elaborate cocktail menus, experimenting with flavors and socialites of mixology. The alleyway filled with regulars who didn\'t just come for a drink; they came to be part of an ecosystem. Soon, Abdallah expanded further, taking over another shop space directly facing Hamra Express.',
+      'For a brief, beautiful window in time, the Zaroubi belonged to this loyal tribe. The alleyway came alive with Sunday lunches featuring traditional Lebanese mezze and the nostalgic, sweeping melodies of Tarab music. It was a sanctuary of friendship, an accidental living room for the displaced creatives and night owls of Beirut.',
+      'The Unwritten Protocol: Defying the Curfews. What made Hamra Express truly remarkable, however, was how it became a literal shelter from the storm. In Beirut, crises don\'t knock; they break down the door. Each time a new round of conflict erupted, sliding down the main street, or whenever the city was gripped by an official curfew, a strange, unwritten protocol took over.',
+      'While the rest of the city shuttered its windows, the doors of Hamra Express would open. Inside, gathered in the warm, dim light, you would find a crowd of die-hard loyals. They came not to ignore the chaos outside, but to survive it together. It was a defiant sanctuary where the clinking of glasses drowned out the uncertainty of the streets.',
+      'Yet, defiance doesn\'t pay the rent indefinitely. Behind the warm camaraderie, the brutal financial reality of the entire alleyway was experiencing a severe reflux. It felt as though a cyclical, unforgiving destiny was forcing everyone to constantly reventure, to tear down what they had just built, and to frantically reinvest in themselves just to stay afloat.',
+      'But a poignant question hung in the air: How many times can you possibly reinvent yourself? How do you maintain the soul of a bohemian haven when, almost overnight, the street’s identity fractures in a dozen conflicting directions? Suddenly, on the very same narrow stretch, you find a newly opened fish restaurant operating next to a charity dispensary, while the curious, transient residents of a half-star hotel across the way gaze down at you from their balconies. The alleyway became a dizzying collage of survival, luxury, poverty, and voyeurism, all crammed into a few dozen meters of asphalt.',
+      'The Shift in the Alleyway. As this disjointed reality pressed in, the bohemian, late-night spirit of the pubs was steadily squeezed out. The dream had to become reticent. Today, the Zaroubi is filled with traditional Arabic cafes, the thick haze of shisha (argileh), and the rapid-fire service of new hummus and foul shops. The street has adapted to a different kind of crowd, a different economic reality.',
+      'The Departure: No Winners, Only Losers. Today, Hamra Express is closing its doors on the Zaroubi and relocating to Badaro.',
+      'In a city defined by constant displacement, there is no simple narrative of winners and losers in this move. Hamra Express will survive, carrying its spirit to a new neighborhood, and the Zaroubi will continue to feed the crowds that now claim it.',
+      'But if we are looking for the true losers in this transition, they are the ones who used to sit on those makeshift seats until the first light of dawn. The losers are the loyalists who walked down that alleyway not out of habit, but out of pure, fierce friendship and allegiance. They were the ones adamant to stay for the fading charm of an era that is quietly being packed away into cardboard boxes. As Hamra Express packs its bottles and dims its lights, a little more of the old Hamra magic slips into the history books, leaving the alleyway just a little quieter, and a little less like home.',
+      '#HamraStreet, #Beirut, #Lebanon, #HamraExpress, #ZaroubiAlleyway, #BeirutNightlife, #HamraAlleyway, #BeirutStories, #LebaneseNostalgia, #BeirutCulture, #HamraBeirut, #BeirutDiaries, #LebanonSpotlight, #CityOfNostalgia, #BeirutVibes, #LebanonNightlife, #HamraNostalgia, #BeirutStreets, #LebaneseCulture, #OurBeirut, #BeirutArt, #StoryOfAStreet, #BadaroBound, #HamraMemories, #BeirutCafes, #LebaneseHeritage, #BeirutSoul, #BeirutUnderground, #NostalgicBeirut, #LoveBeirut'
+    ]
   }
 ];
 
