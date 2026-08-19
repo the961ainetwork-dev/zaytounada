@@ -3,6 +3,43 @@ import { RestaurantMenu, MenuItem } from '../types';
 // Handcrafted menus for the premier featured spots
 const eliteMenus: RestaurantMenu[] = [
   {
+    id: 'menu-tasty-caffee',
+    restaurantId: 'rest-tasty-caffee',
+    restaurantName: 'Tasty Caffee',
+    cuisine: 'Artisanal Specialty Coffee & Viennoiserie House',
+    priceRange: '$$',
+    city: 'Beirut',
+    status: 'approved',
+    createdAt: '2026-08-15T08:00:00Z',
+    sections: [
+      {
+        category: 'Specialty Brews & Espresso',
+        items: [
+          { name: 'Ethiopian Yirgacheffe V60', price: '$5.50', description: 'Washed single origin with notes of wild jasmine, bergamot, white peach, and wild honey.', category: 'Beverage' },
+          { name: 'Mount Lebanon Anaerobic Espresso', price: '$4.25', description: 'Chouf high-altitude nano-lot with notes of candied fig, orange blossom, and dark chocolate.', category: 'Beverage' },
+          { name: 'Cortado with Pistachio Milk', price: '$4.75', description: 'Double Geisha espresso with silky in-house roasted Aleppo pistachio milk.', category: 'Beverage' },
+          { name: 'Nitro Cold Brew with Cascara Foam', price: '$5.00', description: '24h cold-steeped single origin topped with aerated coffee cherry foam.', category: 'Beverage' }
+        ]
+      },
+      {
+        category: '72h Viennoiserie & Bakery',
+        items: [
+          { name: 'Cardamom & Orange Blossom Cruffin', price: '$4.50', description: '72h laminated pastry rolled in cardamom sugar and piped with neroli citrus cream.', category: 'Dessert' },
+          { name: 'Valrhona & Halawa Pain Au Chocolat', price: '$4.75', description: '70% dark chocolate and artisanal sesame halawa encased in crisp laminated layers.', category: 'Dessert' },
+          { name: 'Wild Thyme & Akawi Sourdough Babka', price: '$4.00', description: 'Mountain zaatar, Koura olive oil, and sweet Akawi cheese ribbons.', category: 'Appetizer' }
+        ]
+      },
+      {
+        category: 'All-Day Brunch & Tartines',
+        items: [
+          { name: 'Heirloom Fig & Goat Labneh Tartine', price: '$8.50', description: 'Toasted sourdough, whipped Bekaa goat labneh, seared figs, thyme honey, and walnuts.', category: 'Main Course' },
+          { name: 'Shakshuka Benedict on Zaatar Brioche', price: '$9.25', description: 'Poached free-range eggs, slow tomato-pepper confit, and smoked sumac hollandaise.', category: 'Main Course' },
+          { name: 'Pistachio Ashta French Toast', price: '$8.75', description: 'Brioche soaked in orange-blossom custard, fresh clotted ashta, and date syrup.', category: 'Dessert' }
+        ]
+      }
+    ]
+  },
+  {
     id: 'menu-1',
     restaurantId: 'rest-1',
     restaurantName: 'Em Sherif',

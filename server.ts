@@ -18,6 +18,7 @@ let pagesConfigList: any[] = [
   { id: 'discovery', label: 'Explore Restaurants', icon: 'Compass', active: true, order: 0 },
   { id: 'neighborhoods', label: 'Neighborhoods', icon: 'MapPin', active: true, order: 1 },
   { id: 'catalogue', label: 'Zaytounada Catalogue', icon: 'Grid', active: true, order: 2 },
+  { id: 'tasty-caffee', label: 'Featured: Tasty Caffee', icon: 'Coffee', active: true, order: 2.5 },
   { id: 'pubs-cafes', label: 'Pubs & Cafes', icon: 'Coffee', active: true, order: 3 },
   { id: 'vibes', label: 'Lebanese Vibes', icon: 'Flame', active: true, order: 4 },
   { id: 'takeaways-bakeries', label: 'Bakeries & Produce', icon: 'Store', active: true, order: 5 },

@@ -22,6 +22,8 @@ import SocialFeedView from './components/SocialFeedView';
 import CulinaryEventsView from './components/CulinaryEventsView';
 import RecipesView from './components/RecipesView';
 import MenusView from './components/MenusView';
+import TastyCaffeeFeatureView from './components/TastyCaffeeFeatureView';
+import FeaturedAndVisitedSection from './components/FeaturedAndVisitedSection';
 import { Restaurant, SavedItinerary, Booking, Article } from './types';
 import { RESTAURANTS, ARTICLES as staticArticles } from './data/restaurants';
 import { Award, Compass, Heart, Award as AwardIcon, MapPin, Grid, Plus, Sparkles, BookOpen, Calendar, Star, Gift, ArrowRight, Share2, Check, BookOpenCheck, ArrowUp, Instagram, Facebook, Linkedin, X, ExternalLink, Camera, Upload, Bookmark, Navigation } from 'lucide-react';
@@ -1376,6 +1378,24 @@ export default function App() {
               )}
             </div>
 
+            {/* FEATURED AND VISITED FOR YOU: TASTY CAFFEE EDITORIAL SPOTLIGHT */}
+            <FeaturedAndVisitedSection
+              onOpenFeaturePage={() => {
+                setActiveTab('tasty-caffee');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              onOpenMenuExtracts={() => {
+                setActiveTab('tasty-caffee');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                setTimeout(() => {
+                  const el = document.getElementById('menu-extracts-section');
+                  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 150);
+              }}
+              isSaved={savedRestaurantIds.includes('rest-tasty-caffee')}
+              onToggleSave={() => handleToggleSaveRestaurant('rest-tasty-caffee')}
+            />
+
             {/* HIGH-FIDELITY LOYALTY PROGRAM PROMOTIONAL BANNER */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4" id="home-loyalty-promo-banner-rail">
               <div className="relative bg-gradient-to-br from-[#0c2e1f] via-[#051c13] to-emerald-950 border border-emerald-800/80 rounded-3xl p-6 md:p-8 xl:p-10 overflow-hidden shadow-xl flex flex-col md:flex-row items-center gap-6 text-left transition-all hover:border-emerald-600/80">
@@ -2233,6 +2253,19 @@ export default function App() {
         {/* VIEW: RESTAURANT MENUS */}
         {activeTab === 'menus' && (
           <MenusView />
+        )}
+
+        {/* VIEW: FEATURED AND VISITED FOR YOU - TASTY CAFFEE DEDICATED PAGE */}
+        {activeTab === 'tasty-caffee' && (
+          <TastyCaffeeFeatureView
+            onBackToHome={() => {
+              setActiveTab('discovery');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            isSaved={savedRestaurantIds.includes('rest-tasty-caffee')}
+            onToggleSave={() => handleToggleSaveRestaurant('rest-tasty-caffee')}
+            onBookTable={handleAddBooking}
+          />
         )}
 
         {/* VIEW 4: MY GUIDE & JOURNEY PLANNING */}
